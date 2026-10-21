@@ -1,0 +1,80 @@
+from fastapi import APIRouter, Depends, Request
+
+from app.schema.promotion_schema import (
+    PromotionCreate,
+    PromotionResponse,
+    PromotionUpdate,
+)
+from app.services.promotion_service import PromotionService
+from app.websocket.events import broadcast_change
+from app.api.dependencies.auth import get_current_user
+from app.services.audit_service import AuditService
+
+
+router = APIRouter(
+    prefix="/promotion",
+    tags=["Promotion"],
+)
+
+service = PromotionService()
+
+
+@router.get(
+    "/",
+    response_model=list[PromotionResponse],
+)
+async def get_promotions(current_user = Depends(get_current_user)):
+    return await service.get_all()
+
+
+@router.get(
+    "/{promotion_id}",
+    response_model=PromotionResponse,
+)
+async def get_promotion(promotion_id: str, current_user = Depends(get_current_user)):
+    return await service.get_by_id(promotion_id)
+
+
+@router.post(
+    "/",
+    response_model=PromotionResponse,
+)
+async def create_promotion(
+    data: PromotionCreate,
+    request: Request,
+    current_user = Depends(get_current_user),
+):
+    result = await service.create(data)
+    await AuditService.record(current_user, "created", "promotion", result.get("id"), result.get("name"))
+
+    await broadcast_change(
+        resource="promotion",
+        action="created",
+        data=result,
+        source_client_id=request.headers.get("X-Client-ID"),
+    )
+
+    return result
+
+
+@router.put(
+    "/{promotion_id}",
+    response_model=PromotionResponse,
+)
+async def update_promotion(
+    promotion_id: str,
+    data: PromotionUpdate,
+    request: Request,
+    current_user = Depends(get_current_user),
+):
+    result = await service.update(promotion_id, data)
+    await AuditService.record(current_user, "updated", "promotion", promotion_id, result.get("name"))
+
+    await broadcast_change(
+        resource="promotion",
+        action="updated",
+        data=result,
+        source_client_id=request.headers.get("X-Client-ID"),
+    )
+
+    return result
