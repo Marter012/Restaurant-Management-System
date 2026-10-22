@@ -121,6 +121,7 @@ import {
   requestPrintFromPrintServer,
 } from "../../websocket/websocketService.ts";
 import ModalForm from "../ModalForm/ModalForm.tsx";
+import { finishPrintAgentManualRefresh, resetPrintAgentConnection } from "../../services/printAgentBase.ts";
 
 interface PrintStatusModalProps {
   isOpen: boolean;
@@ -209,34 +210,39 @@ const PrintStatusModal = ({ isOpen, onClose }: PrintStatusModalProps) => {
       setLoading(true);
       setError(false);
 
-      const [health, configData, printersData] = await Promise.all([
-        getHealth(),
+      const health = await getHealth();
+
+      if (!health) {
+        setOnline(false);
+        setConfig(null);
+        setPrinters([]);
+        setPrinterStatus(null);
+        setError(true);
+        return;
+      }
+
+      const [configData, printersData] = await Promise.all([
         getPrintConfigAPI(),
         getPrintersAPI(),
       ]);
 
-      setOnline(health);
+      setOnline(true);
       setConfig(configData);
       setPrinters(printersData);
 
-      if (configData?.printer_name && !selectedPrinter) {
-        setSelectedPrinter(configData.printer_name);
-      }
-
       try {
         const printerStatusData = await getPrinterStatusAPI();
-
         setPrinterStatus(printerStatusData);
-      } catch (printerError) {
-        getAxiosErrorMessage(printerError);
-
+      } catch (error) {
+        getAxiosErrorMessage(error);
         setPrinterStatus(null);
+        setError(true);
       }
     } catch (error) {
-      console.log(error);
       getAxiosErrorMessage(error);
-
       setOnline(false);
+      setConfig(null);
+      setPrinters([]);
       setPrinterStatus(null);
       setError(true);
     } finally {
@@ -725,7 +731,15 @@ const PrintStatusModal = ({ isOpen, onClose }: PrintStatusModalProps) => {
    */
 
   const handleFullRefresh = async () => {
-    await loadInitialData();
+    if (loading) return;
+
+    resetPrintAgentConnection();
+
+    try {
+      await loadInitialData();
+    } finally {
+      finishPrintAgentManualRefresh();
+    }
   };
 
   /*

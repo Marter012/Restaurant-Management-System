@@ -36,7 +36,10 @@ import {
   startWebSocket,
   stopWebSocket,
 } from "../websocket/websocketService.ts";
-import { getHealth, getPrinterStatusAPI } from "../services/printAgentService.ts";
+import {
+  getHealth,
+  getPrinterStatusAPI,
+} from "../services/printAgentService.ts";
 import { setPrintAgentStatus } from "../store/slices/printAgentSlice.ts";
 
 interface LoadingState {
@@ -201,6 +204,7 @@ const AppInitializer = ({ children }: AppInitializerProps) => {
 
       const loadPrintAgent = async () => {
         try {
+          // Comprueba si el agente está disponible.
           const agentConnected = await getHealth();
 
           if (!agentConnected) {
@@ -215,6 +219,7 @@ const AppInitializer = ({ children }: AppInitializerProps) => {
             return;
           }
 
+          // Consulta el estado de la impresora únicamente si el agente responde.
           const printerStatus = await getPrinterStatusAPI();
 
           dispatch(
@@ -234,8 +239,11 @@ const AppInitializer = ({ children }: AppInitializerProps) => {
               timestamp: new Date().toISOString(),
             }),
           );
+
+          // El error del Print Agent no debe impedir iniciar la aplicación.
         }
       };
+
       /*
        * Todas las APIs se ejecutan al mismo tiempo.
        */
