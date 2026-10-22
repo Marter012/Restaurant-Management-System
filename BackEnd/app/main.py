@@ -47,7 +47,7 @@ app.add_middleware(
         "http://127.0.0.1:5173",
         "http://192.168.100.190:5173",
         "http://192.168.56.1:5173",
-        "https://system-manage-print.vercel.app",
+        "https://restaurant-management-system-phi-umber.vercel.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],
