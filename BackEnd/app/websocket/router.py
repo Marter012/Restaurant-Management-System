@@ -1,6 +1,8 @@
 import json
 import logging
 import os
+import hashlib
+import hmac
 from datetime import datetime, timezone
 from uuid import uuid4
 
@@ -88,6 +90,21 @@ async def _register_print_agent(websocket: WebSocket, message: dict) -> None:
 
     expected_token = os.environ.get("PRINT_AGENT_TOKEN", "").strip()
     provided_token = message.get("token")
+    logger.warning(
+        "PRINT_AGENT_TOKEN diagnóstico: "
+        "configurado=%s, recibido=%s, coincide=%s",
+        bool(expected_token),
+        bool(provided_token),
+        bool(expected_token)
+        and bool(provided_token)
+        and hmac.compare_digest(expected_token, provided_token),
+    )
+
+    if expected_token:
+        logger.warning(
+            "PRINT_AGENT_TOKEN SHA256 en backend: %s",
+            hashlib.sha256(expected_token.encode("utf-8")).hexdigest(),
+        )
     logger.info(
     "Print Agent: solicitud de autenticación recibida."
 )
