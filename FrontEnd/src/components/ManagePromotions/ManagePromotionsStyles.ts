@@ -7,8 +7,8 @@ export const ContainerManagePromotions = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 90%;
-  max-height: 90%;
+  height: 85%;
+  max-height: 85%;
 
   gap: 12px;
 
@@ -16,9 +16,23 @@ export const ContainerManagePromotions = styled.div`
 
   flex-shrink: 0;
 
+  @media (max-width: 1000px) {
+    height: auto;
+    max-height: none;
+    min-height: 0;
+    flex-shrink: 1;
+    overflow: visible;
+  }
+
   form{
     width: 100%;
     height: 100%;
+
+    @media (max-width: 1000px) {
+      height: auto;
+      min-height: 0;
+      overflow: visible;
+    }
   }
 
   .active {
@@ -34,9 +48,24 @@ export const ContainerManagePromotions = styled.div`
   .promotions-table {
     width: 100%;
     height: auto;
-    max-height: none;
     min-height: 0;
     flex: 1 1 auto;
+
+    @media (max-width: 1000px) {
+      height: auto;
+      max-height: none;
+      min-height: 0;
+      overflow: visible;
+      flex: 0 0 auto;
+
+      > div:last-child {
+        height: auto !important;
+        max-height: none !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+        flex: 0 0 auto !important;
+      }
+    }
 
     .actions {
       .button-text {
@@ -182,14 +211,12 @@ export const ContainerManagePromotions = styled.div`
     @media (max-width: 600px) {
       
       height: auto;
-      max-height: none;
       overflow: visible;
       flex: 0 0 auto;
 
       > div:last-child {
         height: auto !important;
         min-height: 0 !important;
-        max-height: none !important;
         overflow: visible !important;
         flex: 0 0 auto !important;
       }

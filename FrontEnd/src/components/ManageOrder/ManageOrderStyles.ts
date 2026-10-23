@@ -45,6 +45,13 @@ export const ContainerManageOrders = styled.div`
 
     box-sizing: border-box;
 
+    @media (max-width: 1000px) {
+      height: auto;
+      max-height: none;
+      min-height: auto;
+      overflow: visible;
+    }
+
     .table-header {
       grid-template-columns: 0.65fr 1.25fr 1fr 1.2fr 1fr 1fr;
       gap: 10px;
@@ -182,6 +189,7 @@ export const ContainerManageOrders = styled.div`
     */
 
     @media (max-width: 600px) {
+
       .table-header {
         grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 76px;
         gap: 5px;
@@ -309,6 +317,27 @@ export const ContainerManageOrders = styled.div`
     ESPACIADO RESPONSIVE
     =========================================================
   */
+
+  @media (max-width: 1000px) {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    flex-shrink: 1;
+
+    form {
+      height: auto;
+      min-height: 0;
+      overflow: visible;
+    }
+
+    .orders-table {
+      height: auto;
+      max-height: none;
+      min-height: auto;
+      overflow: visible;
+      flex-shrink: 1;
+    }
+  }
 
   @media (max-width: 850px) {
     gap: 16px;

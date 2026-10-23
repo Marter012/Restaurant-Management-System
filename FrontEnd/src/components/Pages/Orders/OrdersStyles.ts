@@ -4,8 +4,8 @@ import styled from "styled-components";
 export const ContainerOrder = styled.div`
   width: 100%;
   max-width: 1600px;
-  min-height: 90% ;
-  max-height: 90% ;
+  min-height: 85% ;
+  max-height: 85% ;
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
