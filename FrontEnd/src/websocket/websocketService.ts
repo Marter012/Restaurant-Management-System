@@ -5,6 +5,7 @@ import { getProductsAPI } from "../services/productService.ts";
 import { getOrdersAPI } from "../services/orderService.ts";
 import { getCashRegistersAPI } from "../services/cashRegisterService.ts";
 import { getCashMovementsAPI } from "../services/cashMovementService.ts";
+import { getPromotionsAPI } from "../services/promotionService.ts";
 
 import { setProducts } from "../store/slices/productSlice.ts";
 import { setOrders } from "../store/slices/orderSlice.ts";
@@ -17,7 +18,6 @@ import { buildOrderTicket } from "../components/Tickets/OrderTicket.ts";
 import type { IOrder } from "../interfaces/Order.ts";
 import type { PrinterStatus } from "../interfaces/PrintAgent.ts";
 import { finishPrintAgentManualRefresh, resetPrintAgentConnection } from "../services/printAgentBase.ts";
-import { getPromotionsAPI } from "../services/promotionService.ts";
 
 interface WebSocketChangeEvent {
   type: "DATA_CHANGED";
@@ -176,7 +176,6 @@ const printRemoteOrder = async (event: WebSocketChangeEvent) => {
 
   try {
     buildOrderTicket(order);
-    // Nota: La ejecución de impresión se delega de forma segura por WebSocket o adaptador interno
   } catch (error) {
     console.error(
       `La comanda #${order.order_number} llegó por WebSocket, pero no pudo imprimirse:`,
@@ -191,7 +190,6 @@ const handlePrintRequest = async (event: PrintRequestMessage) => {
   }
 
   try {
-    // Si actúa como servidor, procesa el ticket de manera interna
     socket?.send(
       JSON.stringify({
         type: "PRINT_RESULT",
@@ -452,4 +450,9 @@ export const isWebSocketConnected = (): boolean => {
 export const refreshLocalPrintAgentStatus = async (): Promise<void> => {
   resetPrintAgentConnection();
   finishPrintAgentManualRefresh();
+  
+  // Si el socket está abierto y es servidor, pedimos re-registro para forzar el estado
+  if (isPrintServer() && socket?.readyState === WebSocket.OPEN) {
+    socket.send(JSON.stringify({ type: "REGISTER_PRINT_SERVER" }));
+  }
 };
