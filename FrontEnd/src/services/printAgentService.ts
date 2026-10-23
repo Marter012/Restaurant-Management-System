@@ -8,134 +8,84 @@ import type {
   PrintResponse,
   UpdatePrintConfig,
 } from "../interfaces/PrintAgent.ts";
-import { printAgent } from "./printAgentBase.ts";
+import { requestPrintAgentCommand } from "../websocket/websocketService.ts";
 
-/* =========================================================
-   HEALTH
-========================================================= */
+const command = <T>(
+  action: string,
+  payload: Record<string, unknown> = {},
+  timeoutMs = 15000,
+): Promise<T> => requestPrintAgentCommand<T>(action, payload, timeoutMs);
 
+/* HEALTH */
 export const getHealth = async (): Promise<boolean> => {
-  const response = await printAgent.get("/");
-  return response.data.status === "ok";
+  const response = await command<{ status?: string }>("health", {}, 8000);
+  return response?.status === "ok";
 };
 
-/* =========================================================
-   PRINT
-========================================================= */
-
+/* PRINT */
 export const printOrderAPI = async (ticket: string): Promise<PrintResponse> => {
-  const response = await printAgent.post<PrintResponse>("/print", { ticket });
-  return response.data;
+  if (!ticket.trim()) throw new Error("El ticket de impresión está vacío.");
+  return command<PrintResponse>("print", { ticket }, 20000);
 };
 
-/* =========================================================
-   CONFIG
-========================================================= */
+/* CONFIG */
+export const getPrintConfigAPI = (): Promise<PrintConfig> =>
+  command<PrintConfig>("config_get");
 
-export const getPrintConfigAPI = async (): Promise<PrintConfig> => {
-  const response = await printAgent.get<PrintConfig>("/config");
-  return response.data;
-};
-
-export const updatePrintConfigAPI = async (
+export const updatePrintConfigAPI = (
   config: UpdatePrintConfig,
-): Promise<PrintConfig> => {
-  const response = await printAgent.put<PrintConfig>("/config", config);
-  return response.data;
-};
+): Promise<PrintConfig> => command<PrintConfig>("config_update", { config });
 
-/* =========================================================
-   QUEUE
-========================================================= */
+/* QUEUE */
+export const getPrintQueueAPI = (): Promise<PrintQueue> => command<PrintQueue>("queue");
 
-export const getPrintQueueAPI = async (): Promise<PrintQueue> => {
-  const response = await printAgent.get<PrintQueue>("/queue");
-  return response.data;
-};
-
-/* =========================================================
-   JOBS
-========================================================= */
-
+/* JOBS */
 export const getPrintJobsAPI = async (): Promise<PrintJob[]> => {
-  const response = await printAgent.get<PrintJob[]>("/jobs");
-  return Array.isArray(response.data) ? response.data : [];
+  const response = await command<PrintJob[]>("jobs");
+  return Array.isArray(response) ? response : [];
 };
 
 export const cancelPrintJobAPI = async (jobId: number): Promise<void> => {
-  await printAgent.post(`/jobs/${jobId}/cancel`);
+  await command<{ cancelled: boolean }>("cancel_job", { job_id: jobId });
 };
 
-/* =========================================================
-   HISTORY
-========================================================= */
-
+/* HISTORY */
 export const getPrintHistoryAPI = async (): Promise<PrintHistory[]> => {
-  const response = await printAgent.get<PrintHistory[]>("/history");
-  return Array.isArray(response.data) ? response.data : [];
+  const response = await command<PrintHistory[]>("history");
+  return Array.isArray(response) ? response : [];
 };
 
-/* =========================================================
-   PRINTERS
-========================================================= */
-
+/* PRINTERS */
 export const getPrintersAPI = async (): Promise<PrintPrinter[]> => {
-  const response = await printAgent.get("/printers");
-  const data = response.data;
-
-  if (!Array.isArray(data)) {
-    return [];
-  }
+  const response = await command<{ printers?: unknown[] }>("printers");
+  const data = Array.isArray(response) ? response : response?.printers;
+  if (!Array.isArray(data)) return [];
 
   return data.map((printer) => {
-    if (typeof printer === "string") {
-      return { name: printer };
-    }
+    if (typeof printer === "string") return { name: printer };
+    if (!printer || typeof printer !== "object") return { name: "Impresora" };
 
+    const item = printer as Record<string, unknown>;
     return {
-      name:
-        printer.name ??
-        printer.printer_name ??
-        printer.device_name ??
-        "Impresora",
-      status: printer.status,
-      online: printer.online,
-      is_default: printer.is_default,
+      name: String(item.name ?? item.printer_name ?? item.device_name ?? "Impresora"),
+      status: typeof item.status === "string" ? item.status : undefined,
+      online: typeof item.online === "boolean" ? item.online : undefined,
+      is_default: typeof item.is_default === "boolean" ? item.is_default : undefined,
     };
   });
 };
 
-/* =========================================================
-   ESTADO DE IMPRESORA Y ESTADO DEL AGENTE
-========================================================= */
+/* PRINTER STATUS / AGENT STATUS */
+export const getPrinterStatusAPI = (): Promise<PrinterStatus> =>
+  command<PrinterStatus>("printer_status", {}, 20000);
 
-export const getPrinterStatusAPI = async (): Promise<PrinterStatus> => {
-  const response = await printAgent.get<PrinterStatus>("/printer/status", {
-    timeout: 20000,
-  });
-  return response.data;
-};
+export const getAgentStatusAPI = (): Promise<unknown> => command("status", {}, 10000);
 
-export const getAgentStatusAPI = async (): Promise<unknown> => {
-  const response = await printAgent.get("/status", { timeout: 10000 });
-  return response.data;
-};
+/* TEST PRINT */
+export const testPrintPrinterAPI = (): Promise<unknown> =>
+  command("test_print", {}, 20000);
 
-/* =========================================================
-   PRUEBA DE IMPRESIÓN
-========================================================= */
-
-export const testPrintPrinterAPI = async (): Promise<unknown> => {
-  const response = await printAgent.post("/printers/test", undefined, {
-    timeout: 15000,
-  });
-  return response.data;
-};
-
-/* =========================================================
-   ABRIR COLA DE WINDOWS
-========================================================= */
-
+/* OPEN WINDOWS PRINTER SETTINGS */
 export const getOpenQueueWindows = async (): Promise<void> => {
-  await printAgent.get("/printer/open-queue");
+  await command("open_queue", {}, 8000);
 };

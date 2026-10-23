@@ -205,7 +205,6 @@ const AppInitializer = ({ children }: AppInitializerProps) => {
       const loadPrintAgent = async () => {
         try {
           // Comprueba si el agente está disponible.
-          console.log("holaaaaaa")
           const agentConnected = await getHealth();
 
           if (!agentConnected) {
@@ -246,15 +245,21 @@ const AppInitializer = ({ children }: AppInitializerProps) => {
       };
 
       /*
-       * Todas las APIs se ejecutan al mismo tiempo.
+       * Abrimos el WebSocket antes de consultar el Print Agent.
+       * Las peticiones de impresión esperan a que la conexión esté autenticada.
+       * El estado del agente se consulta en segundo plano para no bloquear la carga
+       * principal si la PC de impresión está apagada o desconectada.
        */
+      startWebSocket(dispatch);
+      void loadPrintAgent();
+
+      /* Las APIs principales siguen cargándose en paralelo. */
       await Promise.all([
         loadProducts(),
         loadOrders(),
         loadCashRegister(),
         loadCashMovements(),
         loadPromotions(),
-        loadPrintAgent(),
       ]);
 
       /*
@@ -269,11 +274,6 @@ const AppInitializer = ({ children }: AppInitializerProps) => {
       sessionStorage.setItem(APP_INITIALIZED_KEY, "true");
       setShowInitialLoading(false);
 
-      /*
-       * Una vez que la carga inicial terminó, abrimos una única conexión
-       * WebSocket para mantener todos los clientes sincronizados.
-       */
-      startWebSocket(dispatch);
     } catch (error) {
       console.error("Error inicializando la aplicación:", error);
       setError(true);
