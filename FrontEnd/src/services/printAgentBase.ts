@@ -106,17 +106,23 @@ const printAgentFetchAdapter = async (
     }
   }
 
-  try {
-    const response = await fetch(fullURL, {
+ try {
+    // 1. Creamos un objeto de opciones tipado correctamente para evitar errores de TypeScript
+    const fetchOptions: RequestInit & { targetAddressSpace?: "loopback" | "local" | "public" } = {
       method,
       headers,
       body,
       credentials: config.withCredentials ? "include" : "same-origin",
       signal,
-      ...(isLoopbackURL(fullURL)
-        ? { targetAddressSpace: "loopback" as const }
-        : {}),
-    });
+    };
+
+    // 2. Si la URL es local (127.0.0.1 o localhost), le inyectamos la propiedad que exige Chrome
+    if (isLoopbackURL(fullURL)) {
+      fetchOptions.targetAddressSpace = "loopback";
+    }
+
+    // 3. Ejecutamos el fetch con las opciones preparadas
+    const response = await fetch(fullURL, fetchOptions);
 
     const responseText = await response.text();
 
