@@ -1,8 +1,8 @@
+import hashlib
+import hmac
 import json
 import logging
 import os
-import hashlib
-import hmac
 from datetime import datetime, timezone
 from uuid import uuid4
 
@@ -38,32 +38,67 @@ def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-async def _reject_socket(websocket: WebSocket, message_type: str, error: str) -> None:
-    await manager.send_to(websocket, {"type": message_type, "error": error, "timestamp": utc_now()})
+async def _reject_socket(
+    websocket: WebSocket,
+    message_type: str,
+    error: str,
+) -> None:
+    try:
+        await manager.send_to(
+            websocket,
+            {
+                "type": message_type,
+                "error": error,
+                "timestamp": utc_now(),
+            },
+        )
+    except Exception:
+        logger.debug(
+            "No se pudo enviar el mensaje de rechazo WebSocket.",
+            exc_info=True,
+        )
+
     try:
         await websocket.close(code=1008, reason=error[:120])
     except Exception:
-        pass
+        logger.debug(
+            "La conexión WebSocket ya estaba cerrada.",
+            exc_info=True,
+        )
 
 
-async def _authenticate_browser(websocket: WebSocket, message: dict) -> None:
+async def _authenticate_browser(
+    websocket: WebSocket,
+    message: dict,
+) -> None:
     if manager.get_role(websocket) != "pending":
-        await _reject_socket(websocket, "AUTH_ERROR", "La conexión ya fue autenticada.")
+        await _reject_socket(
+            websocket,
+            "AUTH_ERROR",
+            "La conexión ya fue autenticada.",
+        )
         return
 
     token = message.get("token")
+
     if not isinstance(token, str) or not token.strip():
-        await _reject_socket(websocket, "AUTH_ERROR", "Falta el token de acceso.")
+        await _reject_socket(
+            websocket,
+            "AUTH_ERROR",
+            "Falta el token de acceso.",
+        )
         return
 
     try:
         claims = decode_access_token(token.strip())
         user_id = claims.get("sub")
+
         if not user_id:
             raise ValueError("El token no contiene un usuario válido.")
 
-        # Igual que en la API HTTP: validar que el usuario siga activo y exista.
+        # Validar que el usuario siga activo y exista.
         user = await user_repository.get_by_id(str(user_id))
+
         if not user or not user.get("status", False):
             raise ValueError("El usuario está inactivo o no existe.")
 
@@ -73,49 +108,96 @@ async def _authenticate_browser(websocket: WebSocket, message: dict) -> None:
             "role": user.get("role", ""),
             "exp": claims.get("exp"),
         }
+
         if not manager.authenticate_client(websocket, current_claims):
             raise ValueError("No se pudo autenticar esta conexión.")
 
     except Exception:
-        await _reject_socket(websocket, "AUTH_ERROR", "La sesión no es válida. Iniciá sesión nuevamente.")
+        logger.warning(
+            "Se rechazó la autenticación de un cliente WebSocket.",
+            exc_info=True,
+        )
+
+        await _reject_socket(
+            websocket,
+            "AUTH_ERROR",
+            "La sesión no es válida. Iniciá sesión nuevamente.",
+        )
         return
 
-    await manager.send_to(websocket, {"type": "AUTHENTICATED", "timestamp": utc_now()})
+    await manager.send_to(
+        websocket,
+        {
+            "type": "AUTHENTICATED",
+            "timestamp": utc_now(),
+        },
+    )
 
 
-async def _register_print_agent(websocket: WebSocket, message: dict) -> None:
+async def _register_print_agent(
+    websocket: WebSocket,
+    message: dict,
+) -> None:
     if manager.get_role(websocket) != "pending":
-        await _reject_socket(websocket, "PRINT_AGENT_AUTH_ERROR", "La conexión ya fue registrada.")
+        await _reject_socket(
+            websocket,
+            "PRINT_AGENT_AUTH_ERROR",
+            "La conexión ya fue registrada.",
+        )
         return
 
     expected_token = os.environ.get("PRINT_AGENT_TOKEN", "").strip()
     provided_token = message.get("token")
+
+    # Diagnóstico temporal: no registra el secreto ni su contenido.
     logger.warning(
-        "PRINT_AGENT_TOKEN diagnóstico: "
-        "configurado=%s, recibido=%s, coincide=%s",
+        "Diagnóstico registro Print Agent: "
+        "tipo_mensaje=%r, token_configurado=%s, "
+        "token_recibido=%s, token_tipo=%s, token_longitud=%s",
+        message.get("type"),
         bool(expected_token),
         bool(provided_token),
-        bool(expected_token)
-        and bool(provided_token)
-        and hmac.compare_digest(expected_token, provided_token),
+        type(provided_token).__name__,
+        (
+            len(provided_token)
+            if isinstance(provided_token, str)
+            else "no es texto"
+        ),
     )
 
+    # Huella temporal para comparar el secreto de Render con Windows.
+    # La huella no revela directamente el token original.
     if expected_token:
         logger.warning(
             "PRINT_AGENT_TOKEN SHA256 en backend: %s",
-            hashlib.sha256(expected_token.encode("utf-8")).hexdigest(),
+            hashlib.sha256(
+                expected_token.encode("utf-8")
+            ).hexdigest(),
         )
-    logger.info(
-    "Print Agent: solicitud de autenticación recibida."
-)
-    if not expected_token or not isinstance(provided_token, str) or provided_token != expected_token:
+
+    token_valid = (
+        bool(expected_token)
+        and isinstance(provided_token, str)
+        and bool(provided_token)
+        and hmac.compare_digest(expected_token, provided_token)
+    )
+
+    logger.warning(
+        "Resultado de autenticación Print Agent: válido=%s",
+        token_valid,
+    )
+
+    if not token_valid:
         logger.warning(
-    "Print Agent: autenticación rechazada. Revisar PRINT_AGENT_TOKEN."
-)
+            "Print Agent: autenticación rechazada. "
+            "Revisar el mensaje de registro y PRINT_AGENT_TOKEN."
+        )
+
         await _reject_socket(
             websocket,
             "PRINT_AGENT_AUTH_ERROR",
-            "El Print Agent no está autenticado. Revisá PRINT_AGENT_TOKEN.",
+            "El Print Agent no está autenticado. "
+            "Revisá PRINT_AGENT_TOKEN.",
         )
         return
 
@@ -127,23 +209,45 @@ async def _register_print_agent(websocket: WebSocket, message: dict) -> None:
         )
         return
 
-    await manager.send_to(websocket, {"type": "PRINT_SERVER_REGISTERED", "timestamp": utc_now()})
+    await manager.send_to(
+        websocket,
+        {
+            "type": "PRINT_SERVER_REGISTERED",
+            "timestamp": utc_now(),
+        },
+    )
+
     logger.info(
-    "Print Agent: autenticación correcta y agente registrado."
-)
+        "Print Agent: autenticación correcta y agente registrado."
+    )
+
     cached_status = manager.print_server_status
+
     if cached_status is not None:
         await manager.send_to(
             websocket,
-            {"type": "PRINT_STATUS", "data": cached_status, "timestamp": utc_now()},
+            {
+                "type": "PRINT_STATUS",
+                "data": cached_status,
+                "timestamp": utc_now(),
+            },
         )
 
 
-async def handle_message(websocket: WebSocket, message: dict) -> None:
+async def handle_message(
+    websocket: WebSocket,
+    message: dict,
+) -> None:
     message_type = message.get("type")
 
     if message_type == "ping":
-        await manager.send_to(websocket, {"type": "pong", "timestamp": utc_now()})
+        await manager.send_to(
+            websocket,
+            {
+                "type": "pong",
+                "timestamp": utc_now(),
+            },
+        )
         return
 
     if message_type == "AUTHENTICATE":
@@ -157,17 +261,28 @@ async def handle_message(websocket: WebSocket, message: dict) -> None:
     if message_type == "PRINT_STATUS":
         if manager.get_role(websocket) != "print_server":
             return
+
         status = message.get("data")
+
         if not isinstance(status, dict):
             return
+
         status["agent_connected"] = True
         manager.set_print_server_status(status)
-        await manager.broadcast({"type": "PRINT_STATUS", "data": status, "timestamp": utc_now()})
+
+        await manager.broadcast(
+            {
+                "type": "PRINT_STATUS",
+                "data": status,
+                "timestamp": utc_now(),
+            }
+        )
         return
 
     if message_type == "PRINT_AGENT_REQUEST":
         if not manager.is_client_authenticated(websocket):
             request_id = message.get("request_id")
+
             if isinstance(request_id, str) and request_id:
                 await manager.send_to(
                     websocket,
@@ -175,11 +290,17 @@ async def handle_message(websocket: WebSocket, message: dict) -> None:
                         "type": "PRINT_AGENT_RESPONSE",
                         "request_id": request_id,
                         "success": False,
-                        "error": "La sesión no está autenticada o expiró.",
+                        "error": (
+                            "La sesión no está autenticada o expiró."
+                        ),
                     },
                 )
             else:
-                await _reject_socket(websocket, "AUTH_ERROR", "La sesión no está autenticada.")
+                await _reject_socket(
+                    websocket,
+                    "AUTH_ERROR",
+                    "La sesión no está autenticada.",
+                )
             return
 
         request_id = message.get("request_id")
@@ -188,7 +309,11 @@ async def handle_message(websocket: WebSocket, message: dict) -> None:
 
         if not isinstance(request_id, str) or not request_id:
             return
-        if not isinstance(action, str) or action not in ALLOWED_PRINT_ACTIONS:
+
+        if (
+            not isinstance(action, str)
+            or action not in ALLOWED_PRINT_ACTIONS
+        ):
             await manager.send_to(
                 websocket,
                 {
@@ -199,6 +324,7 @@ async def handle_message(websocket: WebSocket, message: dict) -> None:
                 },
             )
             return
+
         if not isinstance(payload, dict):
             await manager.send_to(
                 websocket,
@@ -212,6 +338,7 @@ async def handle_message(websocket: WebSocket, message: dict) -> None:
             return
 
         print_server = manager.get_print_server()
+
         if print_server is None:
             await manager.send_to(
                 websocket,
@@ -224,7 +351,10 @@ async def handle_message(websocket: WebSocket, message: dict) -> None:
             )
             return
 
-        if not manager.register_agent_request(request_id, websocket):
+        if not manager.register_agent_request(
+            request_id,
+            websocket,
+        ):
             await manager.send_to(
                 websocket,
                 {
@@ -247,8 +377,10 @@ async def handle_message(websocket: WebSocket, message: dict) -> None:
                 "timestamp": utc_now(),
             },
         )
+
         if not delivered:
             manager.pending_agent_requests.pop(request_id, None)
+
             await manager.send_to(
                 websocket,
                 {
@@ -258,12 +390,15 @@ async def handle_message(websocket: WebSocket, message: dict) -> None:
                     "error": "No se pudo enviar la operación al Print Agent.",
                 },
             )
+
         return
 
     if message_type == "PRINT_AGENT_RESULT":
         if manager.get_role(websocket) != "print_server":
             return
+
         request_id = message.get("request_id")
+
         if not isinstance(request_id, str) or not request_id:
             return
 
@@ -272,8 +407,10 @@ async def handle_message(websocket: WebSocket, message: dict) -> None:
             "request_id": request_id,
             "success": bool(message.get("success")),
         }
+
         if "response" in message:
             result["response"] = message["response"]
+
         if "error" in message:
             result["error"] = str(message["error"])
 
@@ -284,7 +421,10 @@ async def handle_message(websocket: WebSocket, message: dict) -> None:
     if message_type == "PRINT_REQUEST":
         message["type"] = "PRINT_AGENT_REQUEST"
         message["action"] = "print"
-        message["payload"] = {"ticket": message.get("ticket", "")}
+        message["payload"] = {
+            "ticket": message.get("ticket", ""),
+        }
+
         await handle_message(websocket, message)
 
 
@@ -294,26 +434,45 @@ async def websocket_endpoint(
     client_id: str | None = Query(default=None),
 ):
     client_id = client_id or str(uuid4())
+
     await manager.connect(websocket, client_id)
 
     try:
         while True:
             raw_message = await websocket.receive_text()
+
             try:
                 message = json.loads(raw_message)
             except (json.JSONDecodeError, TypeError):
                 continue
+
             if isinstance(message, dict):
                 await handle_message(websocket, message)
+
     except WebSocketDisconnect:
         pass
+
+    except RuntimeError as exc:
+        # Starlette puede lanzar RuntimeError si se intenta recibir
+        # después de que el WebSocket haya sido cerrado.
+        if "WebSocket is not connected" not in str(exc):
+            logger.exception("Error en la conexión WebSocket.")
+
     except Exception:
         logger.exception("Error en la conexión WebSocket.")
+
     finally:
-        was_print_server = manager.get_role(websocket) == "print_server"
+        was_print_server = (
+            manager.get_role(websocket) == "print_server"
+        )
+
         manager.disconnect(websocket)
+
         if was_print_server:
-            await manager.fail_pending_agent_requests("El Print Agent se desconectó del backend.")
+            await manager.fail_pending_agent_requests(
+                "El Print Agent se desconectó del backend."
+            )
+
             await manager.broadcast(
                 {
                     "type": "PRINT_STATUS",
