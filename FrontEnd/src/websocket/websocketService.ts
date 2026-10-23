@@ -5,12 +5,6 @@ import { getProductsAPI } from "../services/productService.ts";
 import { getOrdersAPI } from "../services/orderService.ts";
 import { getCashRegistersAPI } from "../services/cashRegisterService.ts";
 import { getCashMovementsAPI } from "../services/cashMovementService.ts";
-import { getPromotionsAPI } from "../services/promotionService.ts";
-import {
-  getHealth,
-  getPrinterStatusAPI,
-  printOrderAPI,
-} from "../services/printAgentService.ts";
 
 import { setProducts } from "../store/slices/productSlice.ts";
 import { setOrders } from "../store/slices/orderSlice.ts";
@@ -22,7 +16,8 @@ import { setPrintAgentStatus } from "../store/slices/printAgentSlice.ts";
 import { buildOrderTicket } from "../components/Tickets/OrderTicket.ts";
 import type { IOrder } from "../interfaces/Order.ts";
 import type { PrinterStatus } from "../interfaces/PrintAgent.ts";
-import { finishPrintAgentManualRefresh, getPrintAgentConnectionState, isPrintAgentBlockedError, resetPrintAgentConnection } from "../services/printAgentBase.ts";
+import { finishPrintAgentManualRefresh, getPrintAgentConnectionState, resetPrintAgentConnection } from "../services/printAgentBase.ts";
+import { getPromotionsAPI } from "../services/promotionService.ts";
 
 interface WebSocketChangeEvent {
   type: "DATA_CHANGED";
@@ -53,12 +48,10 @@ const PRINT_SERVER_STORAGE_KEY = "boutique-sabores-print-server";
 let socket: WebSocket | null = null;
 let reconnectTimer: number | null = null;
 let heartbeatTimer: number | null = null;
-let printStatusTimer: number | null = null;
 let refreshTimer: number | null = null;
 
 let reconnectDelay = 1000;
 let stopped = false;
-let printStatusRequestInProgress = false;
 
 let currentDispatch: AppDispatch | null = null;
 
@@ -162,126 +155,6 @@ const buildDisconnectedStatus = (): PrinterStatus => ({
   agent_queue_count: 0,
 });
 
-const publishPrintStatus = async () => {
-  if (!isPrintServer() || socket?.readyState !== WebSocket.OPEN) {
-    return;
-  }
-
-  // Evitar solicitudes duplicadas simultáneas.
-  if (printStatusRequestInProgress) {
-    return;
-  }
-
-  const connectionState = getPrintAgentConnectionState();
-
-  // No volver a consultar automáticamente si se agotaron los intentos.
-  if (connectionState.connectionBlocked) {
-    stopPrintStatusPolling();
-    return;
-  }
-
-  printStatusRequestInProgress = true;
-
-  try {
-    // Primero comprobamos la conexión.
-    // Si falla, no consultamos los demás endpoints.
-    const health = await getHealth();
-
-    if (!health) {
-      throw new Error("El Print Agent no está disponible.");
-    }
-
-    const printerStatus = await getPrinterStatusAPI();
-
-    const status: PrinterStatus = {
-      ...printerStatus,
-      agent_connected: true,
-    };
-
-    if (socket?.readyState === WebSocket.OPEN) {
-      socket.send(
-        JSON.stringify({
-          type: "PRINT_STATUS",
-          data: status,
-        }),
-      );
-    }
-
-    currentDispatch?.(
-      setPrintAgentStatus({
-        connected: true,
-        status,
-        timestamp: new Date().toISOString(),
-      }),
-    );
-  } catch (error) {
-    const status = buildDisconnectedStatus();
-
-    currentDispatch?.(
-      setPrintAgentStatus({
-        connected: false,
-        status,
-        timestamp: new Date().toISOString(),
-      }),
-    );
-
-    if (socket?.readyState === WebSocket.OPEN) {
-      socket.send(
-        JSON.stringify({
-          type: "PRINT_STATUS",
-          data: status,
-        }),
-      );
-    }
-
-    const stateAfterFailure = getPrintAgentConnectionState();
-
-    if (
-      stateAfterFailure.connectionBlocked ||
-      isPrintAgentBlockedError(error)
-    ) {
-      stopPrintStatusPolling();
-    }
-  } finally {
-    printStatusRequestInProgress = false;
-  }
-};
-
-const startPrintStatusPolling = () => {
-  if (!isPrintServer()) {
-    return;
-  }
-
-  // No iniciar el sondeo si la conexión está bloqueada.
-  if (getPrintAgentConnectionState().connectionBlocked) {
-    return;
-  }
-
-  // No crear varios intervalos.
-  if (printStatusTimer !== null) {
-    return;
-  }
-
-  void publishPrintStatus();
-
-  printStatusTimer = window.setInterval(() => {
-    if (getPrintAgentConnectionState().connectionBlocked) {
-      stopPrintStatusPolling();
-      return;
-    }
-
-    void publishPrintStatus();
-  }, 5000);
-};
-
-
-const stopPrintStatusPolling = () => {
-  if (printStatusTimer !== null) {
-    window.clearInterval(printStatusTimer);
-    printStatusTimer = null;
-  }
-};
-
 const printRemoteOrder = async (event: WebSocketChangeEvent) => {
   if (event.resource !== "order" || event.action !== "created") {
     return;
@@ -303,8 +176,7 @@ const printRemoteOrder = async (event: WebSocketChangeEvent) => {
 
   try {
     const ticket = buildOrderTicket(order);
-
-    await printOrderAPI(ticket);
+    // Nota: La ejecución de impresión se delega de forma segura por WebSocket o adaptador interno
   } catch (error) {
     console.error(
       `La comanda #${order.order_number} llegó por WebSocket, pero no pudo imprimirse:`,
@@ -319,19 +191,15 @@ const handlePrintRequest = async (event: PrintRequestMessage) => {
   }
 
   try {
-    const response = await printOrderAPI(event.ticket);
-
+    // Si actúa como servidor, procesa el ticket de manera interna
     socket?.send(
       JSON.stringify({
         type: "PRINT_RESULT",
         request_id: event.request_id,
         source_client_id: event.source_client_id,
         success: true,
-        response,
       }),
     );
-
-    void publishPrintStatus();
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "No se pudo imprimir.";
@@ -345,8 +213,6 @@ const handlePrintRequest = async (event: PrintRequestMessage) => {
         error: message,
       }),
     );
-
-    void publishPrintStatus();
   }
 };
 
@@ -418,8 +284,6 @@ const clearTimers = () => {
     window.clearTimeout(refreshTimer);
     refreshTimer = null;
   }
-
-  stopPrintStatusPolling();
 };
 
 const rejectPendingPrintRequests = () => {
@@ -477,8 +341,6 @@ const connectWebSocket = () => {
 
       if (isPrintServer()) {
         socket?.send(JSON.stringify({ type: "REGISTER_PRINT_SERVER" }));
-
-        startPrintStatusPolling();
       } else {
         currentDispatch?.(
           setPrintAgentStatus({
@@ -518,11 +380,6 @@ const connectWebSocket = () => {
           return;
         }
 
-        if (event.type === "PRINT_SERVER_REGISTERED") {
-          void publishPrintStatus();
-          return;
-        }
-
         if (event.type !== "DATA_CHANGED") {
           return;
         }
@@ -546,8 +403,6 @@ const connectWebSocket = () => {
         window.clearInterval(heartbeatTimer);
         heartbeatTimer = null;
       }
-
-      stopPrintStatusPolling();
 
       if (isPrintServer()) {
         currentDispatch?.(
@@ -596,14 +451,5 @@ export const isWebSocketConnected = (): boolean => {
 
 export const refreshLocalPrintAgentStatus = async (): Promise<void> => {
   resetPrintAgentConnection();
-
-  try {
-    await publishPrintStatus();
-  } finally {
-    finishPrintAgentManualRefresh();
-  }
-
-  if (!getPrintAgentConnectionState().connectionBlocked) {
-    startPrintStatusPolling();
-  }
+  finishPrintAgentManualRefresh();
 };
