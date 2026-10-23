@@ -121,7 +121,10 @@ import {
   requestPrintFromPrintServer,
 } from "../../websocket/websocketService.ts";
 import ModalForm from "../ModalForm/ModalForm.tsx";
-import { finishPrintAgentManualRefresh, resetPrintAgentConnection } from "../../services/printAgentBase.ts";
+import {
+  finishPrintAgentManualRefresh,
+  resetPrintAgentConnection,
+} from "../../services/printAgentBase.ts";
 
 interface PrintStatusModalProps {
   isOpen: boolean;
@@ -730,17 +733,17 @@ const PrintStatusModal = ({ isOpen, onClose }: PrintStatusModalProps) => {
    * =========================================================
    */
 
-  const handleFullRefresh = async () => {
-    if (loading) return;
+const handleFullRefresh = async () => {
+  if (loading) return;
 
-    resetPrintAgentConnection();
+  resetPrintAgentConnection();
 
-    try {
-      await loadInitialData();
-    } finally {
-      finishPrintAgentManualRefresh();
-    }
-  };
+  try {
+    await loadInitialData();
+  } finally {
+    finishPrintAgentManualRefresh();
+  }
+};
 
   /*
    * =========================================================

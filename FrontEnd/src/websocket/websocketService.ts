@@ -22,6 +22,7 @@ import { setPrintAgentStatus } from "../store/slices/printAgentSlice.ts";
 import { buildOrderTicket } from "../components/Tickets/OrderTicket.ts";
 import type { IOrder } from "../interfaces/Order.ts";
 import type { PrinterStatus } from "../interfaces/PrintAgent.ts";
+import { finishPrintAgentManualRefresh, getPrintAgentConnectionState, isPrintAgentBlockedError, resetPrintAgentConnection } from "../services/printAgentBase.ts";
 
 interface WebSocketChangeEvent {
   type: "DATA_CHANGED";
@@ -57,6 +58,7 @@ let refreshTimer: number | null = null;
 
 let reconnectDelay = 1000;
 let stopped = false;
+let printStatusRequestInProgress = false;
 
 let currentDispatch: AppDispatch | null = null;
 
@@ -161,35 +163,40 @@ const buildDisconnectedStatus = (): PrinterStatus => ({
 });
 
 const publishPrintStatus = async () => {
-  if (!isPrintServer() || socket?.readyState !== WebSocket.OPEN) return;
+  if (!isPrintServer() || socket?.readyState !== WebSocket.OPEN) {
+    return;
+  }
+
+  // Evitar solicitudes duplicadas simultáneas.
+  if (printStatusRequestInProgress) {
+    return;
+  }
+
+  const connectionState = getPrintAgentConnectionState();
+
+  // No volver a consultar automáticamente si se agotaron los intentos.
+  if (connectionState.connectionBlocked) {
+    stopPrintStatusPolling();
+    return;
+  }
+
+  printStatusRequestInProgress = true;
 
   try {
-    const [health, printerStatus] = await Promise.all([
-      getHealth(),
-      getPrinterStatusAPI(),
-    ]);
+    // Primero comprobamos la conexión.
+    // Si falla, no consultamos los demás endpoints.
+    const health = await getHealth();
+
+    if (!health) {
+      throw new Error("El Print Agent no está disponible.");
+    }
+
+    const printerStatus = await getPrinterStatusAPI();
 
     const status: PrinterStatus = {
       ...printerStatus,
-      agent_connected: health,
+      agent_connected: true,
     };
-
-    socket.send(
-      JSON.stringify({
-        type: "PRINT_STATUS",
-        data: status,
-      }),
-    );
-
-    currentDispatch?.(
-      setPrintAgentStatus({
-        connected: health,
-        status,
-        timestamp: new Date().toISOString(),
-      }),
-    );
-  } catch (error) {
-    const status = buildDisconnectedStatus();
 
     if (socket?.readyState === WebSocket.OPEN) {
       socket.send(
@@ -202,34 +209,71 @@ const publishPrintStatus = async () => {
 
     currentDispatch?.(
       setPrintAgentStatus({
+        connected: true,
+        status,
+        timestamp: new Date().toISOString(),
+      }),
+    );
+  } catch (error) {
+    const status = buildDisconnectedStatus();
+
+    currentDispatch?.(
+      setPrintAgentStatus({
         connected: false,
         status,
         timestamp: new Date().toISOString(),
       }),
     );
+
+    if (socket?.readyState === WebSocket.OPEN) {
+      socket.send(
+        JSON.stringify({
+          type: "PRINT_STATUS",
+          data: status,
+        }),
+      );
+    }
+
+    const stateAfterFailure = getPrintAgentConnectionState();
+
+    if (
+      stateAfterFailure.connectionBlocked ||
+      isPrintAgentBlockedError(error)
+    ) {
+      stopPrintStatusPolling();
+    }
+  } finally {
+    printStatusRequestInProgress = false;
   }
 };
+
 const startPrintStatusPolling = () => {
   if (!isPrintServer()) {
     return;
   }
 
-  if (printStatusTimer !== null) {
-    window.clearInterval(printStatusTimer);
+  // No iniciar el sondeo si la conexión está bloqueada.
+  if (getPrintAgentConnectionState().connectionBlocked) {
+    return;
   }
 
-  /**
-   * Primera consulta inmediatamente.
-   */
+  // No crear varios intervalos.
+  if (printStatusTimer !== null) {
+    return;
+  }
+
   void publishPrintStatus();
 
-  /**
-   * Después solamente una consulta cada 5 segundos.
-   */
   printStatusTimer = window.setInterval(() => {
+    if (getPrintAgentConnectionState().connectionBlocked) {
+      stopPrintStatusPolling();
+      return;
+    }
+
     void publishPrintStatus();
   }, 5000);
 };
+
 
 const stopPrintStatusPolling = () => {
   if (printStatusTimer !== null) {
@@ -548,4 +592,18 @@ export const stopWebSocket = () => {
 
 export const isWebSocketConnected = (): boolean => {
   return socket?.readyState === WebSocket.OPEN;
+};
+
+export const refreshLocalPrintAgentStatus = async (): Promise<void> => {
+  resetPrintAgentConnection();
+
+  try {
+    await publishPrintStatus();
+  } finally {
+    finishPrintAgentManualRefresh();
+  }
+
+  if (!getPrintAgentConnectionState().connectionBlocked) {
+    startPrintStatusPolling();
+  }
 };

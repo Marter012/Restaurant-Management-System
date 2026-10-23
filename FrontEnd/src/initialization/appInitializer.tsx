@@ -205,6 +205,7 @@ const AppInitializer = ({ children }: AppInitializerProps) => {
       const loadPrintAgent = async () => {
         try {
           // Comprueba si el agente está disponible.
+          console.log("holaaaaaa")
           const agentConnected = await getHealth();
 
           if (!agentConnected) {

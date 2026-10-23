@@ -1,23 +1,21 @@
 import axios, {
   type AxiosError,
-  type AxiosRequestConfig,
   type InternalAxiosRequestConfig,
 } from "axios";
 
 const MAX_CONNECTION_FAILURES = 3;
 const RETRY_DELAY_MS = 500;
 
-let consecutiveFailures = 0;
-let connectionBlocked = false;
-let manualRefreshInProgress = false;
-
 const BLOCKED_ERROR_CODE = "PRINT_AGENT_BLOCKED";
 const RETRIES_EXHAUSTED_CODE = "PRINT_AGENT_RETRIES_EXHAUSTED";
 
 interface RetryableRequestConfig extends InternalAxiosRequestConfig {
   __printAgentRetryCount?: number;
-  __printAgentSkipRetry?: boolean;
 }
+
+let consecutiveFailures = 0;
+let connectionBlocked = false;
+let manualRefreshInProgress = false;
 
 export const printAgent = axios.create({
   baseURL: import.meta.env.VITE_API_PRINT_URL,
@@ -28,7 +26,7 @@ export const printAgent = axios.create({
 });
 
 const wait = (milliseconds: number): Promise<void> =>
-  new Promise((resolve) => setTimeout(resolve, milliseconds));
+  new Promise((resolve) => window.setTimeout(resolve, milliseconds));
 
 export const getPrintAgentConnectionState = () => ({
   consecutiveFailures,
@@ -47,41 +45,41 @@ export const finishPrintAgentManualRefresh = (): void => {
 };
 
 export const isPrintAgentBlockedError = (error: unknown): boolean => {
-  if (!axios.isAxiosError(error)) {
-    return (
-      error instanceof Error &&
-      (error.message.startsWith(`${BLOCKED_ERROR_CODE}:`) ||
-        error.message.startsWith(`${RETRIES_EXHAUSTED_CODE}:`))
-    );
+  if (!(error instanceof Error)) {
+    return false;
   }
 
   return (
-    error.code === BLOCKED_ERROR_CODE ||
-    error.code === RETRIES_EXHAUSTED_CODE
+    error.message.startsWith(`${BLOCKED_ERROR_CODE}:`) ||
+    error.message.startsWith(`${RETRIES_EXHAUSTED_CODE}:`)
   );
 };
 
-printAgent.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
-    if (connectionBlocked && !manualRefreshInProgress) {
-      const error = new Error(
-        `${BLOCKED_ERROR_CODE}: se agotaron los intentos. Usá Actualizar estado para volver a conectar.`,
-      );
+printAgent.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+  if (connectionBlocked && !manualRefreshInProgress) {
+    const error = new Error(
+      `${BLOCKED_ERROR_CODE}: conexión suspendida hasta la actualización manual.`,
+    );
 
-      return Promise.reject(error);
-    }
+    error.name = BLOCKED_ERROR_CODE;
 
-    return config;
-  },
-);
+    return Promise.reject(error);
+  }
+
+  return config;
+});
 
 printAgent.interceptors.response.use(
   (response) => {
-    consecutiveFailures = 0;
-    connectionBlocked = false;
+    // Una respuesta correcta no debe desbloquear una conexión
+    // que otra solicitud ya haya declarado agotada.
+    if (!connectionBlocked) {
+      consecutiveFailures = 0;
+    }
 
     return response;
   },
+
   async (error: AxiosError) => {
     const config = error.config as RetryableRequestConfig | undefined;
 
@@ -89,59 +87,63 @@ printAgent.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    // No reintentar solicitudes canceladas ni errores de validación.
     if (
       axios.isCancel(error) ||
-      error.code === "ERR_CANCELED" ||
-      (error.response &&
-        error.response.status >= 400 &&
-        error.response.status < 500 &&
-        error.response.status !== 408 &&
-        error.response.status !== 429)
+      error.code === "ERR_CANCELED"
     ) {
       return Promise.reject(error);
     }
 
-    // Las solicitudes marcadas explícitamente no se reintentan.
-    if (config.__printAgentSkipRetry) {
+    // No reintentar errores de validación del cliente.
+    if (
+      error.response &&
+      error.response.status >= 400 &&
+      error.response.status < 500 &&
+      error.response.status !== 408 &&
+      error.response.status !== 429
+    ) {
       return Promise.reject(error);
+    }
+
+    if (connectionBlocked && !manualRefreshInProgress) {
+      const blockedError = new Error(
+        `${BLOCKED_ERROR_CODE}: conexión suspendida hasta la actualización manual.`,
+      );
+
+      blockedError.name = BLOCKED_ERROR_CODE;
+
+      return Promise.reject(blockedError);
     }
 
     const retryCount = config.__printAgentRetryCount ?? 0;
 
+    // Tres intentos totales: el original y hasta dos reintentos.
     if (retryCount < MAX_CONNECTION_FAILURES - 1) {
       config.__printAgentRetryCount = retryCount + 1;
 
       await wait(RETRY_DELAY_MS);
 
-      // Si otra solicitud agotó los intentos, no seguir reintentando.
       if (connectionBlocked && !manualRefreshInProgress) {
-        return Promise.reject(
-          new Error(
-            `${BLOCKED_ERROR_CODE}: se agotaron los intentos de conexión.`,
-          ),
+        const blockedError = new Error(
+          `${BLOCKED_ERROR_CODE}: conexión suspendida hasta la actualización manual.`,
         );
+
+        blockedError.name = BLOCKED_ERROR_CODE;
+
+        return Promise.reject(blockedError);
       }
 
-      return printAgent.request(config as AxiosRequestConfig);
+      return printAgent.request(config);
     }
 
-    consecutiveFailures += 1;
+    consecutiveFailures = MAX_CONNECTION_FAILURES;
     connectionBlocked = true;
 
-    if (!manualRefreshInProgress) {
-      console.warn(
-        "[Print Agent] No se pudo establecer la conexión tras tres intentos. Las consultas automáticas quedan suspendidas hasta actualizar el estado manualmente.",
-      );
-    }
-
     const exhaustedError = new Error(
-      `${RETRIES_EXHAUSTED_CODE}: no se pudo conectar con el Print Agent después de tres intentos.`,
+      `${RETRIES_EXHAUSTED_CODE}: se agotaron los tres intentos de conexión.`,
     );
 
-    Object.assign(exhaustedError, {
-      cause: error,
-    });
+    exhaustedError.name = RETRIES_EXHAUSTED_CODE;
 
     return Promise.reject(exhaustedError);
   },
