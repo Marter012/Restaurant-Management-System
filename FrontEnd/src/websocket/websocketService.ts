@@ -16,7 +16,7 @@ import { setPrintAgentStatus } from "../store/slices/printAgentSlice.ts";
 import { buildOrderTicket } from "../components/Tickets/OrderTicket.ts";
 import type { IOrder } from "../interfaces/Order.ts";
 import type { PrinterStatus } from "../interfaces/PrintAgent.ts";
-import { finishPrintAgentManualRefresh, getPrintAgentConnectionState, resetPrintAgentConnection } from "../services/printAgentBase.ts";
+import { finishPrintAgentManualRefresh, resetPrintAgentConnection } from "../services/printAgentBase.ts";
 import { getPromotionsAPI } from "../services/promotionService.ts";
 
 interface WebSocketChangeEvent {
@@ -175,7 +175,7 @@ const printRemoteOrder = async (event: WebSocketChangeEvent) => {
   }
 
   try {
-    const ticket = buildOrderTicket(order);
+    buildOrderTicket(order);
     // Nota: La ejecución de impresión se delega de forma segura por WebSocket o adaptador interno
   } catch (error) {
     console.error(
