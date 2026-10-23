@@ -43,7 +43,13 @@ const isLoopbackURL = (url: string): boolean => {
   */
 const printAgentFetchAdapter = async (config: InternalAxiosRequestConfig) => {
   const fullURL = axios.getUri(config);
+  const method = config.method?.toUpperCase() ?? "GET";
   const headers = new Headers();
+  // GET y HEAD no necesitan Content-Type porque no envían cuerpo.
+  // Evita provocar un preflight CORS innecesario por esta cabecera.
+  if (method === "GET" || method === "HEAD") {
+    headers.delete("Content-Type");
+  }
 
   if (config.headers) {
     const sourceHeaders = config.headers.toJSON();
@@ -91,7 +97,7 @@ const printAgentFetchAdapter = async (config: InternalAxiosRequestConfig) => {
 
   try {
     const response = await fetch(fullURL, {
-      method: config.method?.toUpperCase() ?? "GET",
+      method,
       headers,
       body,
       credentials: config.withCredentials ? "include" : "same-origin",
