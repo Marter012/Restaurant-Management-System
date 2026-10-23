@@ -338,6 +338,9 @@ const NewOrder = ({ $setSelected }: NewOrderProps) => {
 
     return result;
   };
+  const stateprinter = useSelector(
+    (state: RootState) => state.printAgent.printerStatus,
+  );
 
   return (
     <Formik
@@ -413,9 +416,15 @@ const NewOrder = ({ $setSelected }: NewOrderProps) => {
            */
 
           try {
-            const ticket = buildOrderTicket(createdOrder);
+            if (
+              stateprinter?.connected &&
+              stateprinter?.online &&
+              stateprinter?.agent_connected
+            ) {
+              const ticket = buildOrderTicket(createdOrder);
 
-            await printOrderAPI(ticket);
+              await printOrderAPI(ticket);
+            }
           } catch {
             // La impresión es opcional: un Print Agent desconectado no invalida la venta.
           }
