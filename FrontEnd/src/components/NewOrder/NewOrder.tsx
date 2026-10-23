@@ -55,9 +55,10 @@ import { getAxiosErrorMessage } from "../Utils/ErrorAxios.tsx";
 
 import { buildOrderTicket } from "../Tickets/OrderTicket.ts";
 
+import { isPrintServer } from "../../websocket/websocketService.ts";
+import usePrintAgent from "../../hooks/usePrintOrder.ts";
 import { api } from "../../services/api.ts";
 import ModalForm from "../ModalForm/ModalForm.tsx";
-import usePrintAgent from "../../hooks/usePrintOrder.ts";
 
 interface NewOrderProps {
   $setSelected: Dispatch<SetStateAction<"create" | "manage">>;
@@ -78,6 +79,7 @@ interface PromotionMatch {
 
 const NewOrder = ({ $setSelected }: NewOrderProps) => {
   const dispatch = useDispatch<AppDispatch>();
+  const { printTicket } = usePrintAgent();
 
   const [mobileSection, setMobileSection] = useState<"products" | "order">(
     "products",
@@ -338,7 +340,6 @@ const NewOrder = ({ $setSelected }: NewOrderProps) => {
 
     return result;
   };
-  const { printTicket } = usePrintAgent();
 
   return (
     <Formik
@@ -414,10 +415,19 @@ const NewOrder = ({ $setSelected }: NewOrderProps) => {
            */
 
           try {
-            const ticket = buildOrderTicket(createdOrder);
-            await printTicket(ticket);
-          } catch {
-            // La impresión es opcional: un error de impresión no invalida la venta.
+            // Solo la instancia configurada como Print Server imprime directamente.
+            // En móvil, la comanda se imprime desde el evento DATA_CHANGED recibido
+            // por el Print Server; imprimir también aquí generaría copias duplicadas.
+            if (isPrintServer()) {
+              const ticket = buildOrderTicket(createdOrder);
+              await printTicket(ticket);
+            }
+          } catch (error) {
+            // La impresión es opcional: un Print Agent desconectado no invalida la venta.
+            console.error(
+              `No se pudo imprimir la comanda #${createdOrder.order_number}:`,
+              error,
+            );
           }
 
           try {

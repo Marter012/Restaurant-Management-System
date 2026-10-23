@@ -37,6 +37,8 @@ interface AgentResponseMessage {
 }
 
 const PRINT_SERVER_STORAGE_KEY = "boutique-sabores-print-server";
+const PRINTED_ORDER_STORAGE_KEY = "boutique-sabores-printed-orders";
+const PRINTED_ORDER_TTL_MS = 5 * 60 * 1000;
 const DEFAULT_REQUEST_TIMEOUT = 15000;
 const SOCKET_AUTH_TIMEOUT = 10000;
 
@@ -238,6 +240,43 @@ export const requestPrintFromPrintServer = async (
   }
 };
 
+const hasRecentlyClaimedOrderPrint = (order: IOrder): boolean => {
+  const orderId = order.id;
+  if (!orderId) return false;
+
+  const now = Date.now();
+  let claims: Record<string, number> = {};
+
+  try {
+    const stored = localStorage.getItem(PRINTED_ORDER_STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored) as Record<string, number>;
+      claims = Object.fromEntries(
+        Object.entries(parsed).filter(([, timestamp]) =>
+          typeof timestamp === "number" && now - timestamp < PRINTED_ORDER_TTL_MS,
+        ),
+      );
+    }
+  } catch (error) {
+    console.warn("No se pudo leer el registro de comandas impresas:", error);
+  }
+
+  const key = String(orderId);
+  if (claims[key]) {
+    return true;
+  }
+
+  // localStorage comparte esta marca entre pestañas del mismo navegador.
+  // Se registra antes de enviar el trabajo para evitar impresiones repetidas.
+  claims[key] = now;
+  try {
+    localStorage.setItem(PRINTED_ORDER_STORAGE_KEY, JSON.stringify(claims));
+  } catch (error) {
+    console.warn("No se pudo guardar la marca de impresión de la comanda:", error);
+  }
+  return false;
+};
+
 const printRemoteOrder = async (event: WebSocketChangeEvent) => {
   if (event.resource !== "order" || event.action !== "created") return;
   if (event.source_client_id === getClientId()) return;
@@ -245,6 +284,10 @@ const printRemoteOrder = async (event: WebSocketChangeEvent) => {
 
   const order = event.data as IOrder;
   if (!order || typeof order !== "object") return;
+  if (hasRecentlyClaimedOrderPrint(order)) {
+    console.info(`Se omitió la impresión duplicada de la comanda #${order.order_number}.`);
+    return;
+  }
 
   try {
     const ticket = buildOrderTicket(order);
