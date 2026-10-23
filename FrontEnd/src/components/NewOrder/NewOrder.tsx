@@ -55,9 +55,9 @@ import { getAxiosErrorMessage } from "../Utils/ErrorAxios.tsx";
 
 import { buildOrderTicket } from "../Tickets/OrderTicket.ts";
 
-import { printOrderAPI } from "../../services/printAgentService.ts";
 import { api } from "../../services/api.ts";
 import ModalForm from "../ModalForm/ModalForm.tsx";
+import usePrintAgent from "../../hooks/usePrintOrder.ts";
 
 interface NewOrderProps {
   $setSelected: Dispatch<SetStateAction<"create" | "manage">>;
@@ -338,9 +338,7 @@ const NewOrder = ({ $setSelected }: NewOrderProps) => {
 
     return result;
   };
-  const stateprinter = useSelector(
-    (state: RootState) => state.printAgent.printerStatus,
-  );
+  const { printTicket } = usePrintAgent();
 
   return (
     <Formik
@@ -416,17 +414,10 @@ const NewOrder = ({ $setSelected }: NewOrderProps) => {
            */
 
           try {
-            if (
-              stateprinter?.connected &&
-              stateprinter?.online &&
-              stateprinter?.agent_connected
-            ) {
-              const ticket = buildOrderTicket(createdOrder);
-
-              await printOrderAPI(ticket);
-            }
+            const ticket = buildOrderTicket(createdOrder);
+            await printTicket(ticket);
           } catch {
-            // La impresión es opcional: un Print Agent desconectado no invalida la venta.
+            // La impresión es opcional: un error de impresión no invalida la venta.
           }
 
           try {
