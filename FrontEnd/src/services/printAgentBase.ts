@@ -6,7 +6,6 @@ import axios, {
 
 const MAX_CONNECTION_FAILURES = 3;
 const RETRY_DELAY_MS = 500;
-
 const BLOCKED_ERROR_CODE = "PRINT_AGENT_BLOCKED";
 const RETRIES_EXHAUSTED_CODE = "PRINT_AGENT_RETRIES_EXHAUSTED";
 
@@ -27,6 +26,7 @@ const isLoopbackURL = (url: string): boolean => {
     return (
       parsedURL.hostname === "localhost" ||
       parsedURL.hostname === "127.0.0.1" ||
+      parsedURL.hostname === "::1" ||
       parsedURL.hostname === "[::1]"
     );
   } catch {
@@ -35,21 +35,18 @@ const isLoopbackURL = (url: string): boolean => {
 };
 
 /**
-
-* Adaptador basado en Fetch.
-*
-* targetAddressSpace se configura únicamente para destinos loopback.
-* El permiso de acceso local sigue dependiendo del navegador.
-  */
-const printAgentFetchAdapter = async (config: InternalAxiosRequestConfig) => {
+ * Adaptador Fetch para el Print Agent.
+ *
+ * Las solicitudes a loopback incluyen targetAddressSpace.
+ * Las solicitudes GET y HEAD no envían Content-Type innecesariamente.
+ * El permiso de acceso a la red local sigue dependiendo del navegador.
+ */
+const printAgentFetchAdapter = async (
+  config: InternalAxiosRequestConfig,
+) => {
   const fullURL = axios.getUri(config);
   const method = config.method?.toUpperCase() ?? "GET";
   const headers = new Headers();
-  // GET y HEAD no necesitan Content-Type porque no envían cuerpo.
-  // Evita provocar un preflight CORS innecesario por esta cabecera.
-  if (method === "GET" || method === "HEAD") {
-    headers.delete("Content-Type");
-  }
 
   if (config.headers) {
     const sourceHeaders = config.headers.toJSON();
@@ -61,22 +58,32 @@ const printAgentFetchAdapter = async (config: InternalAxiosRequestConfig) => {
     });
   }
 
+  // Evita enviar Content-Type en solicitudes sin cuerpo.
+  // Esto puede evitar preflight CORS innecesarios.
+  if (method === "GET" || method === "HEAD") {
+    headers.delete("Content-Type");
+  }
+
   let body: BodyInit | undefined;
 
   if (
     config.data !== undefined &&
     config.data !== null &&
-    config.method?.toUpperCase() !== "GET" &&
-    config.method?.toUpperCase() !== "HEAD"
+    method !== "GET" &&
+    method !== "HEAD"
   ) {
     body =
       typeof config.data === "string"
         ? config.data
         : JSON.stringify(config.data);
+
+    // Las operaciones con cuerpo JSON sí necesitan esta cabecera.
+    if (!headers.has("Content-Type")) {
+      headers.set("Content-Type", "application/json");
+    }
   }
 
   const controller = new AbortController();
-
   const timeout = config.timeout ?? 5000;
 
   const timeoutId = window.setTimeout(() => {
@@ -88,10 +95,14 @@ const printAgentFetchAdapter = async (config: InternalAxiosRequestConfig) => {
   if (config.signal) {
     if (config.signal.aborted) {
       controller.abort();
-    } else if (typeof config.signal.addEventListener === "function") {
-      config.signal.addEventListener("abort", () => controller.abort(), {
-        once: true,
-      });
+    } else if (
+      typeof config.signal.addEventListener === "function"
+    ) {
+      config.signal.addEventListener(
+        "abort",
+        () => controller.abort(),
+        { once: true },
+      );
     }
   }
 
@@ -134,7 +145,9 @@ const printAgentFetchAdapter = async (config: InternalAxiosRequestConfig) => {
 
     if (!validateStatus(response.status)) {
       throw Object.assign(
-        new Error(`Request failed with status code ${response.status}`),
+        new Error(
+          `Request failed with status code ${response.status}`,
+        ),
         {
           config,
           response: axiosResponse,
@@ -179,11 +192,17 @@ export const printAgent = axios.create({
 });
 
 const wait = (milliseconds: number): Promise<void> =>
-  new Promise((resolve) => window.setTimeout(resolve, milliseconds));
+  new Promise((resolve) => {
+    window.setTimeout(resolve, milliseconds);
+  });
 
-const createPrintAgentError = (code: string, message: string): Error => {
+const createPrintAgentError = (
+  code: string,
+  message: string,
+): Error => {
   const error = new Error(`${code}: ${message}`);
   error.name = code;
+
   return error;
 };
 
@@ -203,7 +222,9 @@ export const finishPrintAgentManualRefresh = (): void => {
   manualRefreshInProgress = false;
 };
 
-export const isPrintAgentBlockedError = (error: unknown): boolean => {
+export const isPrintAgentBlockedError = (
+  error: unknown,
+): boolean => {
   if (!(error instanceof Error)) {
     return false;
   }
@@ -216,18 +237,20 @@ export const isPrintAgentBlockedError = (error: unknown): boolean => {
   );
 };
 
-printAgent.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  if (connectionBlocked && !manualRefreshInProgress) {
-    return Promise.reject(
-      createPrintAgentError(
-        BLOCKED_ERROR_CODE,
-        "conexión suspendida hasta la actualización manual.",
-      ),
-    );
-  }
+printAgent.interceptors.request.use(
+  (config: InternalAxiosRequestConfig) => {
+    if (connectionBlocked && !manualRefreshInProgress) {
+      return Promise.reject(
+        createPrintAgentError(
+          BLOCKED_ERROR_CODE,
+          "conexión suspendida hasta la actualización manual.",
+        ),
+      );
+    }
 
-  return config;
-});
+    return config;
+  },
+);
 
 printAgent.interceptors.response.use(
   (response) => {
@@ -239,16 +262,22 @@ printAgent.interceptors.response.use(
   },
 
   async (error: AxiosError) => {
-    const config = error.config as RetryableRequestConfig | undefined;
+    const config = error.config as
+      | RetryableRequestConfig
+      | undefined;
 
     if (!config) {
       return Promise.reject(error);
     }
 
-    if (axios.isCancel(error) || error.code === "ERR_CANCELED") {
+    if (
+      axios.isCancel(error) ||
+      error.code === "ERR_CANCELED"
+    ) {
       return Promise.reject(error);
     }
 
+    // Los errores 4xx habituales no se reintentan.
     if (
       error.response &&
       error.response.status >= 400 &&
