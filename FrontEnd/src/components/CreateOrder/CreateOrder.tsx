@@ -758,7 +758,6 @@ export default function CreateOrder({
               </SpanTextOptionStatus>
               <div className="containerInfo">
                 <span>{option.label}</span>
-                <small>{option.status}</small>
               </div>
             </button>
           </OptionCard>
