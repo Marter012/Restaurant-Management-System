@@ -34,7 +34,6 @@ import {
   IngredientEditButton,
   IngredientModalHeading,
   IngredientOptionsList,
-  IngredientSave,
   IngredientSummary,
   OptionCard,
   OptionClear,
