@@ -33,7 +33,7 @@ export interface IngredientAvailabilityResponse {
 
 export interface EstablishmentSettings {
   name: string;
-  phone_number: string;
+  phone_number?: string;
 }
 
 export interface CommercialSettings {

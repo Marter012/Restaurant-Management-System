@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { FaCheck, FaExclamationTriangle, FaStore, FaTag, FaHistory } from "react-icons/fa";
+import {
+  FaCheck,
+  FaExclamationTriangle,
+  FaStore,
+  FaTag,
+  FaHistory,
+} from "react-icons/fa";
 
 import {
   getEstablishmentAPI,
@@ -75,12 +81,19 @@ const SettingsCommercial = () => {
         setName(establishmentData.name ?? "");
         setCommercial({
           public_sales_enabled: Boolean(commercialData.public_sales_enabled),
-          general_discount_enabled: Boolean(commercialData.general_discount_enabled),
-          general_discount_percentage: Number(commercialData.general_discount_percentage ?? 0),
+          general_discount_enabled: Boolean(
+            commercialData.general_discount_enabled,
+          ),
+          general_discount_percentage: Number(
+            commercialData.general_discount_percentage ?? 0,
+          ),
         });
         setRetentionDays(Number(retentionData.retention_days ?? 30));
       } catch {
-        if (active) setError("No se pudieron cargar las configuraciones. Verificá los permisos y la conexión con el backend.");
+        if (active)
+          setError(
+            "No se pudieron cargar las configuraciones. Verificá los permisos y la conexión con el backend.",
+          );
       } finally {
         if (active) setLoading(false);
       }
@@ -121,7 +134,9 @@ const SettingsCommercial = () => {
       (commercial.general_discount_percentage <= 0 ||
         commercial.general_discount_percentage > 100)
     ) {
-      setError("El descuento general debe ser mayor que 0 y no superar el 100 %.");
+      setError(
+        "El descuento general debe ser mayor que 0 y no superar el 100 %.",
+      );
       return;
     }
 
@@ -142,7 +157,11 @@ const SettingsCommercial = () => {
     setMessage("");
     setPreview(null);
 
-    if (!Number.isInteger(retentionDays) || retentionDays < 1 || retentionDays > 3650) {
+    if (
+      !Number.isInteger(retentionDays) ||
+      retentionDays < 1 ||
+      retentionDays > 3650
+    ) {
       setError("El período debe ser un número entero entre 1 y 3650 días.");
       return;
     }
@@ -157,7 +176,9 @@ const SettingsCommercial = () => {
         setPreview(null);
       }
     } catch {
-      setError("No se pudo calcular la cantidad de registros que se eliminarían.");
+      setError(
+        "No se pudo calcular la cantidad de registros que se eliminarían.",
+      );
     } finally {
       setSavingRetention(false);
     }
@@ -170,16 +191,21 @@ const SettingsCommercial = () => {
     setError("");
     try {
       const result = await updateAuditRetentionAPI(retentionDays, true);
-      setMessage(`${result.message} Registros eliminados: ${result.deleted_records ?? 0}.`);
+      setMessage(
+        `${result.message} Registros eliminados: ${result.deleted_records ?? 0}.`,
+      );
       setPreview(null);
     } catch {
-      setError("No se pudo actualizar el período ni eliminar los registros vencidos.");
+      setError(
+        "No se pudo actualizar el período ni eliminar los registros vencidos.",
+      );
     } finally {
       setSavingRetention(false);
     }
   };
 
-  if (loading) return <Loading>Cargando configuración del establecimiento...</Loading>;
+  if (loading)
+    return <Loading>Cargando configuración del establecimiento...</Loading>;
 
   return (
     <CommercialContent>
@@ -188,20 +214,30 @@ const SettingsCommercial = () => {
           <Eyebrow>CONFIGURACIÓN DEL SISTEMA</Eyebrow>
           <Title>Establecimiento y políticas</Title>
           <Description>
-            Administrá la identidad comercial, los descuentos, la habilitación de ventas y la conservación de auditoría.
+            Administrá la identidad comercial, los descuentos, la habilitación
+            de ventas y la conservación de auditoría.
           </Description>
         </div>
       </CommercialHeader>
 
-      {error && <Message $error role="alert">{error}</Message>}
+      {error && (
+        <Message $error role="alert">
+          {error}
+        </Message>
+      )}
       {message && <Message role="status">{message}</Message>}
 
       <Section>
         <SectionHeader>
-          <SectionIcon><FaStore /></SectionIcon>
+          <SectionIcon>
+            <FaStore />
+          </SectionIcon>
           <div>
             <SectionTitle>Identidad del establecimiento</SectionTitle>
-            <SectionDescription>Nombre que podrán consultar las aplicaciones conectadas al backend.</SectionDescription>
+            <SectionDescription>
+              Nombre que podrán consultar las aplicaciones conectadas al
+              backend.
+            </SectionDescription>
           </div>
         </SectionHeader>
         <Field>
@@ -215,7 +251,11 @@ const SettingsCommercial = () => {
           />
         </Field>
         <ActionRow>
-          <SaveButton type="button" onClick={() => void saveName()} disabled={savingName}>
+          <SaveButton
+            type="button"
+            onClick={() => void saveName()}
+            disabled={savingName}
+          >
             <FaCheck /> {savingName ? "Guardando..." : "Guardar nombre"}
           </SaveButton>
         </ActionRow>
@@ -223,11 +263,14 @@ const SettingsCommercial = () => {
 
       <Section>
         <SectionHeader>
-          <SectionIcon><FaTag /></SectionIcon>
+          <SectionIcon>
+            <FaTag />
+          </SectionIcon>
           <div>
             <SectionTitle>Política de descuentos y venta pública</SectionTitle>
             <SectionDescription>
-              El descuento general se aplica a los productos que no tengan un descuento individual configurado.
+              El descuento general se aplica a los productos que no tengan un
+              descuento individual configurado.
             </SectionDescription>
           </div>
         </SectionHeader>
@@ -235,16 +278,21 @@ const SettingsCommercial = () => {
         <ToggleRow>
           <ToggleCopy>
             <strong>Permitir venta al público</strong>
-            <span>Habilita o bloquea la posibilidad de iniciar ventas desde el FrontEnd público.</span>
+            <span>
+              Habilita o bloquea la posibilidad de iniciar ventas desde el
+              FrontEnd público.
+            </span>
           </ToggleCopy>
           <Toggle
             type="button"
             $enabled={commercial.public_sales_enabled}
             aria-pressed={commercial.public_sales_enabled}
-            onClick={() => setCommercial((current) => ({
-              ...current,
-              public_sales_enabled: !current.public_sales_enabled,
-            }))}
+            onClick={() =>
+              setCommercial((current) => ({
+                ...current,
+                public_sales_enabled: !current.public_sales_enabled,
+              }))
+            }
           >
             <i />
           </Toggle>
@@ -253,23 +301,30 @@ const SettingsCommercial = () => {
         <ToggleRow>
           <ToggleCopy>
             <strong>Activar descuento general</strong>
-            <span>Aplica un porcentaje a todos los productos sin descuento individual.</span>
+            <span>
+              Aplica un porcentaje a todos los productos sin descuento
+              individual.
+            </span>
           </ToggleCopy>
           <Toggle
             type="button"
             $enabled={commercial.general_discount_enabled}
             aria-pressed={commercial.general_discount_enabled}
-            onClick={() => setCommercial((current) => ({
-              ...current,
-              general_discount_enabled: !current.general_discount_enabled,
-            }))}
+            onClick={() =>
+              setCommercial((current) => ({
+                ...current,
+                general_discount_enabled: !current.general_discount_enabled,
+              }))
+            }
           >
             <i />
           </Toggle>
         </ToggleRow>
 
         <Field>
-          <Label htmlFor="general-discount">Porcentaje de descuento general</Label>
+          <Label htmlFor="general-discount">
+            Porcentaje de descuento general
+          </Label>
           <Input
             id="general-discount"
             type="number"
@@ -278,30 +333,43 @@ const SettingsCommercial = () => {
             step="0.1"
             value={commercial.general_discount_percentage}
             disabled={!commercial.general_discount_enabled}
-            onChange={(event) => setCommercial((current) => ({
-              ...current,
-              general_discount_percentage: Number(event.target.value),
-            }))}
+            onChange={(event) =>
+              setCommercial((current) => ({
+                ...current,
+                general_discount_percentage: Number(event.target.value),
+              }))
+            }
           />
           <HelpText>
-            Los descuentos individuales se configuran desde el formulario de cada producto y tienen prioridad sobre este porcentaje.
+            Los descuentos individuales se configuran desde el formulario de
+            cada producto y tienen prioridad sobre este porcentaje.
           </HelpText>
         </Field>
 
         <ActionRow>
-          <SaveButton type="button" onClick={() => void saveCommercial()} disabled={savingCommercial}>
-            <FaCheck /> {savingCommercial ? "Guardando..." : "Guardar configuración comercial"}
+          <SaveButton
+            type="button"
+            onClick={() => void saveCommercial()}
+            disabled={savingCommercial}
+          >
+            <FaCheck />{" "}
+            {savingCommercial
+              ? "Guardando..."
+              : "Guardar configuración comercial"}
           </SaveButton>
         </ActionRow>
       </Section>
 
       <Section>
         <SectionHeader>
-          <SectionIcon><FaHistory /></SectionIcon>
+          <SectionIcon>
+            <FaHistory />
+          </SectionIcon>
           <div>
             <SectionTitle>Conservación del historial de actividad</SectionTitle>
             <SectionDescription>
-              Definí durante cuántos días se conservarán los registros de actividad de los usuarios.
+              Definí durante cuántos días se conservarán los registros de
+              actividad de los usuarios.
             </SectionDescription>
           </div>
         </SectionHeader>
@@ -321,7 +389,8 @@ const SettingsCommercial = () => {
             }}
           />
           <HelpText>
-            Los registros anteriores al período elegido serán eliminados de la base de datos. El valor inicial es de 30 días.
+            Los registros anteriores al período elegido serán eliminados de la
+            base de datos. El valor inicial es de 30 días.
           </HelpText>
         </Field>
 
@@ -332,16 +401,27 @@ const SettingsCommercial = () => {
               <div>
                 <strong>Se requiere confirmación</strong>
                 <span>
-                  Hay {preview.records_to_delete} registros anteriores al período de {preview.retention_days} días.
-                  Si confirmás, se eliminarán permanentemente.
+                  Hay {preview.records_to_delete} registros anteriores al
+                  período de {preview.retention_days} días. Si confirmás, se
+                  eliminarán permanentemente.
                 </span>
               </div>
             </WarningBox>
             <ActionRow>
-              <SaveButton type="button" onClick={() => void confirmRetention()} disabled={savingRetention}>
-                {savingRetention ? "Eliminando..." : "Confirmar y eliminar registros"}
+              <SaveButton
+                type="button"
+                onClick={() => void confirmRetention()}
+                disabled={savingRetention}
+              >
+                {savingRetention
+                  ? "Eliminando..."
+                  : "Confirmar y eliminar registros"}
               </SaveButton>
-              <SecondaryButton type="button" onClick={() => setPreview(null)} disabled={savingRetention}>
+              <SecondaryButton
+                type="button"
+                onClick={() => setPreview(null)}
+                disabled={savingRetention}
+              >
                 Cancelar
               </SecondaryButton>
             </ActionRow>
@@ -350,8 +430,14 @@ const SettingsCommercial = () => {
 
         {!preview && (
           <ActionRow>
-            <SaveButton type="button" onClick={() => void requestRetentionPreview()} disabled={savingRetention}>
-              {savingRetention ? "Calculando..." : "Previsualizar y guardar período"}
+            <SaveButton
+              type="button"
+              onClick={() => void requestRetentionPreview()}
+              disabled={savingRetention}
+            >
+              {savingRetention
+                ? "Calculando..."
+                : "Previsualizar y guardar período"}
             </SaveButton>
           </ActionRow>
         )}
