@@ -15,7 +15,6 @@ import {
   CashMessageLink,
   ContainerOrder,
   CashBlockedActions,
-  CashBlockedConfirmButton,
   OrderNotice,
   OrderNoticeIcon,
   OrderNoticeContent,
@@ -36,14 +35,17 @@ import PageHeader from "../../PageHeaders/PageHeaders.tsx";
 import { ContainerPage } from "../PageStyles.ts";
 import type { IOrder } from "../../../interfaces/Order.ts";
 
-import { OpenCashContainer } from "../../CashDay/CashDayStyles.ts";
 import ModalOrderCreate from "../../Modals/ModalOrder/ModalOrderCreate.tsx";
+import { StatusButton } from "../../Utils/ButtonStyles.ts";
 
 const Orders = () => {
   const dispatch = useDispatch<AppDispatch>();
+
   const [showNewOrder, setShowNewOrder] = useState(false);
+
   const [parentOrderForAdditional, setParentOrderForAdditional] =
     useState<IOrder | null>(null);
+
   const [showBlockedNotice, setShowBlockedNotice] = useState(false);
   const [showReadOnlyOrders, setShowReadOnlyOrders] = useState(false);
 
@@ -74,13 +76,18 @@ const Orders = () => {
     );
   });
 
+  // Estado de la caja seleccionada.
   const isSelectedCashOpen = cashRegister?.status_cash_register === "open";
 
-  const isReadOnlyMode = showReadOnlyOrders && !isSelectedCashOpen;
+  // Si existe una caja seleccionada pero no está abierta.
+  const isSelectedCashClosed = Boolean(cashRegister) && !isSelectedCashOpen;
+
+  // Solo lectura cuando el usuario solicita consultar las comandas.
+  const isReadOnlyMode = showReadOnlyOrders;
 
   const canManageOrders = isSelectedCashOpen;
 
-  const canViewOrders = canManageOrders || isReadOnlyMode;
+  const canViewOrders = isSelectedCashOpen || showReadOnlyOrders;
 
   const isCashBlocked = Boolean(anotherOpenCashRegister) && !isSelectedCashOpen;
 
@@ -96,6 +103,12 @@ const Orders = () => {
     }
   }, [isCashBlocked, showReadOnlyOrders]);
 
+  const selectedDay = useSelector((state: RootState) => state.daySelected.day);
+
+  const selectedShift = useSelector(
+    (state: RootState) => state.daySelected.shift,
+  );
+
   const handleGoToOpenCash = () => {
     if (!anotherOpenCashRegister) return;
 
@@ -110,8 +123,8 @@ const Orders = () => {
     setShowReadOnlyOrders(false);
   };
 
-  // Abre las comandas asociadas al día y turno que ya estaban seleccionados,
-  // sin habilitar acciones de creación, edición o modificación.
+  // Permite consultar las comandas del día y turno seleccionados
+  // sin habilitar acciones de creación o modificación.
   const handleOpenSelectedDayOrders = () => {
     setShowReadOnlyOrders(true);
     setShowBlockedNotice(false);
@@ -144,7 +157,10 @@ const Orders = () => {
     };
 
     document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
   }, [showNewOrder]);
 
   useEffect(() => {
@@ -155,6 +171,7 @@ const Orders = () => {
     };
   }, [showNewOrder]);
 
+  // Fecha de la otra caja abierta.
   const anotherCashDate = anotherOpenCashRegister
     ? anotherOpenCashRegister.date
       ? getDateOnly(anotherOpenCashRegister.date)
@@ -204,45 +221,74 @@ const Orders = () => {
             </OrderNoticeDetails>
 
             <CashBlockedActions>
-              <CashBlockedConfirmButton
+              <StatusButton
+                className="danger"
                 type="button"
                 onClick={handleGoToOpenCash}
               >
-                <FaCashRegister />
-                Ir a la caja abierta
-              </CashBlockedConfirmButton>
+                <FaCashRegister /> Comandas ¬{" "}
+                {formatDate(anotherOpenCashRegister?.opened_at || "")} | Turno{" "}
+                {anotherOpenCashRegister?.shift === "morning"
+                  ? "Mañana"
+                  : "Noche"}
+              </StatusButton>
 
-              <CashBlockedConfirmButton
-                type="button"
-                onClick={handleOpenSelectedDayOrders}
-              >
-                Abrir pestaña de comandas igual
-              </CashBlockedConfirmButton>
+              <StatusButton type="button" onClick={handleOpenSelectedDayOrders}>
+                <FaCashRegister />
+                Comandas ¬ {selectedDay} | Turno{" "}
+                {selectedShift === "morning" ? "Mañana" : "Noche"}
+              </StatusButton>
             </CashBlockedActions>
           </OrderNoticeContent>
         </OrderNotice>
       )}
 
-      {/* CAJA CERRADA: SE MUESTRA SOLO SI NO HAY OTRA CAJA ABIERTA */}
-      {cashRegister?.status === false &&
-        !isCashBlocked &&
+      {/* AVISO: LA CAJA SELECCIONADA ESTÁ CERRADA */}
+      {isSelectedCashClosed &&
+        !anotherOpenCashRegister &&
         !showReadOnlyOrders && (
-          <OpenCashContainer>
-            <CashMessage>
-              <FaCashRegister />
-              <h2>Caja cerrada</h2>
+          <OrderNotice role="status" aria-live="polite">
+            <OrderNoticeIcon>
+              <MdOutlineWarning />
+            </OrderNoticeIcon>
+
+            <OrderNoticeContent>
+              <h2>La caja seleccionada está cerrada</h2>
 
               <p>
-                La caja del turno{" "}
-                <strong>{shift === "morning" ? "mañana" : "noche"}</strong> está
-                cerrada.
+                Esta caja pertenece al día y turno seleccionados. Podés
+                consultar sus comandas en modo de solo lectura.
               </p>
 
-              <span>
-                Debés abrir la caja primero para poder gestionar las comandas.
-              </span>
-            </CashMessage>
-          </OpenCashContainer>
+              <OrderNoticeDetails>
+                <OrderNoticeDetail>
+                  <MdOutlineCalendarToday />
+                  <span>
+                    <strong>Fecha:</strong> {formatDate(day)}
+                  </span>
+                </OrderNoticeDetail>
+
+                <OrderNoticeDetail>
+                  <MdOutlineAccessTime />
+                  <span>
+                    <strong>Turno:</strong>{" "}
+                    {shift === "morning" ? "Mañana" : "Noche"}
+                  </span>
+                </OrderNoticeDetail>
+              </OrderNoticeDetails>
+
+              <CashBlockedActions>
+                <StatusButton
+                  type="button"
+                  onClick={handleOpenSelectedDayOrders}
+                >
+                  <FaCashRegister />
+                  Comandas | {formatDate(day)} | Turno{" "}
+                  {shift === "morning" ? "Mañana" : "Noche"}
+                </StatusButton>
+              </CashBlockedActions>
+            </OrderNoticeContent>
+          </OrderNotice>
         )}
 
       {/* NO EXISTE UNA CAJA PARA EL DÍA Y TURNO SELECCIONADOS */}
@@ -250,20 +296,21 @@ const Orders = () => {
         <CashMessageLink to="/cashRegister">
           <CashMessage>
             <FaCashRegister />
+
             <h2>No hay una caja disponible</h2>
+
             <p>No existe una caja para el día y turno seleccionados.</p>
+
             <span>Abrí una caja antes de gestionar las comandas.</span>
           </CashMessage>
         </CashMessageLink>
       )}
 
       {/* COMANDAS: GESTIÓN NORMAL O CONSULTA DEL DÍA SELECCIONADO */}
-      {/* COMANDAS */}
-
       {canViewOrders && (
         <ContainerOrder>
           <ManageOrder
-            key={`${day}-${shift}`}
+            key={`${day}-${shift}-${isReadOnlyMode ? "readonly" : "manage"}`}
             orderIdToEdit={isReadOnlyMode ? undefined : orderToEdit}
             readOnly={isReadOnlyMode}
             onCreateOrder={canManageOrders ? openNewOrder : undefined}
@@ -274,6 +321,7 @@ const Orders = () => {
         </ContainerOrder>
       )}
 
+      {/* MODAL DE CREACIÓN DE COMANDA */}
       <ModalOrderCreate
         isOpen={showNewOrder}
         onClose={closeNewOrder}

@@ -87,22 +87,21 @@ const CashDashboardContent = ({
   };
 
   const getOrderPaymentMethod = (order: any) => {
-    const methods = Array.isArray(order.payments)
-      ? order.payments
-          .map((payment: any) => payment.method_payment)
-          .filter(Boolean)
-      : [];
-
-    const uniqueMethods = [...new Set(methods)];
     const methodLabels: Record<string, string> = {
       cash: "Efectivo",
       transfer: "Transferencia",
       qr: "QR",
       mercado_pago: "Mercado Pago",
       debit_card: "Débito",
-      pending: "Pendiente",
-
     };
+
+    const methods = Array.isArray(order.payments)
+      ? order.payments
+          .map((payment: any) => payment.method_payment)
+          .filter((method: any) => method && method !== "pending")
+      : [];
+
+    const uniqueMethods = [...new Set(methods)];
 
     if (uniqueMethods.length > 0) {
       return uniqueMethods
@@ -110,11 +109,15 @@ const CashDashboardContent = ({
         .join(" / ");
     }
 
+    if (order.method_payment === "pending") {
+      return "Pendiente";
+    }
+
     if (order.method_payment) {
       return methodLabels[order.method_payment] ?? order.method_payment;
     }
 
-    return "Sin pagar";
+    return "—";
   };
 
   const getOrderAmount = (order: any) =>
@@ -128,31 +131,31 @@ const CashDashboardContent = ({
 
   const getOrderDate = (order: any) =>
     new Date(
-      order.created_at ?? order.createdAt ?? order.date ?? order.updated_at ?? 0,
+      order.created_at ??
+        order.createdAt ??
+        order.date ??
+        order.updated_at ??
+        0,
     ).getTime();
 
-  const formatPaymentMethods = (order: any) => {
-    const labels: Record<string, string> = {
-      cash: "Efectivo",
-      transfer: "Transferencia",
-      qr: "QR",
-      mercado_pago: "Mercado Pago",
-      debit_card: "Débito",
-      pending: "Pendiente",
-    };
-
-    const payments = Array.isArray(order.payments) ? order.payments : [];
-    if (payments.length > 0) {
-      return payments
-        .map((payment: any) => {
-          const method = labels[payment.method_payment] ?? payment.method_payment ?? "Pago";
-          const amount = Number(payment.amount ?? 0);
-          return `${method}: $${amount.toLocaleString("es-AR")}`;
-        })
-        .join(" · ");
+  const getOrderPaidAmount = (order: any) => {
+    if (
+      order.status_payment === "pending" ||
+      order.status_payment === "cancelled"
+    ) {
+      return 0;
     }
 
-    return getOrderPaymentMethod(order);
+    const payments = Array.isArray(order.payments) ? order.payments : [];
+
+    if (payments.length > 0) {
+      return payments.reduce(
+        (total: number, payment: any) => total + Number(payment.amount ?? 0),
+        0,
+      );
+    }
+
+    return order.status_payment === "paid" ? getOrderAmount(order) : 0;
   };
 
   // Una sola lista visual: órdenes + movimientos manuales.
@@ -162,9 +165,12 @@ const CashDashboardContent = ({
       source: "order" as const,
       date: getOrderDate(order),
       description: `Venta #${getOrderNumber(order)}`,
-      type: order.status_payment === "paid" ? "inflow" as const : "pending" as const,
-      amount: getOrderAmount(order),
-      method: formatPaymentMethods(order),
+      type:
+        order.status_payment === "paid"
+          ? ("inflow" as const)
+          : ("pending" as const),
+      amount: getOrderPaidAmount(order),
+      method: getOrderPaymentMethod(order),
       status: getOrderPaymentStatus(order),
       order,
       movement: undefined,
@@ -178,8 +184,13 @@ const CashDashboardContent = ({
         description: movement.description || "Movimiento manual",
         type: movement.type as "inflow" | "outflow",
         amount: Number(movement.amount ?? 0),
-        method: getOrderPaymentMethod({ method_payment: movement.method_payment }),
-        status: movement.type === "inflow" ? "Ingreso registrado" : "Egreso registrado",
+        method: getOrderPaymentMethod({
+          method_payment: movement.method_payment,
+        }),
+        status:
+          movement.type === "inflow"
+            ? "Ingreso registrado"
+            : "Egreso registrado",
         order: undefined,
         movement,
       })),
@@ -287,14 +298,27 @@ const CashDashboardContent = ({
             <span className="count">{cashActivities.length} movimientos</span>
           </div>
           <CashMovementTable
-            headers={["Movimiento", "Tipo", "Método de pago", "Importe", "Estado"]}
+            headers={[
+              "Movimiento",
+              "Tipo",
+              "Método de pago",
+              "Importe",
+              "Estado",
+            ]}
           >
             {cashActivities.map((activity) => {
+              console.log(activity);
               const isOrder = activity.source === "order";
               const typeLabel = isOrder
                 ? activity.status === "Pagada"
-                  ? "Venta"
-                  : "Venta pendiente"
+                  ? "Pagada"
+                  : activity.status === "Pendiente"
+                    ? "Pendiente"
+                    : activity.status === "Cancelada"
+                      ? "Cancelada"
+                      : activity.status === "Parcial"
+                        ? "Parcial"
+                        : "Valor Desconocido"
                 : activity.type === "inflow"
                   ? "Ingreso"
                   : "Egreso";
@@ -305,7 +329,9 @@ const CashDashboardContent = ({
                   ? "income"
                   : activity.order?.status_payment === "cancelled"
                     ? "expense"
-                    : "pending"
+                    : activity.order?.status_payment === "pending"
+                      ? "pending"
+                      : "partially_paid"
                 : activity.type === "inflow"
                   ? "income"
                   : "expense";
@@ -329,19 +355,29 @@ const CashDashboardContent = ({
                     }
                   }}
                 >
-                  <span className="movement-description">{activity.description}</span>
+                  <span className="movement-description">
+                    {activity.description}
+                  </span>
                   <span className="movement-type">
-                    <span className={`movement-badge ${tone}`}>{typeLabel}</span>
+                    <span className={`movement-badge ${tone}`}>
+                      {typeLabel}
+                    </span>
                   </span>
                   <span className="movement-method">{activity.method}</span>
                   <strong
                     className={`movement-amount ${activity.type === "inflow" ? "positive" : activity.type === "outflow" ? "negative" : ""}`}
                   >
-                    {activity.type === "outflow" ? "−" : activity.type === "inflow" ? "+" : ""}$
-                    {activity.amount.toLocaleString("es-AR")}
+                    {activity.type === "outflow"
+                      ? "−"
+                      : activity.type === "inflow"
+                        ? "+"
+                        : ""}
+                    ${activity.amount.toLocaleString("es-AR")}
                   </strong>
                   <span className="movement-status">
-                    <span className={`movement-badge ${tone}`}>{activity.status}</span>
+                    <span className={`movement-badge ${tone}`}>
+                      {activity.status}
+                    </span>
                   </span>
                 </CashMovementRow>
               );

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { FaLock, FaShieldAlt, FaCheckCircle } from "react-icons/fa";
 
 import type { AppDispatch } from "../../store/store.ts";
-import { getMe } from "../../services/authService.ts";
+import { clearUserCache, getMe } from "../../services/authService.ts";
 import { updateUserAPI } from "../../services/userService.ts";
 import { setMustChangeCredentials } from "../../store/slices/userSlice.ts";
 import { getAxiosErrorMessage } from "../Utils/ErrorAxios.tsx";
@@ -108,6 +108,18 @@ const InitialAdminCredentials = () => {
         email: normalizedEmail,
         password,
       });
+
+      // Invalidar los datos anteriores del usuario.
+      clearUserCache();
+
+      // Consultar nuevamente el estado actualizado en el backend.
+      const updatedUser = (await getMe()) as CurrentUser;
+
+      if (updatedUser.must_change_credentials) {
+        throw new Error(
+          "Las credenciales se actualizaron, pero el servidor todavía indica que falta completar el cambio.",
+        );
+      }
 
       setSuccess("Las credenciales se actualizaron correctamente.");
 

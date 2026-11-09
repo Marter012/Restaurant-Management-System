@@ -18,7 +18,7 @@ export const AlertContainer = styled.div<{
   $stackIndex: number;
 }>`
   position: fixed;
-  left: 24px;
+  right: 24px;
   bottom: ${({ $stackIndex }) => `calc(24px + ${$stackIndex} * 76px)`};
   z-index: 20000;
 
@@ -50,7 +50,7 @@ export const AlertContainer = styled.div<{
   will-change: transform, opacity;
 
   @media (max-width: 480px) {
-    left: 15px;
+    right: 15px;
     bottom: ${({ $stackIndex }) => `calc(15px + ${$stackIndex} * 76px)`};
 
     width: calc(100vw - 30px);

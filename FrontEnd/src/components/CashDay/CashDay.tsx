@@ -214,8 +214,24 @@ const CashDay = ({ setActiveTab, onBlockedByOpenCash }: CashDayProps) => {
   // los importes efectivamente ingresados y el saldo real de caja.
   const salePaymentMovements = useMemo(
     () =>
-      cashRegisterMovements.filter((movement) => Boolean(movement.order_id)),
-    [cashRegisterMovements],
+      cashRegisterMovements.filter((movement) => {
+        if (!movement.order_id) return false;
+
+        const order = orders.find(
+          (item) => String(item.id) === String(movement.order_id),
+        );
+
+        // No contabilizar ventas canceladas ni pendientes.
+        if (
+          order?.status_payment === "cancelled" ||
+          order?.status_payment === "pending"
+        ) {
+          return false;
+        }
+
+        return true;
+      }),
+    [cashRegisterMovements, orders],
   );
 
   /* =========================================================

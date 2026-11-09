@@ -34,45 +34,24 @@ const formatTime = (date: string): string => {
   });
 };
 
-const formatProductLine = (
-  item: IOrderItem,
-  width = 40,
-): string => {
+const formatProductLine = (item: IOrderItem, width = 40): string => {
   const quantity = `${item.quantity} x`;
   const price = formatMoney(item.subtotal);
 
   let name = item.name || "Producto";
 
-  const availableNameLength =
-    width -
-    quantity.length -
-    price.length -
-    4;
+  const availableNameLength = width - quantity.length - price.length - 4;
 
   if (name.length > availableNameLength) {
-    name =
-      name.substring(0, availableNameLength - 3) +
-      "...";
+    name = name.substring(0, availableNameLength - 3) + "...";
   }
 
-  const spaces =
-    width -
-    quantity.length -
-    name.length -
-    price.length;
+  const spaces = width - quantity.length - name.length - price.length;
 
-  return (
-    quantity +
-    " " +
-    name +
-    " ".repeat(Math.max(2, spaces)) +
-    price
-  );
+  return quantity + " " + name + " ".repeat(Math.max(2, spaces)) + price;
 };
 
-const getPaymentMethod = (
-  method: string,
-): string => {
+const getPaymentMethod = (method: string): string => {
   switch (method) {
     case "cash":
       return "Efectivo";
@@ -91,12 +70,13 @@ const getPaymentMethod = (
   }
 };
 
-const getPaymentStatus = (
-  status: string,
-): string => {
+const getPaymentStatus = (status: string): string => {
   switch (status) {
     case "paid":
       return "Pagado";
+
+    case "partially_paid":
+      return "Pago parcial";
 
     case "pending":
       return "Pendiente";
@@ -109,9 +89,7 @@ const getPaymentStatus = (
   }
 };
 
-export const buildOrderTicket = (
-  order: IOrder,
-): string => {
+export const buildOrderTicket = (order: IOrder): string => {
   const width = 40;
 
   const separator = "-".repeat(width);
@@ -121,44 +99,23 @@ export const buildOrderTicket = (
 
   lines.push(doubleSeparator);
 
-  lines.push(
-    "         BOUTIQUE DE SABORES",
-  );
+  lines.push("         BOUTIQUE DE SABORES");
 
   lines.push(doubleSeparator);
 
-  lines.push(
-    `PEDIDO #${String(order.order_number).padStart(
-      2,
-      "0",
-    )}`,
-  );
+  lines.push(`PEDIDO #${String(order.order_number).padStart(2, "0")}`);
 
-  lines.push(
-    `Cliente: ${
-      order.customer_name || "Sin nombre"
-    }`,
-  );
+  lines.push(`Cliente: ${order.customer_name || "Sin nombre"}`);
 
-  lines.push(
-    `Fecha: ${formatDate(order.created_at)}`,
-  );
+  lines.push(`Fecha: ${formatDate(order.created_at)}`);
 
-  lines.push(
-    `Hora: ${formatTime(order.created_at)}`,
-  );
+  lines.push(`Hora: ${formatTime(order.created_at)}`);
 
-  lines.push(
-    `Retiro: ${
-      order.delivery_time || "No especificado"
-    }`,
-  );
+  lines.push(`Retiro: ${order.delivery_time || "No especificado"}`);
 
   lines.push(separator);
 
-  lines.push(
-    "                 PRODUCTOS",
-  );
+  lines.push("                 PRODUCTOS");
 
   lines.push(separator);
 
@@ -167,9 +124,7 @@ export const buildOrderTicket = (
   }
 
   order.items.forEach((item) => {
-    lines.push(
-      formatProductLine(item, width),
-    );
+    lines.push(formatProductLine(item, width));
     if (item.garnish) lines.push(`   Guarnición: ${item.garnish}`);
     if (item.removed_ingredients?.length) {
       lines.push(`   SIN: ${item.removed_ingredients.join(", ")}`);
@@ -180,62 +135,32 @@ export const buildOrderTicket = (
      * seleccionados, también los mostramos.
      */
 
-    if (
-      item.item_type === "promotion" &&
-      item.promotion_selections?.length
-    ) {
-      item.promotion_selections.forEach(
-        (selection) => {
-          lines.push(
-            `   • Producto x${selection.quantity}`,
-          );
-        },
-      );
+    if (item.item_type === "promotion" && item.promotion_selections?.length) {
+      item.promotion_selections.forEach((selection) => {
+        lines.push(`   • Producto x${selection.quantity}`);
+      });
     }
   });
 
   lines.push(separator);
 
-  const total = formatMoney(
-    order.total_price,
-  );
+  const total = formatMoney(order.total_price);
 
-  const totalSpaces =
-    width -
-    "TOTAL".length -
-    total.length;
+  const totalSpaces = width - "TOTAL".length - total.length;
 
-  lines.push(
-    "TOTAL" +
-      " ".repeat(Math.max(2, totalSpaces)) +
-      total,
-  );
+  lines.push("TOTAL" + " ".repeat(Math.max(2, totalSpaces)) + total);
 
   lines.push(separator);
 
-  lines.push(
-    `Pago: ${getPaymentMethod(
-      order.method_payment,
-    )}`,
-  );
+  lines.push(`Pago: ${getPaymentMethod(order.method_payment)}`);
 
-  lines.push(
-    `Estado pago: ${getPaymentStatus(
-      order.status_payment,
-    )}`,
-  );
+  lines.push(`Estado pago: ${getPaymentStatus(order.status_payment)}`);
 
-  lines.push(
-    `Estado comanda: ${
-      order.status ? "Activa" : "Inactiva"
-    }`,
-  );
+  lines.push(`Estado comanda: ${order.status ? "Activa" : "Inactiva"}`);
 
   lines.push(separator);
 
-  lines.push(
-    "       ¡Gracias por su compra!",
-  );
+  lines.push("       ¡Gracias por su compra!");
 
   lines.push("");
 

@@ -51,5 +51,6 @@ export interface PromotionFormValues {
 export interface PromotionFormProps {
   mode: "create" | "edit";
   promotion?: Promotion;
-  onSuccess: () => void;
+  onSuccess: () => Promise<void>;
+  onSubmittingChange?: (value: boolean) => void;
 }

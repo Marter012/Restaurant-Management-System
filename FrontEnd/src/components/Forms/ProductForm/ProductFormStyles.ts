@@ -119,40 +119,40 @@ export const FormGroup = styled.div`
     }
   }
 
- input[type="file"] {
-  width: 100%;
-  min-width: 0;
-  min-height: 52px;
-  padding: 8px;
-  cursor: pointer;
-
-  &::file-selector-button {
-    min-height: 34px;
-    margin-right: 12px;
-    padding: 0 13px;
-    border: 0;
-    border-radius: 8px;
-    background: var(--app-primary);
-    color: var(--app-white);
-    font: inherit;
-    font-size: 0.82rem;
-    font-weight: 700;
+  input[type="file"] {
+    width: 100%;
+    min-width: 0;
+    min-height: 52px;
+    padding: 8px;
     cursor: pointer;
-  }
-
-  @media (max-width: 1000px) {
-    min-height: 46px;
-    padding: 6px;
-    font-size: 0.76rem;
 
     &::file-selector-button {
-      min-height: 32px;
-      margin-right: 7px;
-      padding: 0 9px;
+      min-height: 34px;
+      margin-right: 12px;
+      padding: 0 13px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--app-primary);
+      color: var(--app-white);
+      font: inherit;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    @media (max-width: 1000px) {
+      min-height: 46px;
+      padding: 6px;
       font-size: 0.76rem;
+
+      &::file-selector-button {
+        min-height: 32px;
+        margin-right: 7px;
+        padding: 0 9px;
+        font-size: 0.76rem;
+      }
     }
   }
-}
   input[type="number"] {
     appearance: textfield;
     -moz-appearance: textfield;
@@ -166,6 +166,7 @@ export const FormGroup = styled.div`
   }
 
   .category-input {
+    position: relative;
     display: flex;
     align-items: stretch;
     gap: 10px;
@@ -186,8 +187,6 @@ export const FormGroup = styled.div`
       cursor: pointer;
     }
 
-   
-    
     @media (max-width: 420px) {
       flex-direction: column;
 
@@ -198,7 +197,6 @@ export const FormGroup = styled.div`
       }
     }
   }
-  
 
   &.ingredients-group {
     gap: 8px;
@@ -374,112 +372,186 @@ export const FormActions = styled.div`
   display: none;
 `;
 
-export const CancelButton = styled.button`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+// =========================================================
+// AUTOCOMPLETE DE CATEGORÍAS
+// =========================================================
 
-  min-height: 42px;
+export const CategorySuggestions = styled.div`
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 50;
 
-  box-sizing: border-box;
-  padding: 10px 18px;
+  display: flex;
+  flex-direction: column;
 
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+
+  padding: 5px;
   border: 1px solid var(--app-border);
-  border-radius: 9px;
+  border-radius: 11px;
 
   background: var(--app-white);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.14);
+
+  overscroll-behavior: contain;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: var(--app-accent);
+  }
+`;
+
+export const CategorySuggestion = styled.button`
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+
+  border: none;
+  border-radius: 7px;
+
+  background: transparent;
   color: var(--app-ink);
 
   font-family: inherit;
-  font-size: 0.83rem;
+  font-size: 0.87rem;
+  font-weight: 600;
+  text-align: left;
+
+  cursor: pointer;
+  transition: background 150ms ease;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--app-primary-soft);
+    outline: none;
+  }
+`;
+
+// =========================================================
+// INGREDIENTES REUTILIZABLES
+// =========================================================
+
+export const IngredientSuggestions = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+
+  padding: 13px;
+
+  border: 1px solid var(--app-border);
+  border-radius: 12px;
+
+  background: var(--app-surface-soft);
+
+  .ingredient-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    max-height: 150px;
+    overflow-y: auto;
+    padding: 2px;
+
+    overscroll-behavior: contain;
+
+    &::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+      background: var(--app-accent);
+    }
+  }
+
+  .no-ingredients {
+    margin: 0;
+    color: var(--app-muted-dark);
+    font-size: 0.8rem;
+    line-height: 1.5;
+  }
+`;
+
+export const IngredientSuggestionsTitle = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+
+  span {
+    color: var(--app-primary);
+    font-size: 0.82rem;
+    font-weight: 800;
+  }
+
+  small {
+    color: var(--app-muted-dark);
+    font-size: 0.72rem;
+  }
+`;
+
+export const IngredientChip = styled.button<{ $selected: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  min-height: 34px;
+  max-width: 100%;
+
+  padding: 7px 11px;
+
+  border: 1px solid
+    ${({ $selected }) =>
+      $selected ? "var(--app-primary)" : "var(--app-border)"};
+
+  border-radius: 20px;
+
+  background: ${({ $selected }) =>
+    $selected ? "var(--app-primary)" : "var(--app-white)"};
+
+  color: ${({ $selected }) =>
+    $selected ? "var(--app-white)" : "var(--app-ink)"};
+
+  font-family: inherit;
+  font-size: 0.77rem;
   font-weight: 700;
 
   cursor: pointer;
 
   transition:
-    background-color 180ms ease,
-    border-color 180ms ease,
-    color 180ms ease,
-    transform 180ms ease;
+    background 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
 
-  &:hover:not(:disabled) {
-    border-color: var(--app-accent);
-    background: var(--app-surface-soft);
-    color: var(--app-primary);
+  svg {
+    flex-shrink: 0;
+    font-size: 0.65rem;
   }
 
-  &:active:not(:disabled) {
-    transform: scale(0.98);
-  }
-
-  &:focus-visible {
-    outline: 3px solid rgba(var(--app-primary-rgb), 0.18);
-    outline-offset: 2px;
-  }
-
-  &:disabled {
-    opacity: 0.55;
-    cursor: not-allowed;
-  }
-`;
-
-// =========================================================
-// BOTÓN CREAR / GUARDAR
-// =========================================================
-
-export const SubmitButton = styled.button`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  min-height: 42px;
-
-  box-sizing: border-box;
-  padding: 10px 19px;
-
-  border: 1px solid var(--app-primary);
-  border-radius: 9px;
-
-  background: var(--app-primary);
-  color: var(--app-white);
-
-  font-family: inherit;
-  font-size: 0.83rem;
-  font-weight: 750;
-
-  cursor: pointer;
-
-  box-shadow: 0 3px 7px rgba(var(--app-primary-rgb), 0.12);
-
-  transition:
-    background-color 180ms ease,
-    border-color 180ms ease,
-    box-shadow 180ms ease,
-    transform 180ms ease;
-
-  &:hover:not(:disabled) {
-    background: var(--app-primary-hover);
-    border-color: var(--app-primary-hover);
-
-    box-shadow: 0 5px 12px rgba(var(--app-primary-rgb), 0.17);
-
+  &:hover {
+    border-color: var(--app-primary);
     transform: translateY(-1px);
   }
 
-  &:active:not(:disabled) {
-    transform: scale(0.98);
-    box-shadow: none;
-  }
-
   &:focus-visible {
-    outline: 3px solid rgba(var(--app-primary-rgb), 0.2);
+    outline: 2px solid var(--app-accent);
     outline-offset: 2px;
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    box-shadow: none;
-    transform: none;
   }
 `;

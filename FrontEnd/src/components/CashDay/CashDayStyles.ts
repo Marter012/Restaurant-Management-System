@@ -922,201 +922,200 @@ export const SalesContainer = styled.div`
    OPEN CASH
 ============================================================ */
 
-export const OpenCashContainer = styled.div`
-  width: min(560px, 100%);
 
-  padding: 42px 48px;
+export const OpenCashContainer = styled.section`
+  position: relative;
+  width: 100%;
+  min-height: 190px;
+  padding: 28px 24px 28px 150px;
 
-  display: flex;
-
-  flex-direction: column;
-
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto 1fr;
   align-items: center;
-
-  text-align: center;
+  column-gap: 32px;
+  row-gap: 12px;
 
   background: var(--app-white);
-
-  border: 1px solid var(--app-surface-soft);
-
+  border: 1px solid var(--app-accent);
+  border-left: 6px solid var(--app-accent);
   border-radius: 18px;
 
-  box-shadow: 0 8px 24px rgba(var(--app-shadow-rgb), 0.07);
+  box-shadow: 0 10px 25px rgba(74, 40, 24, 0.08);
 
-  box-sizing: border-box;
+  /* Icono de advertencia */
+  &::before {
+    content: "!";
+    position: absolute;
+    left: 40px;
+    top: 50%;
+    transform: translateY(-50%);
 
-  transition: all 0.2s ease;
+    width: 76px;
+    height: 76px;
 
-  &:hover {
-    border-color: rgba(var(--app-accent-rgb), 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    box-shadow: 0 10px 28px rgba(var(--app-shadow-rgb), 0.1);
+    background: rgba(183, 131, 78, 0.2);
+    color: var(--app-primary);
 
-    transform: translateY(-2px);
+    border-radius: 18px;
+    font-size: 42px;
+    font-weight: 800;
+  }
+
+  /* Separador vertical */
+  &::after {
+    content: "";
+    position: absolute;
+    left: 126px;
+    top: 18%;
+    bottom: 18%;
+    width: 2px;
+    background: rgba(183, 131, 78, 0.35);
   }
 
   h2 {
-    margin: 0 0 10px;
+    grid-column: 1;
+    grid-row: 1;
 
+    margin: 0;
     color: var(--app-primary);
 
-    font-size: 22px;
-
-    font-weight: 700;
-
-    line-height: 1.3;
-  }
-
-  h3 {
-    margin: 0 0 8px;
-
-    color: var(--app-accent);
-
-    font-size: 17px;
-
-    font-weight: 600;
+    font-size: clamp(17px, 1.5vw, 23px);
+    font-weight: 750;
+    line-height: 1.4;
   }
 
   p {
-    max-width: 420px;
+    grid-column: 1;
+    grid-row: 2;
 
-    margin: 0 0 8px;
+    margin: 0;
+    color: var(--app-ink);
 
-    color: var(--app-primary);
-
-    font-size: 15px;
-
-    font-weight: 500;
-
-    line-height: 1.5;
+    font-size: clamp(14px, 1.15vw, 18px);
+    line-height: 1.6;
   }
 
-  p:last-of-type {
-    margin-bottom: 22px;
-  }
+  @media (max-width: 900px) {
+    padding: 24px 22px 24px 115px;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 12px;
 
-  strong {
-    color: var(--app-primary);
+    &::before {
+      left: 22px;
+      width: 66px;
+      height: 66px;
+      font-size: 36px;
+    }
 
-    font-weight: 700;
-  }
+    &::after {
+      left: 100px;
+    }
 
-  svg {
-    width: 58px;
-    height: 58px;
+    h2,
+    p {
+      grid-column: 1;
+    }
 
-    padding: 15px;
+    h2 {
+      grid-row: 1;
+    }
 
-    margin-bottom: 22px;
-
-    color: var(--app-primary);
-
-    background: rgba(var(--app-accent-rgb), 0.16);
-
-    border-radius: 50%;
+    p {
+      grid-row: 2;
+    }
   }
 
   @media (max-width: 600px) {
-    width: 100%;
+    padding: 22px 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
 
-    padding: 30px 22px;
-
-    border-radius: 15px;
-
-    h2 {
-      font-size: 20px;
+    &::before,
+    &::after {
+      display: none;
     }
 
-    h3 {
-      font-size: 16px;
+    h2 {
+      font-size: 19px;
+      line-height: 1.4;
     }
 
     p {
       font-size: 14px;
-    }
-
-    svg {
-      width: 50px;
-      height: 50px;
-
-      padding: 13px;
-
-      margin-bottom: 18px;
-    }
-  }
-
-  @media (max-width: 420px) {
-    padding: 25px 16px;
-
-    h2 {
-      font-size: 18px;
-    }
-
-    h3 {
-      font-size: 15px;
-    }
-
-    p {
-      font-size: 13px;
+      line-height: 1.6;
     }
   }
 `;
 
 export const OpenCashButton = styled.button`
-  display: inline-flex;
+  grid-column: 2;
+  grid-row: 1 / 3;
 
+  min-width: 210px;
+  min-height: 58px;
+  padding: 15px 25px;
+
+  display: flex;
   align-items: center;
   justify-content: center;
-
-  min-width: 150px;
+  gap: 12px;
 
   border: none;
+  border-radius: 13px;
 
-  border-radius: 10px;
+  background: linear-gradient(
+    110deg,
+    var(--app-accent),
+    var(--app-primary)
+  );
 
-  padding: 11px 22px;
+  color: white;
+
+  font-size: 16px;
+  font-weight: 700;
 
   cursor: pointer;
 
-  background: var(--app-primary);
-
-  color: var(--app-white);
-
-  font-size: 14px;
-
-  font-weight: 600;
-
-  box-shadow: 0 4px 10px rgba(var(--app-shadow-rgb), 0.18);
+  box-shadow: 0 6px 15px rgba(74, 40, 24, 0.15);
 
   transition:
-    background 0.2s ease,
+    transform 0.2s ease,
     box-shadow 0.2s ease,
-    transform 0.2s ease;
+    filter 0.2s ease;
 
   &:hover {
-    background: var(--app-primary-active);
-
-    box-shadow: 0 6px 14px rgba(var(--app-shadow-rgb), 0.22);
-
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    filter: brightness(1.08);
+    box-shadow: 0 9px 20px rgba(74, 40, 24, 0.2);
   }
 
   &:active {
     transform: translateY(0);
-
-    box-shadow: 0 3px 7px rgba(var(--app-shadow-rgb), 0.16);
   }
 
   &:focus-visible {
-    outline: 3px solid rgba(var(--app-accent-rgb), 0.35);
-
-    outline-offset: 2px;
+    outline: 3px solid var(--app-accent);
+    outline-offset: 3px;
   }
 
-  @media (max-width: 420px) {
+  @media (max-width: 900px) {
+    grid-column: 1;
+    grid-row: 3;
     width: 100%;
+    min-height: 52px;
+  }
 
-    min-width: 0;
+  @media (max-width: 600px) {
+    min-width: 100%;
+    margin-top: 5px;
   }
 `;
 
@@ -1350,14 +1349,13 @@ export const SalePaymentStatus = styled.span<{ $status: string }>`
     $status === "paid"
       ? "var(--app-surface-soft)"
       : $status === "pending"
-        ? "var(--app-surface-soft)"
-        : "var(--app-danger-soft)"};
-  color: ${({ $status }) =>
-    $status === "paid"
-      ? "var(--app-primary)"
-      : $status === "pending"
-        ? "var(--app-primary-active)"
-        : "var(--app-danger)"};
+        ? "var(--app-warning)"
+        : $status === "partially_paid"
+          ? "var(--app-warning)"
+          : $status === "cancelled"
+            ? "var(--app-danger-soft)"
+            : "blue"};
+  color: black;
   font-size: 12px;
   font-weight: 700;
 `;
@@ -1505,7 +1503,6 @@ export const CashDashboard = styled.div`
   flex-direction: column;
   gap: 18px;
   color: var(--app-primary);
-  
 `;
 
 export const CashDashboardHeader = styled.header`
@@ -1556,11 +1553,11 @@ export const CashDashboardActions = styled.div`
   }
   @media (max-width: 1300px) {
     display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    flex-wrap: wrap;
   }
 `;
 
@@ -1928,7 +1925,6 @@ export const CashPreviousClose = styled.section`
     }
   }
 `;
-
 
 /* ============================================================
    OBSERVACIONES DE LA VENTA

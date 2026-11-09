@@ -119,6 +119,8 @@ export const StatusButton = styled.button`
   font-size: 0.86rem;
   font-weight: 750;
   cursor: pointer;
+    background: #4f8b50 ;
+  
   transition:
     filter 180ms ease,
     transform 180ms ease;
@@ -144,6 +146,6 @@ export const StatusButton = styled.button`
     opacity: 0.6;
   }
   &.danger {
-    background-color: #c3212c;
+    background: #c3212c;
 }
 `;

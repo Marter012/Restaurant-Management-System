@@ -33,7 +33,8 @@ export interface ProductFormProps {
   mode: "create" | "edit";
   product?: Product;
   onSuccess: () => void;
-  categories? : string[]
+  categories?: string[];
+  onSubmittingChange?: (value: boolean) => void;
 }
 
 export interface ProductsForOrderProps {

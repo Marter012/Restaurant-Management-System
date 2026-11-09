@@ -5,12 +5,14 @@ interface ModalProductEditProps {
   product: Product;
   categories: string[];
   onSuccess: () => void;
+  onSubmittingChange: (value: boolean) => void;
 }
 
 const ModalProductEdit = ({
   product,
   categories,
   onSuccess,
+  onSubmittingChange,
 }: ModalProductEditProps) => {
   return (
     <ProductForm
@@ -18,6 +20,7 @@ const ModalProductEdit = ({
       mode="edit"
       product={product}
       onSuccess={onSuccess}
+      onSubmittingChange={onSubmittingChange}
     />
   );
 };

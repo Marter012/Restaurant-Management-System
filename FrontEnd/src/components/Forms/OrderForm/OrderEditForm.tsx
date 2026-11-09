@@ -54,10 +54,12 @@ const formatOrderMoney = (value: number) =>
 function EditOrderContent({
   order,
   onSuccess,
+  onSubmittingChange,
   readOnly = false,
 }: {
   order: IOrder;
   onSuccess?: () => void;
+  onSubmittingChange?: (value: boolean) => void;
   readOnly?: boolean;
 }) {
   const dispatch = useDispatch<AppDispatch>();
@@ -74,6 +76,8 @@ function EditOrderContent({
       setSubmitting(false);
       return;
     }
+
+    onSubmittingChange?.(true);
     try {
       const isPending = values.status_payment === "pending";
       const isCancelled = values.status_payment === "cancelled";
@@ -584,10 +588,12 @@ function EditOrderContent({
 export default function OrderEditForm({
   order,
   onSuccess,
+  onSubmittingChange,
   readOnly = false,
 }: {
   order: IOrder | null;
   onSuccess?: () => void;
+  onSubmittingChange?: (value: boolean) => void;
   readOnly?: boolean;
 }) {
   if (!order) {
@@ -601,6 +607,11 @@ export default function OrderEditForm({
   }
 
   return (
-    <EditOrderContent order={order} onSuccess={onSuccess} readOnly={readOnly} />
+    <EditOrderContent
+      order={order}
+      onSuccess={onSuccess}
+      onSubmittingChange={onSubmittingChange}
+      readOnly={readOnly}
+    />
   );
 }

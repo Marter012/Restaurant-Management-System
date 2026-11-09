@@ -90,22 +90,3 @@ export const FormActions = styled.div`
   margin-top: 10px;
 `;
 
-export const SubmitButton = styled.button`
-  padding: 11px 20px;
-  border: none;
-  border-radius: 8px;
-  background-color: var(--app-primary);
-  color: var(--app-white);
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s;
-
-  &:hover {
-    background-color: var(--app-primary);
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-`;

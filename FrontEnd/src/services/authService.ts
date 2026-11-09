@@ -1,9 +1,6 @@
 import { api } from "./api.ts";
 
-import {
-  clearAuthTokens,
-  saveAuthTokens,
-} from "./authStorage.ts";
+import { clearAuthTokens, saveAuthTokens } from "./authStorage.ts";
 
 export interface LoginResponse {
   access_token: string;
@@ -28,7 +25,7 @@ export interface User {
 let cachedUser: User | null = null;
 let getMeRequest: Promise<User> | null = null;
 
-const clearUserCache = (): void => {
+export const clearUserCache = (): void => {
   cachedUser = null;
   getMeRequest = null;
 };
@@ -41,21 +38,14 @@ export const login = async (
   username: string,
   password: string,
 ): Promise<LoginResponse> => {
-  const response = await api.post<LoginResponse>(
-    "/auth/",
-    {
-      username,
-      password,
-    },
-  );
+  const response = await api.post<LoginResponse>("/auth/", {
+    username,
+    password,
+  });
 
   const data = response.data;
 
-  saveAuthTokens(
-    data.access_token,
-    data.refresh_token,
-    data.expires_in,
-  );
+  saveAuthTokens(data.access_token, data.refresh_token, data.expires_in);
 
   // Evitar reutilizar información de una sesión anterior.
   clearUserCache();
@@ -70,20 +60,13 @@ export const login = async (
 export const refreshAccessToken = async (
   refreshToken: string,
 ): Promise<LoginResponse> => {
-  const response = await api.post<LoginResponse>(
-    "/auth/refresh",
-    {
-      refresh_token: refreshToken,
-    },
-  );
+  const response = await api.post<LoginResponse>("/auth/refresh", {
+    refresh_token: refreshToken,
+  });
 
   const data = response.data;
 
-  saveAuthTokens(
-    data.access_token,
-    data.refresh_token,
-    data.expires_in,
-  );
+  saveAuthTokens(data.access_token, data.refresh_token, data.expires_in);
 
   return data;
 };
@@ -154,10 +137,7 @@ export const ResetPassword = async (
   return response.data;
 };
 
-export const VerifyCode = async (
-  email: string,
-  code: string,
-) => {
+export const VerifyCode = async (email: string, code: string) => {
   const response = await api.post("/auth/verify-reset-code", {
     email,
     code,
@@ -173,9 +153,7 @@ export type ResetStatus =
   | "completed"
   | "expired";
 
-export const GetResetStatus = async (
-  email: string,
-): Promise<ResetStatus> => {
+export const GetResetStatus = async (email: string): Promise<ResetStatus> => {
   const response = await api.get<{
     status: ResetStatus;
   }>("/auth/reset-status", {

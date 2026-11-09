@@ -282,12 +282,19 @@ export const FieldsGrid = styled.div`
     color: var(--app-muted-dark);
     font-size: 0.76rem;
     font-weight: 800;
+    position: relative;
   }
   label > span,
   label .errorMessage {
-    color: var(--app-danger);
+    width: 100%;
+    height: 20px;
+    color: black;
     font-size: 0.7rem;
     font-weight: 700;
+    background-color: red !important;
+    border-radius: 10px;
+    text-align: center;
+    position: absolute;
   }
   @media (max-width: 520px) {
     grid-template-columns: minmax(0, 1fr);

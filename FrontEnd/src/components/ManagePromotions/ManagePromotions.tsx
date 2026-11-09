@@ -46,6 +46,7 @@ import ModalPromotionOptions from "../Modals/ModalPromotion/ModalPromotionOption
 import ModalPromotionDelete from "../Modals/ModalPromotion/ModalPromotionDelete.tsx";
 import { ActionButton, StatusButton } from "../Utils/ButtonStyles.ts";
 import { useAlert } from "../context/AlertContext.tsx";
+import { getAxiosErrorMessage } from "../Utils/ErrorAxios.tsx";
 
 type ModalMode = "options" | "create" | "edit" | "delete";
 type DeleteAction = "delete" | "status";
@@ -74,36 +75,36 @@ const formatDate = (value?: string) => {
     : date.toLocaleDateString("es-AR", { day: "2-digit", month: "short" });
 };
 
-const getApiErrorMessage = (error: unknown, fallback: string): string => {
-  const apiError = error as {
-    response?: { data?: { detail?: unknown; message?: unknown } };
-    message?: unknown;
-  };
-  const detail = apiError?.response?.data?.detail;
-  const message = apiError?.response?.data?.message ?? apiError?.message;
-
-  if (typeof detail === "string" && detail.trim()) return detail;
-  if (Array.isArray(detail) && detail.length > 0) {
-    const messages = detail
-      .map((item) => {
-        if (typeof item === "string") return item;
-        if (item && typeof item === "object" && "msg" in item) {
-          return String((item as { msg: unknown }).msg);
-        }
-        return "";
-      })
-      .filter(Boolean);
-    if (messages.length) return messages.join(". ");
-  }
-  if (typeof message === "string" && message.trim()) return message;
-  return fallback;
-};
-
 export const AddPromotion = ({ onClick }: { onClick: () => void }) => (
   <AddPromotionButton type="button" onClick={onClick}>
     <FaPlus /> Nueva promoción
   </AddPromotionButton>
 );
+
+const normalizeSearch = (value: string) =>
+  value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLocaleLowerCase("es")
+    .trim();
+
+const getSearchableValues = (value: unknown): string[] => {
+  if (value === null || value === undefined) return [];
+
+  if (typeof value === "string" || typeof value === "number") {
+    return [String(value)];
+  }
+
+  if (Array.isArray(value)) {
+    return value.flatMap((item) => getSearchableValues(item));
+  }
+
+  if (typeof value === "object") {
+    return Object.values(value).flatMap((item) => getSearchableValues(item));
+  }
+
+  return [];
+};
 
 const ManagePromotions = forwardRef<ManagePromotionRef, ManagePromotionProps>(
   ({ showActive, setShowActive }, ref) => {
@@ -122,6 +123,7 @@ const ManagePromotions = forwardRef<ManagePromotionRef, ManagePromotionProps>(
     const [promotionSearch, setPromotionSearch] = useState("");
     const [menuPromotionId, setMenuPromotionId] = useState<string | null>(null);
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const loadPromotions = async () => {
       try {
         const data = await getPromotionsAPI();
@@ -156,7 +158,7 @@ const ManagePromotions = forwardRef<ManagePromotionRef, ManagePromotionProps>(
         console.error("Error eliminando promoción:", deleteError);
 
         showAlert(
-          getApiErrorMessage(
+          getAxiosErrorMessage(
             deleteError,
             "No se pudo eliminar la promoción. Intentá nuevamente.",
           ),
@@ -168,14 +170,22 @@ const ManagePromotions = forwardRef<ManagePromotionRef, ManagePromotionProps>(
     };
     const now = new Date();
     const allPromotions = promotions as PromotionWithOptionalMetadata[];
-
     const filteredPromotions = allPromotions
       .filter((promotion) => promotion.status === showActive)
-      .filter((promotion) =>
-        promotion.name
-          .toLocaleLowerCase("es")
-          .includes(promotionSearch.trim().toLocaleLowerCase("es")),
-      )
+      .filter((promotion) => {
+        const search = normalizeSearch(promotionSearch);
+
+        if (!search) return true;
+
+        const searchableValues = [
+          ...getSearchableValues(promotion),
+          promotion.price.toLocaleString("es-AR"),
+        ];
+
+        return searchableValues.some((value) =>
+          normalizeSearch(value).includes(search),
+        );
+      })
       .sort((a, b) =>
         a.name.localeCompare(b.name, "es", { sensitivity: "base" }),
       );
@@ -192,6 +202,7 @@ const ManagePromotions = forwardRef<ManagePromotionRef, ManagePromotionProps>(
       setSelectedPromotion(null);
       setModalMode("options");
       setDeleting(false);
+      setIsSubmitting(false);
     };
 
     const getModalTitle = () => {
@@ -240,11 +251,10 @@ const ManagePromotions = forwardRef<ManagePromotionRef, ManagePromotionProps>(
             <FaSearch aria-hidden="true" />
 
             <input
-              type="search"
               value={promotionSearch}
               onChange={(event) => setPromotionSearch(event.target.value)}
-              placeholder="Buscar promoción por nombre..."
-              aria-label="Buscar promoción por nombre"
+              placeholder="Buscar promoción"
+              aria-label="Buscar promoción"
             />
 
             {promotionSearch && (
@@ -462,8 +472,18 @@ const ManagePromotions = forwardRef<ManagePromotionRef, ManagePromotionProps>(
               )}
 
               {(modalMode === "create" || modalMode === "edit") && (
-                <ActionButton type="submit" form="promotion-form">
-                  {modalMode === "create" ? "Crear " : "Guardar"}
+                <ActionButton
+                  type="submit"
+                  form="promotion-form"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting
+                    ? modalMode === "create"
+                      ? "Creando..."
+                      : "Guardando..."
+                    : modalMode === "create"
+                      ? "Crear"
+                      : "Guardar"}
                 </ActionButton>
               )}
 
@@ -513,7 +533,7 @@ const ManagePromotions = forwardRef<ManagePromotionRef, ManagePromotionProps>(
                       );
 
                       showAlert(
-                        getApiErrorMessage(
+                        getAxiosErrorMessage(
                           updateError,
                           "No se pudo actualizar el estado de la promoción. Intentá nuevamente.",
                         ),
@@ -545,6 +565,7 @@ const ManagePromotions = forwardRef<ManagePromotionRef, ManagePromotionProps>(
 
           {modalMode === "create" && (
             <ModalPromotionCreate
+              onSubmittingChange={setIsSubmitting}
               onSuccess={async () => {
                 await loadPromotions();
                 closeModal();
@@ -555,6 +576,7 @@ const ManagePromotions = forwardRef<ManagePromotionRef, ManagePromotionProps>(
           {modalMode === "edit" && selectedPromotion && (
             <ModalPromotionEdit
               promotion={selectedPromotion}
+              onSubmittingChange={setIsSubmitting}
               onSuccess={async () => {
                 await loadPromotions();
                 closeModal();

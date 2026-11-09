@@ -120,7 +120,7 @@ export const CashMovementRow = styled(TableRow)`
   box-shadow: none;
 
   transition: background-color 0.2s ease;
-
+  cursor: pointer;
   &:hover {
     z-index: auto;
     background: var(--app-surface-soft);
@@ -164,10 +164,10 @@ export const CashMovementRow = styled(TableRow)`
     align-items: center;
     justify-content: center;
     width: fit-content;
-    max-width: 100%;
+    width: 100%;
     padding: 5px 8px;
     border: none;
-    border-radius: 20px;
+    border-radius: 10px;
     font-size: 10px;
     font-weight: 800;
     line-height: 1.2;
@@ -175,19 +175,24 @@ export const CashMovementRow = styled(TableRow)`
   }
 
   .movement-badge.income {
-    background: var(--app-surface-soft);
-    color: var(--app-primary);
+    background: var(--app-success);
+    color: white;
   }
 
   .movement-badge.expense {
-    background: var(--app-danger-soft);
-    color: var(--app-danger);
+    background: var(--app-danger);
+    color: black;
   }
 
   .movement-badge.pending {
-  background: var(--app-accent-soft);
-  color: var(--app-accent);
-}
+    background: var(--app-warning);
+    color: black;
+  }
+
+  .movement-badge.partially_paid {
+    background: var(--app-warning-soft);
+    color: black;
+  }
 
   .movement-amount {
     display: block;

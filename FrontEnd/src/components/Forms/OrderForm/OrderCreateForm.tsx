@@ -1,4 +1,4 @@
-import { Field, ErrorMessage } from "formik";
+import { Field, ErrorMessage, useFormikContext } from "formik";
 import { useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import type { FieldProps } from "formik";
@@ -67,6 +67,8 @@ import {
   DataSection,
 } from "./OrderFormStyles.ts";
 import TimePicker from "../../TimePicker/TimePicker.tsx";
+import { useAlert } from "../../context/AlertContext.tsx";
+import { ActionButton } from "../../Utils/ButtonStyles.ts";
 
 interface CreateOrderProps {
   nextOrderNumber: number;
@@ -167,6 +169,25 @@ function CreateOrderContent({
 
     setFieldValue("payments", adjustedPayments);
   }, [totalPrice]);
+
+  const { showAlert } = useAlert();
+
+  const { errors, submitCount } = useFormikContext<OrderFormValues>();
+
+  const lastAlertedSubmit = useRef(0);
+
+  useEffect(() => {
+    if (submitCount <= lastAlertedSubmit.current) return;
+
+    lastAlertedSubmit.current = submitCount;
+
+    if (Object.keys(errors).length > 0) {
+      showAlert(
+        "Revisá los campos del formulario. Hay información incompleta o incorrecta.",
+        "error",
+      );
+    }
+  }, [submitCount, errors, showAlert]);
 
   const updatePaymentAmount = (index: number, rawValue: string) => {
     const current = [...(values.payments ?? [])];
@@ -279,6 +300,8 @@ function CreateOrderContent({
           name="customer_name"
           placeholder="Nombre del cliente"
           autoComplete="off"
+                    data-capitalize-words="true"
+
         />
         <ObservationField>
           <label htmlFor="new-order-observations">
@@ -290,6 +313,7 @@ function CreateOrderContent({
             name="observations"
             placeholder="Agregá aclaraciones para preparar o entregar la comanda..."
             maxLength={500}
+            data-capitalize-words="true"
             rows={3}
           />
           <ErrorMessage name="observations" component={Error} />
@@ -553,7 +577,7 @@ function CreateOrderContent({
                   Medio de pago
                   <Field as={Select} name="method_payment">
                     <option value="" disabled>
-                      Seleccionar 1
+                      Seleccionar Pago
                     </option>
                     <option value="cash">Efectivo</option>
                     <option value="transfer">Transferencia</option>
@@ -801,7 +825,7 @@ function CreateOrderContent({
               size="small"
               scroll="active"
               footerActions={
-                <IngredientSave
+                <ActionButton
                   type="button"
                   onClick={() => {
                     setFieldValue(
@@ -834,7 +858,7 @@ function CreateOrderContent({
                   }}
                 >
                   Guardar personalización
-                </IngredientSave>
+                </ActionButton>
               }
             >
               <IngredientModalHeading>
@@ -944,6 +968,8 @@ function CreateOrderContent({
                     }}
                     placeholder="Ej.: más cheddar"
                     aria-label="Nombre del ingrediente extra"
+                    data-capitalize-words="true"
+
                   />
                   <ExtraIngredientsAddButton
                     type="button"

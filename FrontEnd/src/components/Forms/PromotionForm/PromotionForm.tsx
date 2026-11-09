@@ -52,7 +52,12 @@ import {
 import { getAxiosErrorMessage } from "../../Utils/ErrorAxios.tsx";
 import { useAlert } from "../../context/AlertContext.tsx";
 
-const PromotionForm = ({ mode, promotion, onSuccess }: PromotionFormProps) => {
+const PromotionForm = ({
+  mode,
+  promotion,
+  onSuccess,
+  onSubmittingChange,
+}: PromotionFormProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const products = useSelector((state: RootState) => state.products.products);
 
@@ -114,7 +119,7 @@ const PromotionForm = ({ mode, promotion, onSuccess }: PromotionFormProps) => {
       enableReinitialize
       validationSchema={PromotionSchema}
       onSubmit={async (values, { setSubmitting }) => {
-        setSubmitting(true);
+        onSubmittingChange?.(true);
 
         try {
           const promotionData = {
@@ -124,6 +129,7 @@ const PromotionForm = ({ mode, promotion, onSuccess }: PromotionFormProps) => {
               .map((item) => {
                 const groupName =
                   getGroupName(item.product_ids) || item.name.trim();
+
                 return `${Number(item.quantity)} ${groupName}`;
               })
               .join(" + "),
@@ -147,6 +153,7 @@ const PromotionForm = ({ mode, promotion, onSuccess }: PromotionFormProps) => {
               promotion.id,
               promotionData,
             );
+
             dispatch(updatePromotion(updated));
           }
 
@@ -157,14 +164,13 @@ const PromotionForm = ({ mode, promotion, onSuccess }: PromotionFormProps) => {
             "success",
           );
 
-          onSuccess();
-
-          onSuccess();
+          await onSuccess();
         } catch (error) {
           console.error("Error guardando promoción:", error);
           showAlert(getAxiosErrorMessage(error), "error");
         } finally {
           setSubmitting(false);
+          onSubmittingChange?.(false);
         }
       }}
     >
@@ -238,6 +244,7 @@ const PromotionForm = ({ mode, promotion, onSuccess }: PromotionFormProps) => {
                       name="name"
                       type="text"
                       placeholder="Ej. Promo Empanadas"
+                      data-capitalize-words="true"
                     />
                     <ErrorMessage name="name" component={ErrorText} />
                   </FormGroup>

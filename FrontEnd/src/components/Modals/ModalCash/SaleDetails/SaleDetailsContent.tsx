@@ -65,7 +65,11 @@ const SaleDetailsContent = ({ sale }: { sale: any }) => (
             ? "Pagado"
             : sale.status_payment === "pending"
               ? "Pendiente"
-              : "Cancelado"}
+              :  sale.status_payment === "cancelled" 
+              ?"Cancelado" 
+              :  sale.status_payment === "partially_paid" 
+              ? "Pago pendiente" : "DATO DESCONOCIDO"
+              }
         </SalePaymentStatus>
       </SalePaymentRow>
     </SalePaymentInfo>

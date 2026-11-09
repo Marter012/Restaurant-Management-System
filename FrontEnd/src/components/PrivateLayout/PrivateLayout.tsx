@@ -11,7 +11,11 @@ import {
   stopTokenRefresh,
 } from "../../services/authRefresh.ts";
 import { getMe } from "../../services/authService.ts";
-import { setMustChangeCredentials, logoutUser, loginUser } from "../../store/slices/userSlice.ts";
+import {
+  setMustChangeCredentials,
+  logoutUser,
+  loginUser,
+} from "../../store/slices/userSlice.ts";
 import NavBar from "../NavBar/NavBar.tsx";
 import ModalForm from "../ModalForm/ModalForm.tsx";
 
@@ -41,6 +45,12 @@ const PrivateLayout = () => {
 
   const [authReady, setAuthReady] = useState(false);
   const [showCredentialNotice, setShowCredentialNotice] = useState(false);
+
+  useEffect(() => {
+    if (!mustChangeCredentials) {
+      setShowCredentialNotice(false);
+    }
+  }, [mustChangeCredentials]);
 
   useEffect(() => {
     let mounted = true;
@@ -92,7 +102,11 @@ const PrivateLayout = () => {
   }, [dispatch, navigate]);
 
   useEffect(() => {
-    if (authReady && mustChangeCredentials && location.pathname !== "/settings") {
+    if (
+      authReady &&
+      mustChangeCredentials &&
+      location.pathname !== "/settings"
+    ) {
       navigate("/settings", {
         replace: true,
         state: { section: "users", forceCredentialUpdate: true },
@@ -106,8 +120,12 @@ const PrivateLayout = () => {
         <SessionCard>
           <SessionLogo>BS</SessionLogo>
           <SessionTitle>Boutique de Sabores</SessionTitle>
-          <SessionDescription>Estamos preparando todo para vos</SessionDescription>
-          <SpinnerContainer><Spinner /></SpinnerContainer>
+          <SessionDescription>
+            Estamos preparando todo para vos
+          </SessionDescription>
+          <SpinnerContainer>
+            <Spinner />
+          </SpinnerContainer>
           <span>Verificando tu sesión...</span>
           <SessionDescription>Un momento, por favor.</SessionDescription>
         </SessionCard>
@@ -116,7 +134,13 @@ const PrivateLayout = () => {
   }
 
   if (mustChangeCredentials && location.pathname !== "/settings") {
-    return <Navigate to="/settings" replace state={{ section: "users", forceCredentialUpdate: true }} />;
+    return (
+      <Navigate
+        to="/settings"
+        replace
+        state={{ section: "users", forceCredentialUpdate: true }}
+      />
+    );
   }
 
   return (
@@ -154,8 +178,9 @@ const PrivateLayout = () => {
         }
       >
         <p>
-          La cuenta administradora inicial todavía utiliza las credenciales predeterminadas.
-          Para proteger el acceso, cambiá tu email y establecé una contraseña nueva.
+          La cuenta administradora inicial todavía utiliza las credenciales
+          predeterminadas. Para proteger el acceso, cambiá tu email y establecé
+          una contraseña nueva.
         </p>
       </ModalForm>
     </AppInitializer>

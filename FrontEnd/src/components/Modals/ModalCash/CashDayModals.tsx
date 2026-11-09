@@ -1,24 +1,28 @@
+import { FaEdit } from "react-icons/fa";
+import type { FormEvent } from "react";
+
 import OpenCashSection from "./OpenCashModal/OpenCashSection.tsx";
 import CloseCashSection from "./CloseCashModal/CloseCashSection.tsx";
 import RegisterIncome from "./RegisterIncome/RegisterIncome.tsx";
 import RegisterExpense from "./RegisterExpense/RegisterExpense.tsx";
 import EditMovementForm from "./EditMovement/EditMovementForm.tsx";
 import SaleDetailsContent from "./SaleDetails/SaleDetailsContent.tsx";
-import { FaEdit } from "react-icons/fa";
+
 import {
   EditOrderButton,
   EditMovementSaveButton,
 } from "../../CashDay/CashDayStyles.ts";
+
 import {
-  SubmitButton as OpenSubmit,
-} from "../../Forms/StatusCashForm/OpenCashFormStyles.ts";
-import {
-  SubmitButton as CloseSubmit,
+  SubmitButton as CashSubmit,
 } from "../../Forms/StatusCashForm/CloseCashFormStyles.ts";
+
 import {
   SubmitButton as MovementSubmit,
 } from "../../Forms/CashMovementForm/CashMovementFormStyles.ts";
+
 import ModalForm from "../../ModalForm/ModalForm.tsx";
+
 import type { ICashMovement } from "../../../interfaces/CashMovements.ts";
 
 export type CashDayModalMode =
@@ -29,31 +33,40 @@ export type CashDayModalMode =
   | "editMovement"
   | "sale"
   | null;
+
 interface Props {
   mode: CashDayModalMode;
   selectedShift: string;
   openingAmount: number;
   cashRegisterId: string;
+
   openingSubmitting: boolean;
   closingSubmitting: boolean;
   movementSubmitting: boolean;
   editSubmitting: boolean;
+
   editingMovement: ICashMovement | null;
   editDescription: string;
   editAmount: string;
+
   selectedSale: any;
+
   onClose: () => void;
   onOpenSubmit: (amount: number, shift?: any) => void | Promise<void>;
   onCloseSubmit: (amount: number) => void | Promise<void>;
   onMovementSubmit: (data: any) => void | Promise<void>;
+
   onSubmittingOpen: (value: boolean) => void;
   onSubmittingClose: (value: boolean) => void;
   onSubmittingMovement: (value: boolean) => void;
-  onEditSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+
+  onEditSubmit: (event: FormEvent<HTMLFormElement>) => void;
   onEditDescription: (value: string) => void;
   onEditAmount: (value: string) => void;
+
   onEditOrder: () => void;
 }
+
 const CashDayModals = (props: Props) => {
   const {
     mode,
@@ -80,7 +93,9 @@ const CashDayModals = (props: Props) => {
     onEditAmount,
     onEditOrder,
   } = props;
+
   if (!mode) return null;
+
   const title =
     mode === "open"
       ? `Abrir caja ${selectedShift === "morning" ? "Turno mañana" : "Turno noche"}`
@@ -95,6 +110,7 @@ const CashDayModals = (props: Props) => {
               : mode === "sale"
                 ? `Venta #${selectedSale?.order_number ?? ""}`
                 : "";
+
   const busy =
     mode === "open"
       ? openingSubmitting
@@ -105,43 +121,65 @@ const CashDayModals = (props: Props) => {
           : mode === "editMovement"
             ? editSubmitting
             : false;
+
   const footerActions =
     mode === "open" ? (
-        <OpenSubmit type="submit" form="open-cash-form" disabled={busy}>
-          {busy ? "Abriendo..." : "Abrir caja"}
-        </OpenSubmit>
+      <CashSubmit
+        type="submit"
+        form="open-cash-form"
+        disabled={busy}
+      >
+        {busy ? "Abriendo..." : "Abrir caja"}
+      </CashSubmit>
     ) : mode === "close" ? (
-        <CloseSubmit type="submit" form="close-cash-form" disabled={busy}>
-          {busy ? "Cerrando..." : "Cerrar caja"}
-        </CloseSubmit>
+      <CashSubmit
+        type="submit"
+        form="close-cash-form"
+        disabled={busy}
+      >
+        {busy ? "Cerrando..." : "Cerrar caja"}
+      </CashSubmit>
     ) : mode === "income" || mode === "expense" ? (
-        <MovementSubmit type="submit" form="cash-movement-form" disabled={busy}>
-          {busy
-            ? "Guardando..."
-            : mode === "income"
-              ? "Agregar ingreso"
-              : "Agregar egreso"}
-        </MovementSubmit>
+      <MovementSubmit
+        type="submit"
+        form="cash-movement-form"
+        disabled={busy}
+      >
+        {busy
+          ? "Guardando..."
+          : mode === "income"
+            ? "Agregar ingreso"
+            : "Agregar egreso"}
+      </MovementSubmit>
     ) : mode === "editMovement" ? (
-        <EditMovementSaveButton
-          type="submit"
-          form="edit-movement-form"
-          disabled={busy}
-        >
-          {busy ? "Guardando..." : "Guardar cambios"}
-        </EditMovementSaveButton>
+      <EditMovementSaveButton
+        type="submit"
+        form="edit-movement-form"
+        disabled={busy}
+      >
+        {busy ? "Guardando..." : "Guardar cambios"}
+      </EditMovementSaveButton>
     ) : mode === "sale" ? (
       <EditOrderButton type="button" onClick={onEditOrder}>
         <FaEdit />
         Modificar comanda
       </EditOrderButton>
     ) : undefined;
+
+  const modalSize =
+    mode === "income" ||
+    mode === "expense" ||
+    mode === "open" ||
+    mode === "close"
+      ? "compact"
+      : "default";
+
   return (
     <ModalForm
       isOpen={Boolean(mode)}
       title={title}
       onClose={onClose}
-      size={mode === "income" || mode === "expense" || mode === "open"  || mode === "close"? "compact" : "default"}
+      size={modalSize}
       footerActions={footerActions}
     >
       {mode === "open" && (
@@ -151,6 +189,7 @@ const CashDayModals = (props: Props) => {
           onClose={onClose}
         />
       )}
+
       {mode === "close" && (
         <CloseCashSection
           onSubmittingChange={onSubmittingClose}
@@ -159,6 +198,7 @@ const CashDayModals = (props: Props) => {
           onClose={onClose}
         />
       )}
+
       {mode === "income" && (
         <RegisterIncome
           cashRegisterId={cashRegisterId}
@@ -167,6 +207,7 @@ const CashDayModals = (props: Props) => {
           onClose={onClose}
         />
       )}
+
       {mode === "expense" && (
         <RegisterExpense
           cashRegisterId={cashRegisterId}
@@ -175,6 +216,7 @@ const CashDayModals = (props: Props) => {
           onClose={onClose}
         />
       )}
+
       {mode === "editMovement" && editingMovement && (
         <EditMovementForm
           description={editDescription}
@@ -185,10 +227,12 @@ const CashDayModals = (props: Props) => {
           onSubmit={onEditSubmit}
         />
       )}
+
       {mode === "sale" && selectedSale && (
         <SaleDetailsContent sale={selectedSale} />
       )}
     </ModalForm>
   );
 };
+
 export default CashDayModals;

@@ -23,7 +23,6 @@ import ModalPrintFalse from "../ModalPrintFalse/ModalPrintFalse.tsx";
 import { OrdersTableRow } from "../Tables/ListTableStyles.ts";
 import ModalOrderEdit from "../Modals/ModalOrder/ModalOrderEdit.tsx";
 import ModalOrderOptions from "../Modals/ModalOrder/ModalOrderOptions.tsx";
-import { SubmitButton } from "../Forms/ProductForm/ProductFormStyles.ts";
 import { ActionButton } from "../Utils/ButtonStyles.ts";
 
 interface ManageOrderProps {
@@ -90,6 +89,7 @@ const ManageOrder = ({
   const [search, setSearch] = useState("");
 
   const [statusFilter, setStatusFilter] = useState<PaymentFilter>("all");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Siempre resolver la caja desde la selección actual del Navbar.
   // readOnly controla los permisos, pero nunca fija la consulta a una caja anterior.
@@ -143,6 +143,7 @@ const ManageOrder = ({
     setModalOpen(false);
     setSelectedOrder(null);
     setModalMode("options");
+    setIsSubmitting(false);
   };
 
   const handleEditAction = () => {
@@ -519,7 +520,6 @@ const ManageOrder = ({
 
                   <ActionButton
                     className="ligth"
-                  
                     type="button"
                     title="Reimprimir comanda"
                     onClick={(event) => {
@@ -567,9 +567,13 @@ const ManageOrder = ({
         onClose={handleClose}
         footerActions={
           modalMode === "edit" && selectedOrder && !readOnly ? (
-            <SubmitButton type="submit" form="manage-order-form">
-              ✓ Guardar modificaciones
-            </SubmitButton>
+            <ActionButton
+              type="submit"
+              form="manage-order-form"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Guardando..." : "✓ Guardar modificaciones"}
+            </ActionButton>
           ) : modalMode === "options" &&
             selectedOrder &&
             canModifyOrder(selectedOrder) ? (
@@ -590,6 +594,7 @@ const ManageOrder = ({
             order={selectedOrder}
             onClose={handleClose}
             readOnly={readOnly}
+            onSubmittingChange={setIsSubmitting}
           />
         )}
       </ModalForm>

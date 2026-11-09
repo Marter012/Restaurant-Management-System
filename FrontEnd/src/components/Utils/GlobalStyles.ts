@@ -50,7 +50,7 @@ export const GlobalStyles = createGlobalStyle`
 
     /* ESTADOS — ADVERTENCIAS */
     --app-warning: #B87928;
-    --app-warning-soft: #FBEDD5;
+    --app-warning-soft: #e7c995;
     --app-warning-rgb: 184, 121, 40;
 
     /* ESTADOS — ERRORES Y ACCIONES CRÍTICAS */

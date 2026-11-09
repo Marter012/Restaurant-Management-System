@@ -119,6 +119,8 @@ const ManageProducts = forwardRef<ManageProductsRef, ManageProductsProps>(
 
     const [isAdmin, setIsAdmin] = useState(false);
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     useEffect(() => {
       void getMeAdmin();
     }, []);
@@ -417,8 +419,8 @@ const ManageProducts = forwardRef<ManageProductsRef, ManageProductsProps>(
               type="text"
               value={productSearch}
               onChange={(event) => setProductSearch(event.target.value)}
-              placeholder="Buscar producto por nombre..."
-              aria-label="Buscar producto por nombre"
+              placeholder="Buscar producto"
+              aria-label="Buscar producto"
             />
 
             {productSearch && (
@@ -667,14 +669,22 @@ const ManageProducts = forwardRef<ManageProductsRef, ManageProductsProps>(
               )}
 
               {modalMode === "create" && (
-                <ActionButton type="submit" form="manage-product-form">
-                  Crear
+                <ActionButton
+                  type="submit"
+                  form="manage-product-form"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Creando..." : "Crear"}
                 </ActionButton>
               )}
 
               {modalMode === "edit" && (
-                <ActionButton type="submit" form="manage-product-form">
-                  Guardar
+                <ActionButton
+                  type="submit"
+                  form="manage-product-form"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Guardando..." : "Guardar"}
                 </ActionButton>
               )}
 
@@ -738,16 +748,14 @@ const ManageProducts = forwardRef<ManageProductsRef, ManageProductsProps>(
           )}
 
           {modalMode === "delete" && selectedProduct && (
-            <ModalProductDelete
-              product={selectedProduct}
-              mode={deleteAction}
-            />
+            <ModalProductDelete product={selectedProduct} mode={deleteAction} />
           )}
 
           {modalMode === "create" && (
             <ModalProductCreate
               categories={categories}
               onSuccess={closeModal}
+              onSubmittingChange={setIsSubmitting}
             />
           )}
 
@@ -756,6 +764,7 @@ const ManageProducts = forwardRef<ManageProductsRef, ManageProductsProps>(
               product={selectedProduct}
               categories={categories}
               onSuccess={closeModal}
+              onSubmittingChange={setIsSubmitting}
             />
           )}
 

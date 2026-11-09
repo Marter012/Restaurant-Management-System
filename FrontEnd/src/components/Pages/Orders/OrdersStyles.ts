@@ -44,178 +44,149 @@ ESTADO SIN CAJA DISPONIBLE
 ========================================================= */
 
 export const CashMessageLink = styled(Link)`
-  position: relative;
-  width: 100%;
   display: block;
+  width: 100%;
   text-decoration: none;
   color: inherit;
-  box-sizing: border-box;
-
-  &::after {
-    content: "▣   Ir a Cajas";
-    position: absolute;
-    bottom: 25px;
-    left: 50%;
-    transform: translateX(-50%);
-
-    width: 220px;
-    min-height: 54px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border: 1px solid var(--app-accent);
-    border-radius: 13px;
-    background: linear-gradient(110deg, var(--app-accent), var(--app-primary));
-
-    color: var(--app-white);
-    font-size: 1.05rem;
-    font-weight: 800;
-    box-shadow: 0 5px 14px rgba(var(--app-shadow-rgb), 0.14);
-    transition:
-      filter 0.2s ease,
-      transform 0.2s ease;
-  }
-
-  &:hover::after {
-    filter: brightness(1.08);
-    transform: translate(-50%, -2px);
-  }
-
-  @media (max-width: 600px) {
-    &::after {
-      width: calc(100% - 40px);
-      bottom: 18px;
-    }
-  }
 `;
+
 export const CashMessage = styled.div`
   position: relative;
-  isolation: isolate;
-
   width: 100%;
-  min-height: 510px;
-  padding: 35px 25px 105px;
-  box-sizing: border-box;
+  min-height: 190px;
+  padding: 30px 35px 30px 150px;
 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 17px;
-
-  overflow: hidden;
-  text-align: center;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto auto;
+  align-content: center;
+  gap: 9px;
 
   background: var(--app-white);
-  border: 2px solid var(--app-accent-soft);
-  border-radius: 20px;
+  border: 1px solid var(--app-accent);
+  border-left: 6px solid var(--app-accent);
+  border-radius: 18px;
 
-  box-shadow: 0 12px 30px rgba(var(--app-shadow-rgb), 0.06);
+  box-shadow: 0 10px 25px rgba(74, 40, 24, 0.08);
 
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  /* Icono */
+  svg {
+    position: absolute;
+    left: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    width: 76px;
+    height: 76px;
+    padding: 17px;
+
+    color: var(--app-primary);
+    background: rgba(183, 131, 78, 0.2);
+    border-radius: 18px;
+  }
+
+  /* Separador vertical */
   &::before {
     content: "";
     position: absolute;
-    z-index: -1;
-    top: 25px;
-    left: 50%;
-    width: 250px;
-    height: 200px;
-    transform: translateX(-50%);
+    left: 126px;
+    top: 18%;
+    bottom: 18%;
 
-    background: radial-gradient(
-      circle,
-      var(--app-surface-soft) 0%,
-      var(--app-accent-soft) 65%,
-      transparent 72%
-    );
-
-    border-radius: 48% 52% 55% 45%;
-    opacity: 0.85;
-  }
-
-  & > svg {
-    width: 125px;
-    height: 125px;
-    margin: 0;
-    padding: 15px;
-    box-sizing: border-box;
-
-    color: var(--app-primary);
-    font-size: 5rem;
-
-    filter: drop-shadow(
-      0 5px 5px rgba(var(--app-shadow-rgb), 0.12)
-    );
+    width: 2px;
+    background: rgba(183, 131, 78, 0.35);
   }
 
   h2 {
     margin: 0;
     color: var(--app-primary);
-    font-size:  2rem;
-    font-weight: 850;
-    line-height: 1.2;
-    letter-spacing: -0.7px;
+
+    font-size: clamp(18px, 1.5vw, 23px);
+    font-weight: 750;
+    line-height: 1.4;
   }
 
   p {
     margin: 0;
     color: var(--app-ink);
-    font-size: 1rem;
-    font-weight: 600;
-    line-height: 1.5;
+
+    font-size: clamp(14px, 1.15vw, 18px);
+    line-height: 1.6;
   }
 
   span {
-    width: min(650px, 100%);
-    min-height: 62px;
-    padding: 12px 20px;
-    box-sizing: border-box;
+    display: block;
+    margin-top: 3px;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
+    color: var(--app-accent);
 
-    border-radius: 17px;
-    background: var(--app-surface-soft);
-
-    color: var(--app-primary);
-    font-size: 1rem;
-    font-weight: 700;
+    font-size: 14px;
+    font-weight: 650;
     line-height: 1.5;
+  }
+
+  ${CashMessageLink}:hover & {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(74, 40, 24, 0.13);
+  }
+
+  @media (max-width: 900px) {
+    min-height: 175px;
+    padding: 24px 24px 24px 115px;
+
+    svg {
+      left: 22px;
+      width: 66px;
+      height: 66px;
+      padding: 15px;
+    }
 
     &::before {
-      content: "ⓘ";
-      flex-shrink: 0;
-      font-size: 1.6rem;
-      color: var(--app-accent);
+      left: 100px;
     }
   }
 
-  @media (max-width: 700px) {
-    min-height: 470px;
-    padding: 25px 16px 90px;
-    gap: 15px;
+  @media (max-width: 600px) {
+    min-height: auto;
+    padding: 24px 20px;
 
-    &::before {
-      width: 200px;
-      height: 165px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+
+    svg {
+      position: static;
+      transform: none;
+
+      width: 58px;
+      height: 58px;
+      padding: 13px;
+
+      margin-bottom: 3px;
     }
 
-    & > svg {
-      width: 105px;
-      height: 105px;
+    &::before {
+      display: none;
+    }
+
+    h2 {
+      font-size: 19px;
+    }
+
+    p {
+      font-size: 14px;
     }
 
     span {
-      min-height: 58px;
-      padding: 10px;
-      font-size: 0.88rem;
+      font-size: 13px;
     }
   }
 `;
-
 
 export const CashBlockedOverlay = styled.div`
   position: fixed;
