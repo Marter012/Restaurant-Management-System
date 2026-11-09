@@ -33,21 +33,6 @@ const SaleDetailsContent = ({ sale }: Props) => {
 
   const payments = Array.isArray(sale.payments) ? sale.payments : [];
 
-  const paymentStatus = () => {
-    switch (sale.status_payment) {
-      case "paid":
-        return "Pagado";
-      case "pending":
-        return "Pendiente";
-      case "cancelled":
-        return "Cancelado";
-      case "partially_paid":
-        return "Pago parcial";
-      default:
-        return "Estado desconocido";
-    }
-  };
-
   const getMethodLabel = (method: string) =>
     methodLabels[method] ?? method ?? "Sin especificar";
 
