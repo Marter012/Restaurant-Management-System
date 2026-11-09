@@ -16,72 +16,91 @@ export const NavigationContainer = styled.nav`
   a,
   button:not(.menu-toggle) {
     position: relative;
-    width: 100%;
-    min-height: 46px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: 13px;
-    padding: 0 13px;
+    gap: 12px;
+
+    width: 100%;
+    min-height: 44px;
+    padding: 0 12px;
+
     border: 1px solid transparent;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     background: transparent;
-    color: var(--app-border);
-    text-decoration: none;
-    font-family: inherit;
-    font-size: 0.88rem;
-    font-weight: 650;
+    color: var(--color-sidebar-muted);
+
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    line-height: 1.2;
     text-align: left;
+    text-decoration: none;
     white-space: nowrap;
+
     transition:
-      background 0.18s ease,
-      color 0.18s ease,
-      border-color 0.18s ease,
-      transform 0.18s ease;
+      background-color var(--transition-normal),
+      color var(--transition-normal),
+      border-color var(--transition-normal),
+      transform var(--transition-fast);
   }
 
   a svg,
   button:not(.menu-toggle) svg {
     flex: 0 0 19px;
+    color: currentColor;
     font-size: 17px;
-    color: var(--app-white);
   }
 
   a:hover,
   button:not(.menu-toggle):hover {
-    color: var(--app-white);
-    background: var(--app-primary-active);
+    background: var(--color-sidebar-surface);
+    color: var(--color-sidebar-text);
   }
 
-  a.active {
-    color: var(--app-primary-active);
-    background: var(--app-accent);
-    border-color: var(--app-accent);
-    box-shadow: 0 6px 16px rgba(var(--app-primary-rgb), 0.141);
+  a:active,
+  button:not(.menu-toggle):active {
+    transform: translateY(1px);
   }
 
-  a.active svg {
-    color: var(--app-primary-active);
+  a.active,
+  a[aria-current="page"] {
+    border-color: var(--color-sidebar-border);
+    background: var(--color-sidebar-active);
+    color: var(--color-sidebar-text);
+    box-shadow: inset 3px 0 0 var(--color-accent);
   }
 
-  a.active::after {
-    content: none;
+  a.active svg,
+  a[aria-current="page"] svg {
+    color: var(--color-white);
   }
 
   .menu-toggle {
     display: none;
-    width: 42px;
-    height: 42px;
     align-items: center;
     justify-content: center;
-    border: 1px solid var(--app-primary);
-    border-radius: 12px;
-    background: var(--app-primary-active);
-    color: var(--app-white);
+    width: 42px;
+    height: 42px;
+    padding: 0;
+
+    border: 1px solid var(--color-sidebar-border);
+    border-radius: var(--radius-md);
+    background: var(--color-sidebar-surface);
+    color: var(--color-sidebar-text);
+
     font-size: 18px;
+    transition:
+      background-color var(--transition-normal),
+      border-color var(--transition-normal);
   }
 
-  /* TABLET: SOLO ICONOS EN LA BARRA LATERAL */
+  .menu-toggle:hover {
+    border-color: color-mix(in srgb, var(--color-accent) 55%, transparent);
+    background: var(--color-sidebar-active);
+  }
+
+  /* TABLET: ICON-ONLY SIDEBAR */
   @media (min-width: 621px) and (max-width: 1024px) {
     width: 100%;
 
@@ -94,14 +113,17 @@ export const NavigationContainer = styled.nav`
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
+
       width: 100%;
       height: auto;
       padding: 0;
+
       border: 0;
       border-radius: 0;
       background: transparent;
       box-shadow: none;
+
       opacity: 1;
       visibility: visible;
       transform: none;
@@ -110,14 +132,16 @@ export const NavigationContainer = styled.nav`
 
     a,
     button:not(.menu-toggle) {
-      width: 52px;
-      min-width: 52px;
-      height: 48px;
-      min-height: 48px;
       justify-content: center;
-      padding: 0;
       gap: 0;
-      border-radius: 13px;
+
+      width: 50px;
+      min-width: 50px;
+      min-height: 48px;
+      height: 48px;
+      padding: 0;
+
+      border-radius: var(--radius-md);
     }
 
     a span,
@@ -128,45 +152,53 @@ export const NavigationContainer = styled.nav`
     a svg,
     button:not(.menu-toggle) svg {
       flex: 0 0 auto;
-      font-size: 20px;
+      font-size: 19px;
+    }
+
+    a.active,
+    a[aria-current="page"] {
+      box-shadow: inset 0 -3px 0 var(--color-accent);
     }
   }
 
-  /* MOBILE: MENÚ HAMBURGUESA */
+  /* MOBILE: HAMBURGER MENU */
   @media (max-width: 620px) {
     width: auto;
 
     .menu-toggle {
       display: flex;
-      width: 42px;
-      height: 42px;
-      flex-shrink: 0;
+      flex: 0 0 42px;
     }
 
     .navigation-links {
       position: absolute;
-      top: calc(100% + 14px);
+      top: calc(100% + 12px);
       right: 0;
       z-index: 1000;
-      width: min(300px, calc(100vw - 24px));
-      height: auto;
-      padding: 10px;
+
       display: flex;
       flex-direction: column;
       align-items: stretch;
-      gap: 5px;
-      border: 1px solid var(--app-surface-soft);
-      border-radius: 18px;
-      background: var(--app-white);
-      box-shadow: 0 22px 55px rgba(var(--app-shadow-rgb), 0.149);
+      gap: 4px;
+
+      width: min(300px, calc(100vw - 24px));
+      height: auto;
+      padding: 8px;
+
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      background: var(--color-surface);
+      box-shadow: var(--shadow-lg);
+
       opacity: 0;
       visibility: hidden;
-      transform: translateY(-7px);
+      transform: translateY(-6px);
       pointer-events: none;
+
       transition:
-        opacity 0.18s ease,
-        transform 0.18s ease,
-        visibility 0.18s ease;
+        opacity var(--transition-normal),
+        transform var(--transition-normal),
+        visibility var(--transition-normal);
     }
 
     .navigation-links.open {
@@ -178,33 +210,38 @@ export const NavigationContainer = styled.nav`
 
     a,
     button:not(.menu-toggle) {
-      color: var(--app-primary-active);
-      min-height: 46px;
-    }
-
-    a span {
-      display: inline;
+      min-height: 44px;
+      color: var(--color-text);
     }
 
     a svg,
     button:not(.menu-toggle) svg {
-      color: var(--app-primary);
+      color: var(--color-primary);
     }
 
     a:hover,
     button:not(.menu-toggle):hover {
-      color: var(--app-primary-active);
-      background: var(--app-surface-soft);
+      background: var(--color-surface-muted);
+      color: var(--color-primary);
     }
 
-    a.active {
-      color: var(--app-primary-active);
-      background: var(--app-accent);
+    a.active,
+    a[aria-current="page"] {
+      border-color: transparent;
+      background: var(--color-primary-soft);
+      color: var(--color-primary);
+      box-shadow: inset 3px 0 0 var(--color-primary);
+    }
+
+    a.active svg,
+    a[aria-current="page"] svg {
+      color: var(--color-primary);
     }
   }
 
   @media (max-width: 380px) {
     .menu-toggle {
+      flex-basis: 38px;
       width: 38px;
       height: 38px;
     }
@@ -213,60 +250,60 @@ export const NavigationContainer = styled.nav`
 
 export const PrintButton = styled.button`
   position: relative;
-  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 0 20px;
-  box-sizing: border-box;
+
+  height: 100%;
+  padding: 0 16px;
   flex-shrink: 0;
-  border: none;
-  border-radius: 0;
-  background: transparent !important;
-  color: #c29e70;
-  border: none !important;
-  font-size: 0.95rem;
-  font-weight: 500;
+
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-sidebar-muted);
+
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
   white-space: nowrap;
+
   cursor: pointer;
+
   transition:
-    background-color 0.2s ease,
-    color 0.2s ease;
+    background-color var(--transition-normal),
+    color var(--transition-normal),
+    border-color var(--transition-normal);
 
   &:hover {
-    color: #f4e9d8 !important;
-    background-color: rgba(194, 158, 112, 0.12) !important;
+    border-color: var(--color-sidebar-border);
+    background: var(--color-sidebar-surface);
+    color: var(--color-sidebar-text);
   }
 
   &:focus-visible {
-    outline: 2px solid #c29e70;
-    outline-offset: -2px;
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
   }
 
   span {
-    font-size: 0.95rem;
-    font-weight: 500;
+    font-size: inherit;
+    font-weight: inherit;
   }
 
   @media (max-width: 1300px) {
-    width: 100%;
-    height: 48px;
     justify-content: flex-start;
-    gap: 12px;
-    padding: 0 14px;
-    border-radius: 8px;
-    font-size: 0.9rem;
-
-    span {
-      display: inline;
-    }
+    width: 100%;
+    height: 46px;
+    padding: 0 12px;
   }
 
   @media (min-width: 621px) and (max-width: 1024px) {
-    width: 52px;
-    min-width: 52px;
     justify-content: center;
+    width: 50px;
+    min-width: 50px;
+    height: 48px;
     padding: 0;
 
     span {
@@ -275,19 +312,28 @@ export const PrintButton = styled.button`
   }
 
   @media (max-width: 400px) {
-    height: 46px;
-    padding: 0 12px;
+    height: 44px;
+    padding: 0 10px;
   }
 `;
 
 export const PrintIndicator = styled.span<{
   $online: boolean;
 }>`
-  right: 13px;
-  width: 7px;
-  height: 7px;
+  display: inline-block;
+  flex: 0 0 8px;
+  width: 8px;
+  height: 8px;
+
   border-radius: 50%;
-  background-color: ${({ $online }) => ($online ? "#35a853" : "#d9534f")};
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15);
+  background-color: ${({ $online }) =>
+    $online ? "var(--color-success)" : "var(--color-danger)"};
+
+  box-shadow: 0 0 0 3px
+    ${({ $online }) =>
+      $online
+        ? "var(--color-success-soft)"
+        : "var(--color-danger-soft)"};
+
   pointer-events: none;
 `;

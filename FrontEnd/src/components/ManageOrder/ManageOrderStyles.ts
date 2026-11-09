@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { TableRow } from "../Tables/ListTableStyles.ts";
 
 // =========================================================
 // CONTENEDOR DE COMANDAS
@@ -41,19 +42,19 @@ export const ContainerManageOrders = styled.div`
 
     padding: 0 14px;
 
-    background: var(--app-surface);
-    border: 1px solid var(--app-border);
-    border-radius: var(--app-radius-sm);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
 
-    color: var(--app-muted);
+    color: var(--color-text-secondary);
 
     transition:
-      border-color var(--app-transition),
-      box-shadow var(--app-transition);
+      border-color var(--transition-normal),
+      box-shadow var(--transition-normal);
 
     &:focus-within {
-      border-color: var(--app-accent);
-      box-shadow: 0 0 0 3px rgba(var(--app-accent-rgb), 0.1);
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px var(--color-primary-soft);
     }
 
     svg {
@@ -71,13 +72,12 @@ export const ContainerManageOrders = styled.div`
       outline: 0;
 
       background: transparent;
-      color: var(--app-ink);
+      color: var(--color-text);
 
-      font-family: inherit;
       font-size: 13px;
 
       &::placeholder {
-        color: var(--app-muted);
+        color: var(--color-text-secondary);
       }
     }
   }
@@ -105,11 +105,11 @@ export const ContainerManageOrders = styled.div`
 
       text-align: center;
 
-      color: var(--app-muted-dark);
+      color: var(--color-text-secondary);
       font-size: 11px;
       font-weight: 750;
 
-      background-color: var(--app-border);
+      background-color: var(--color-background);
     }
 
     select {
@@ -118,13 +118,12 @@ export const ContainerManageOrders = styled.div`
 
       padding: 0 12px;
 
-      border: 1px solid var(--app-border);
-      border-radius: var(--app-radius-sm);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
 
-      background: var(--app-surface);
-      color: var(--app-ink);
+      background: var(--color-surface);
+      color: var(--color-text);
 
-      font-family: inherit;
       font-size: 13px;
       font-weight: 650;
 
@@ -132,7 +131,7 @@ export const ContainerManageOrders = styled.div`
       cursor: pointer;
 
       &:focus {
-        border-color: var(--app-accent);
+        border-color: var(--color-accent);
       }
     }
   }
@@ -152,13 +151,12 @@ export const ContainerManageOrders = styled.div`
 
     padding: 0 17px;
 
-    border: 1px solid var(--app-primary);
-    border-radius: var(--app-radius-sm);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-sm);
 
-    background: var(--app-primary);
-    color: var(--app-white);
+    background: var(--color-primary);
+    color: var(--color-white);
 
-    font-family: inherit;
     font-size: 13px;
     font-weight: 800;
 
@@ -166,13 +164,13 @@ export const ContainerManageOrders = styled.div`
     cursor: pointer;
 
     transition:
-      background var(--app-transition),
-      transform var(--app-transition),
-      box-shadow var(--app-transition);
+      background var(--transition-normal),
+      transform var(--transition-normal),
+      box-shadow var(--transition-normal);
 
     &:hover {
-      filter: brightness(1.08);
-      box-shadow: var(--app-shadow-sm);
+      background: var(--color-primary-hover);
+      box-shadow: var(--shadow-sm);
     }
 
     &:active {
@@ -237,6 +235,12 @@ export const ContainerManageOrders = styled.div`
     .total {
       white-space: normal;
       overflow-wrap: anywhere;
+    }
+    .payment-pill,
+    .payment-status {
+      width: 80%;
+      display: flex;
+      justify-content: center;
     }
   }
 
@@ -440,7 +444,7 @@ export const EmptyMessage = styled.div`
 
   padding: 25px;
 
-  color: var(--app-muted);
+  color: var(--color-text-secondary);
 
   font-size: 13px;
   font-weight: 600;
@@ -452,5 +456,211 @@ export const EmptyMessage = styled.div`
     min-height: 120px;
     padding: 18px;
     font-size: 12px;
+  }
+`;
+
+// =========================================================
+// FILA DE COMANDAS
+// =========================================================
+
+export const OrdersTableRow = styled(TableRow)`
+  min-height: 62px;
+
+  margin: 0;
+  padding: 11px 16px;
+
+  border: 0;
+  border-bottom: 1px solid var(--color-border);
+  border-radius: 0;
+
+  background: var(--color-surface);
+  color: var(--color-text);
+
+  box-shadow: none;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--color-surface-hover);
+    border-color: var(--color-border);
+    box-shadow: none;
+  }
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  .order-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: fit-content;
+
+    padding: 6px 11px;
+
+    border-radius: 20px;
+
+    background: var(--color-surface-hover);
+    color: var(--color-primary);
+
+    font-size: 12px;
+    font-weight: 850;
+
+    white-space: nowrap;
+  }
+
+  .customer {
+    color: var(--color-text);
+    font-weight: 700;
+  }
+
+  .product-lines {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    gap: 3px;
+
+    min-width: 0;
+
+    span {
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+
+      color: var(--color-text-secondary);
+      font-size: 12px;
+    }
+
+    small {
+      color: var(--color-text-light);
+      font-size: 11px;
+      font-weight: 700;
+    }
+  }
+
+  .total {
+    color: var(--color-primary);
+    font-weight: 850;
+  }
+
+  .payment-pill {
+    display: inline-flex;
+    align-items: center;
+
+    max-width: 100%;
+    width: fit-content;
+
+    padding: 6px 10px;
+
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+
+    background: var(--color-surface-hover);
+    color: var(--color-text-secondary);
+
+    font-size: 11px;
+    font-weight: 750;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  // Estados de pago
+
+  .payment-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: fit-content;
+    max-width: 100%;
+
+    padding: 6px 10px;
+
+    border: 1px solid transparent;
+    border-radius: 999px;
+
+    font-size: 11px;
+    font-weight: 850;
+    line-height: 1.25;
+
+    white-space: nowrap;
+  }
+
+  .payment-status.paid {
+    background: var(--color-success-soft);
+    border-color: var(--color-success);
+    color: var(--color-success);
+  }
+
+  .payment-status.pending {
+    background: var(--color-pending-soft);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .payment-status.partially_paid {
+    background: var(--color-pending-soft);
+    border-color: var(--color-pending);
+    color: var(--color-pending);
+  }
+
+  .payment-status.cancelled {
+    background: var(--color-danger-soft);
+    border-color: var(--color-danger);
+    color: var(--color-danger);
+  }
+
+  .payment-status.unknown {
+    background: var(--color-surface-hover);
+    border-color: var(--color-border);
+    color: var(--color-text-light);
+  }
+
+  // Estado de la comanda, independiente del pago.
+
+  .order-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: fit-content;
+    max-width: 100%;
+
+    padding: 6px 10px;
+
+    border-radius: 999px;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    white-space: nowrap;
+  }
+
+  .order-status.active {
+    background: var(--color-success-soft);
+    color: var(--color-success);
+  }
+
+  .order-status.inactive {
+    background: var(--color-danger-soft);
+    color: var(--color-danger);
+  }
+
+  .actions {
+    justify-content: center;
+  }
+
+  @media (max-width: 850px) {
+    gap: 10px;
+    padding: 12px;
+  }
+
+  @media (max-width: 600px) {
+    gap: 8px;
+    padding: 11px 9px;
   }
 `;

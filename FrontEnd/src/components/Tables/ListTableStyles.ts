@@ -15,21 +15,21 @@ export const CardTable = styled.div`
 
   overflow: hidden;
 
-  background: var(--app-surface);
-  border: 1px solid var(--app-border);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 14px;
 
-  box-shadow: 0 4px 14px rgba(var(--app-shadow-rgb), 0.06);
+  box-shadow: 0 4px 14px var(--color-text-light);
 
   text-align: left;
   box-sizing: border-box;
 
   transition:
-    border-color var(--app-transition),
-    box-shadow var(--app-transition);
+    border-color var(--transition-normal),
+    box-shadow var(--transition-normal);
 
   &:focus-within {
-    border-color: var(--app-border-strong);
+    border-color: var(--color-border-strong);
   }
 
   .table-scroll {
@@ -55,10 +55,7 @@ export const CardTable = styled.div`
 export const TableHeader = styled.div<{ $columns: number }>`
   display: grid;
 
-  grid-template-columns: repeat(
-    ${({ $columns }) => $columns},
-    minmax(0, 1fr)
-  );
+  grid-template-columns: repeat(${({ $columns }) => $columns}, minmax(0, 1fr));
 
   gap: 16px;
   align-items: center;
@@ -67,9 +64,8 @@ export const TableHeader = styled.div<{ $columns: number }>`
   width: max-content;
 
   padding: 15px 18px;
-
-  background: var(--app-white);
-  border-bottom: 1px solid var(--app-border);
+  background: var(--color-white);
+  border-bottom: 1px solid var(--color-border);
 
   box-sizing: border-box;
 
@@ -81,9 +77,7 @@ export const TableHeader = styled.div<{ $columns: number }>`
     min-width: 0;
     margin: 0;
 
-    color: var(--app-navbar-text);
-
-    font-family: inherit;
+    color: var(--color-text);
     font-size: 12px;
     font-weight: 800;
 
@@ -93,6 +87,7 @@ export const TableHeader = styled.div<{ $columns: number }>`
 
     overflow: hidden;
     text-overflow: ellipsis;
+    text-align: center;
     white-space: nowrap;
   }
 
@@ -119,9 +114,8 @@ export const TableHeader = styled.div<{ $columns: number }>`
 // =========================================================
 
 export const OrdersTableHeader = styled(TableHeader)`
-  background: var(--app-surface-soft);
+  background: var(--color-surface-hover);
   h4 {
-    
     font-size: 11px;
     font-weight: 800;
     letter-spacing: 0.055em;
@@ -148,12 +142,12 @@ export const ContainerRows = styled.div`
 
   overflow: visible;
 
-  background: var(--app-white);
+  background: var(--color-white);
 
   box-sizing: border-box;
 
   scrollbar-width: thin;
-  scrollbar-color: var(--app-border-strong) transparent;
+  scrollbar-color: var(--color-border-strong) transparent;
 
   @media (max-width: 600px) {
     padding: 4px;
@@ -169,10 +163,7 @@ export const TableRow = styled.div<{ $columns: number }>`
 
   display: grid;
 
-  grid-template-columns: repeat(
-    ${({ $columns }) => $columns},
-    minmax(0, 1fr)
-  );
+  grid-template-columns: repeat(${({ $columns }) => $columns}, minmax(0, 1fr));
 
   gap: 16px;
   align-items: center;
@@ -184,40 +175,46 @@ export const TableRow = styled.div<{ $columns: number }>`
   padding: 15px 14px;
 
   border: 1px solid transparent;
-  border-radius: var(--app-radius-sm);
+  border-radius: var(--radius-sm);
 
-  background: var(--app-surface);
+  background: var(--color-surface);
 
-  color: var(--app-muted-dark);
-
-  font-family: inherit;
+  color: var(--color-text-secondary);
   font-size: 13px;
   line-height: 1.45;
 
   box-sizing: border-box;
 
-  box-shadow: var(--app-shadow-xs);
+  box-shadow: var(--shadow-sm);
 
   transition:
-    background-color var(--app-transition),
-    border-color var(--app-transition),
-    box-shadow var(--app-transition),
-    transform var(--app-transition);
+    background-color var(--transition-normal),
+    border-color var(--transition-normal),
+    box-shadow var(--transition-normal),
+    transform var(--transition-normal);
+
+  > * {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-width: 0;
+  }
 
   &:hover {
     z-index: 1;
 
-    background: var(--app-surface-soft);
-    border-color: var(--app-border);
+    background: var(--color-surface-hover);
+    border-color: var(--color-border);
 
     box-shadow:
-      0 2px 4px rgba(var(--app-shadow-rgb), 0.025),
-      0 5px 12px rgba(var(--app-shadow-rgb), 0.035);
+      0 2px 4px var(--color-text-light),
+      0 5px 12px var(--color-text-light);
   }
 
   &:focus-within {
-    border-color: var(--app-border-strong);
-    box-shadow: 0 0 0 3px rgba(var(--app-muted-rgb), 0.08);
+    border-color: var(--color-border-strong);
+    box-shadow: 0 0 0 3px var(--color-surface-muted);
   }
 
   span,
@@ -233,11 +230,11 @@ export const TableRow = styled.div<{ $columns: number }>`
   }
 
   span {
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
   }
 
   strong {
-    color: var(--app-ink);
+    color: var(--color-text);
     font-size: 13px;
     font-weight: 750;
   }
@@ -258,7 +255,7 @@ export const TableRow = styled.div<{ $columns: number }>`
 
   .price,
   .total {
-    color: var(--app-ink);
+    color: var(--color-text);
     font-size: 13px;
     font-weight: 800;
     font-variant-numeric: tabular-nums;
@@ -275,11 +272,11 @@ export const TableRow = styled.div<{ $columns: number }>`
 
     padding: 5px 10px;
 
-    border: 1px solid var(--app-border);
+    border: 1px solid var(--color-border);
     border-radius: 999px;
 
-    background: var(--app-success-soft);
-    color: var(--app-success);
+    background: var(--color-success-soft);
+    color: var(--color-success);
 
     font-size: 11px;
     font-weight: 800;
@@ -293,12 +290,12 @@ export const TableRow = styled.div<{ $columns: number }>`
   }
 
   .product-name {
-    color: var(--app-ink);
+    color: var(--color-text);
     font-weight: 700;
   }
 
   .category {
-    color: var(--app-muted);
+    color: var(--color-text-light);
   }
 
   .actions svg {
@@ -360,213 +357,6 @@ export const TableRow = styled.div<{ $columns: number }>`
 `;
 
 // =========================================================
-// FILA DE COMANDAS
-// =========================================================
-
-export const OrdersTableRow = styled(TableRow)`
-  min-height: 62px;
-
-  margin: 0;
-  padding: 11px 16px;
-
-  border: 0;
-  border-bottom: 1px solid var(--app-border);
-  border-radius: 0;
-
-  background: var(--app-surface);
-  color: var(--app-ink);
-
-  box-shadow: none;
-
-  cursor: pointer;
-
-  &:hover {
-    background: var(--app-surface-soft);
-    border-color: var(--app-border);
-    box-shadow: none;
-  }
-
-  &:last-child {
-    border-bottom: 0;
-  }
-
-  .order-number {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    width: fit-content;
-
-    padding: 6px 11px;
-
-    border-radius: 20px;
-
-    background: var(--app-surface-soft);
-    color: var(--app-primary);
-
-    font-size: 12px;
-    font-weight: 850;
-
-    white-space: nowrap;
-  }
-
-  .customer {
-    color: var(--app-ink);
-    font-weight: 700;
-  }
-
-  .product-lines {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-
-    gap: 3px;
-
-    min-width: 0;
-
-    span {
-      max-width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-
-      color: var(--app-muted-dark);
-      font-size: 12px;
-    }
-
-    small {
-      color: var(--app-muted);
-      font-size: 11px;
-      font-weight: 700;
-    }
-  }
-
-  .total {
-    color: var(--app-primary);
-    font-weight: 850;
-  }
-
-  .payment-pill {
-    display: inline-flex;
-    align-items: center;
-
-    max-width: 100%;
-    width: fit-content;
-
-    padding: 6px 10px;
-
-    border: 1px solid var(--app-border);
-    border-radius: 999px;
-
-    background: var(--app-surface-soft);
-    color: var(--app-muted-dark);
-
-    font-size: 11px;
-    font-weight: 750;
-
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  // Estados de pago
-
-  .payment-status {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    width: fit-content;
-    max-width: 100%;
-
-    padding: 6px 10px;
-
-    border: 1px solid transparent;
-    border-radius: 999px;
-
-    font-size: 11px;
-    font-weight: 850;
-    line-height: 1.25;
-
-    white-space: nowrap;
-  }
-
-  .payment-status.paid {
-    background: var(--app-success-soft);
-    border-color: var(--app-success);
-    color: var(--app-success);
-  }
-
-  .payment-status.pending {
-    background: var(--app-warning-soft);
-    border-color: var(--app-accent);
-    color: var(--app-accent);
-  }
-
-  .payment-status.partially_paid {
-    background: rgba(59, 130, 246, 0.10);
-    border-color: #3b82f6;
-    color: #2563eb;
-  }
-
-  .payment-status.cancelled {
-    background: rgba(220, 38, 38, 0.10);
-    border-color: #dc2626;
-    color: #dc2626;
-  }
-
-  .payment-status.unknown {
-    background: var(--app-surface-soft);
-    border-color: var(--app-border);
-    color: var(--app-muted);
-  }
-
-  // Estado de la comanda, independiente del pago.
-
-  .order-status {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    width: fit-content;
-    max-width: 100%;
-
-    padding: 6px 10px;
-
-    border-radius: 999px;
-
-    font-size: 11px;
-    font-weight: 800;
-
-    white-space: nowrap;
-  }
-
-  .order-status.active {
-    background: var(--app-success-soft);
-    color: var(--app-success);
-  }
-
-  .order-status.inactive {
-    background: rgba(220, 38, 38, 0.10);
-    color: #dc2626;
-  }
-
-  .actions {
-    justify-content: center;
-  }
-
-  @media (max-width: 850px) {
-    gap: 10px;
-    padding: 12px;
-  }
-
-  @media (max-width: 600px) {
-    gap: 8px;
-    padding: 11px 9px;
-  }
-`;
-
-// =========================================================
 // BOTONES GENERALES DE TABLA
 // =========================================================
 
@@ -583,13 +373,11 @@ export const TableButton = styled.button`
 
   padding: 7px 11px;
 
-  border: 1px solid var(--app-border-strong);
-  border-radius: var(--app-radius-sm);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
 
-  background: var(--app-surface);
-  color: var(--app-muted-dark);
-
-  font-family: inherit;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
   font-size: 12px;
   font-weight: 750;
   line-height: 1.2;
@@ -597,23 +385,23 @@ export const TableButton = styled.button`
   white-space: nowrap;
   cursor: pointer;
 
-  box-shadow: var(--app-shadow-xs);
+  box-shadow: var(--shadow-sm);
 
   transition:
-    background-color var(--app-transition),
-    border-color var(--app-transition),
-    color var(--app-transition),
-    box-shadow var(--app-transition),
-    transform var(--app-transition);
+    background-color var(--transition-normal),
+    border-color var(--transition-normal),
+    color var(--transition-normal),
+    box-shadow var(--transition-normal),
+    transform var(--transition-normal);
 
   &:hover:not(:disabled) {
-    background: var(--app-surface-soft);
-    border-color: var(--app-accent);
-    color: var(--app-primary);
+    background: var(--color-surface-hover);
+    border-color: var(--color-accent);
+    color: var(--color-primary);
   }
 
   &:focus-visible {
-    outline: 3px solid var(--app-surface-soft);
+    outline: 3px solid var(--color-surface-hover);
     outline-offset: 2px;
   }
 
@@ -623,9 +411,9 @@ export const TableButton = styled.button`
   }
 
   &:disabled {
-    background: var(--app-surface-soft);
-    border-color: var(--app-border);
-    color: var(--app-muted);
+    background: var(--color-surface-hover);
+    border-color: var(--color-border);
+    color: var(--color-text-light);
 
     cursor: not-allowed;
     transform: none;

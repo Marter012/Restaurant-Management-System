@@ -8,7 +8,7 @@ export const FormStyles = styled(Form)`
   flex-direction: column;
   gap: 20px;
 
-  .containerInfo{
+  .containerInfo {
     width: 100%;
     height: 80%;
     overflow-y: auto;
@@ -33,53 +33,57 @@ export const FormGroup = styled.div`
 
 export const Label = styled.label`
   font-weight: 600;
-  color: var(--app-primary);
+  color: var(--color-primary);
 `;
 
 export const Input = styled.input`
   width: 100%;
   padding: 11px 13px;
   box-sizing: border-box;
-  border: 1px solid var(--app-accent);
-  border-radius: 8px;
-  background-color: var(--app-white);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-white);
+  color: var(--color-text);
   font-size: 1rem;
   outline: none;
-  transition: 0.2s;
+  transition: var(--transition-normal);
 
   &:focus {
-    border-color: var(--app-primary);
-    box-shadow: 0 0 0 2px rgba(var(--app-shadow-rgb), 0.1);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px var(--color-primary-soft);
   }
 
   &:disabled {
-    background-color: var(--app-surface-soft);
+    background-color: var(--color-surface-hover);
     cursor: not-allowed;
   }
 `;
+
 export const Select = styled.select`
   width: 100%;
   padding: 11px 13px;
   box-sizing: border-box;
-  border: 1px solid var(--app-accent);
-  border-radius: 8px;
-  background-color: red;
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-text);
   font-size: 1rem;
   outline: none;
-  transition: 0.2s;
+  transition: var(--transition-normal);
 
   &:focus {
-    border-color: var(--app-primary);
-    box-shadow: 0 0 0 2px rgba(var(--app-shadow-rgb), 0.1);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px var(--color-primary-soft);
   }
 
   &:disabled {
-    background-color: var(--app-surface-soft);
+    background-color: var(--color-surface-hover);
     cursor: not-allowed;
   }
 `;
+
 export const ErrorText = styled.span`
-  color: var(--app-danger);
+  color: var(--color-danger);
   font-size: 0.85rem;
 `;
 
@@ -89,4 +93,3 @@ export const FormActions = styled.div`
   gap: 10px;
   margin-top: 10px;
 `;
-

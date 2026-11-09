@@ -13,7 +13,7 @@ export const ContainerManagePromotions = styled.div`
 
   .promotions-feedback {
     margin: 8px 0;
-    color: var(--app-muted);
+    color: var(--color-text-secondary);
   }
 
   @media (max-width: 700px) {
@@ -30,10 +30,10 @@ export const CategoryTabs = styled.nav`
   gap: 4px;
   padding: 5px;
   overflow-x: auto;
-  background: var(--app-surface);
-  border: 1px solid var(--app-border);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 15px;
-  box-shadow: var(--app-shadow-xs);
+  box-shadow: var(--shadow-sm);
   scrollbar-width: thin;
 `;
 
@@ -49,8 +49,8 @@ export const CategoryTab = styled.button<{ $active: boolean }>`
   border: 0;
   border-radius: 10px;
   background: ${({ $active }) =>
-    $active ? "var(--app-primary)" : "transparent"};
-  color: ${({ $active }) => ($active ? "var(--app-white)" : "var(--app-ink)")};
+    $active ? "var(--color-primary)" : "transparent"};
+  color: ${({ $active }) => ($active ? "var(--color-white)" : "var(--color-text)")};
   font: inherit;
   font-size: 0.9rem;
   font-weight: 650;
@@ -65,7 +65,7 @@ export const CategoryTab = styled.button<{ $active: boolean }>`
   }
   &:hover {
     background: ${({ $active }) =>
-      $active ? "var(--app-primary)" : "var(--app-surface-soft)"};
+      $active ? "var(--color-primary)" : "var(--color-surface-muted)"};
   }
 
   @media (max-width: 600px) {
@@ -90,7 +90,7 @@ export const Filter = styled.div`
     display: grid;
     gap: 6px;
     min-width: 0;
-    color: var(--app-ink);
+    color: var(--color-text);
     font-size: 0.82rem;
     font-weight: 600;
   }
@@ -130,11 +130,11 @@ export const SearchControl = styled.label`
   align-items: center;
   gap: 12px;
   padding: 0 17px;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 13px;
-  background: var(--app-surface);
-  color: var(--app-muted);
-  box-shadow: var(--app-shadow-xs);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  box-shadow: var(--shadow-sm);
 
   > svg {
     flex: 0 0 auto;
@@ -147,12 +147,12 @@ export const SearchControl = styled.label`
     border: 0;
     outline: 0;
     background: transparent;
-    color: var(--app-ink);
+    color: var(--color-text);
     font: inherit;
     font-size: 0.94rem;
   }
   input::placeholder {
-    color: var(--app-muted);
+    color: var(--color-text-secondary);
   }
   button.clear-search {
     width: 30px;
@@ -162,12 +162,12 @@ export const SearchControl = styled.label`
     border: 0;
     border-radius: 7px;
     background: transparent;
-    color: var(--app-muted);
+    color: var(--color-text-secondary);
     cursor: pointer;
   }
   &:focus-within {
-    border-color: var(--app-accent);
-    box-shadow: 0 0 0 3px rgba(var(--app-accent-rgb), 0.13);
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 13%, transparent);
   }
 
   @media (max-width: 520px) {
@@ -179,16 +179,16 @@ export const FilterSelect = styled.select`
   width: 100%;
   height: 48px;
   padding: 0 14px;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
-  background: var(--app-surface);
-  color: var(--app-ink);
+  background: var(--color-surface);
+  color: var(--color-text);
   font: inherit;
   font-size: 0.9rem;
   outline: none;
   cursor: pointer;
   &:focus {
-    border-color: var(--app-accent);
+    border-color: var(--color-accent);
   }
   @media (max-width: 520px) {
     height: 46px;
@@ -218,10 +218,10 @@ export const PromotionCard = styled.article`
   min-width: 0;
   overflow: visible;
   padding: 10px;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 18px;
-  background: var(--app-surface);
-  box-shadow: var(--app-shadow-xs);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
   cursor: pointer;
   transition:
     transform 0.18s ease,
@@ -230,8 +230,8 @@ export const PromotionCard = styled.article`
 
   &:hover {
     transform: translateY(-3px);
-    border-color: var(--app-accent-soft);
-    box-shadow: 0 10px 26px rgba(75, 43, 25, 0.11);
+    border-color: var(--color-primary-soft);
+    box-shadow: var(--shadow-md);
   }
 `;
 
@@ -240,7 +240,7 @@ export const PromotionImage = styled.div`
   position: relative;
   overflow: visible;
   border-radius: 13px;
-  background: var(--app-surface-soft);
+  background: var(--color-surface-muted);
 
   > img {
     display: block;
@@ -259,23 +259,23 @@ export const PromotionImage = styled.div`
     display: grid;
     gap: 3px;
     padding: 6px;
-    border: 1px solid var(--app-border);
+    border: 1px solid var(--color-border);
     border-radius: 10px;
-    background: var(--app-surface);
-    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.15);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-md);
 
     button {
       padding: 9px 10px;
       border: 0;
       border-radius: 7px;
       background: transparent;
-      color: var(--app-ink);
+      color: var(--color-text);
       text-align: left;
       font: inherit;
       font-size: 0.8rem;
       cursor: pointer;
       &:hover {
-        background: var(--app-surface-soft);
+        background: var(--color-surface-muted);
       }
     }
   }
@@ -298,18 +298,18 @@ export const PromotionBadge = styled.span<{
   border-radius: 9px;
   background: ${({ $status }) =>
     $status === "active"
-      ? "#e2f3df"
+      ? "var(--color-success-soft)"
       : $status === "scheduled"
-        ? "#fff0c2"
+        ? "var(--color-pending-soft)"
         : $status === "expired"
-          ? "#fce8e5"
-          : "#fce8e5"};
+          ? "var(--color-danger-soft)"
+          : "var(--color-danger-soft)"};
   color: ${({ $status }) =>
     $status === "active"
-      ? "#24723a"
+      ? "var(--color-success)"
       : $status === "scheduled"
-        ? "#a96800"
-        : "#bd3932"};
+        ? "var(--color-pending)"
+        : "var(--color-danger)"};
   font-size: 0.78rem;
   font-weight: 800;
   svg {
@@ -327,11 +327,11 @@ export const PromotionMenuButton = styled.button`
   place-items: center;
   border: 0;
   border-radius: 9px;
-  background: #fffaf2;
-  color: var(--app-primary);
+  background: var(--color-surface);
+  color: var(--color-primary);
   cursor: pointer;
   &:hover {
-    background: var(--app-white);
+    background: var(--color-white);
   }
 `;
 
@@ -339,7 +339,7 @@ export const PromotionCardContent = styled.div`
   padding: 10px 12px 3px;
   h3 {
     margin: 0 0 5px;
-    color: var(--app-ink);
+    color: var(--color-text);
     font-size: 1.02rem;
     font-weight: 800;
     line-height: 1.25;
@@ -347,7 +347,7 @@ export const PromotionCardContent = styled.div`
   > p {
     min-height: 38px;
     margin: 0;
-    color: var(--app-ink);
+    color: var(--color-text);
     font-size: 0.86rem;
     line-height: 1.4;
     display: -webkit-box;
@@ -368,8 +368,8 @@ export const PromotionCardFooter = styled.div`
     flex: 0 0 auto;
     padding: 8px 15px;
     border-radius: 22px;
-    background: var(--app-surface-soft);
-    color: var(--app-ink);
+    background: var(--color-surface-muted);
+    color: var(--color-text);
     font-size: 1.02rem;
     font-weight: 800;
     white-space: nowrap;
@@ -379,12 +379,12 @@ export const PromotionCardFooter = styled.div`
     display: inline-flex;
     align-items: center;
     gap: 7px;
-    color: var(--app-ink);
+    color: var(--color-text);
     font-size: 0.8rem;
     white-space: nowrap;
   }
   span svg {
-    color: var(--app-primary);
+    color: var(--color-primary);
     flex: 0 0 auto;
   }
   @media (max-width: 520px) {
@@ -400,10 +400,10 @@ export const PromotionCardFooter = styled.div`
 export const EmptyPromotions = styled.div`
   grid-column: 1 / -1;
   padding: 42px 20px;
-  border: 1px dashed var(--app-border);
+  border: 1px dashed var(--color-border);
   border-radius: 16px;
-  background: var(--app-surface);
-  color: var(--app-muted);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
   text-align: center;
 `;
 
@@ -415,8 +415,8 @@ export const AddPromotionButton = styled.button`
   padding: 12px 19px;
   border: 0;
   border-radius: 10px;
-  background: var(--app-primary);
-  color: var(--app-white);
+  background: var(--color-primary);
+  color: var(--color-white);
   font-size: 0.9rem;
   font-weight: 700;
   cursor: pointer;
@@ -462,7 +462,7 @@ export const PromotionActions = styled.div`
   gap: 10px;
   box-sizing: border-box;
   padding-top: 14px;
-  border-top: 1px solid var(--app-border);
+  border-top: 1px solid var(--color-border);
 
   button {
     min-height: 44px;
@@ -470,7 +470,6 @@ export const PromotionActions = styled.div`
     min-width: 132px;
     padding: 10px 16px;
     border-radius: 9px;
-    font-family: inherit;
     font-size: 0.84rem;
     font-weight: 750;
     transition:
@@ -522,11 +521,11 @@ export const PromotionDetailsMain = styled.section`
   gap: 14px;
   min-width: 0;
   padding-right: 22px;
-  border-right: 1px solid var(--app-border);
+  border-right: 1px solid var(--color-border);
 
   > h3 {
     margin: 0;
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 1.18rem;
     font-weight: 800;
     line-height: 1.3;
@@ -537,7 +536,7 @@ export const PromotionDetailsMain = styled.section`
     padding-right: 0;
     padding-bottom: 18px;
     border-right: 0;
-    border-bottom: 1px solid var(--app-border);
+    border-bottom: 1px solid var(--color-border);
   }
 `;
 
@@ -546,9 +545,9 @@ export const PromotionDetailImage = styled.img`
   width: 100%;
   height: 210px;
   object-fit: cover;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 13px;
-  background: var(--app-surface-soft);
+  background: var(--color-surface-muted);
 
   @media (max-width: 520px) {
     height: 170px;
@@ -568,18 +567,18 @@ export const PromotionDetailSummary = styled.div`
     justify-content: space-between;
     gap: 14px;
     padding: 12px 14px;
-    border: 1px solid var(--app-border);
+    border: 1px solid var(--color-border);
     border-radius: 10px;
-    background: var(--app-surface);
+    background: var(--color-surface);
 
     span {
-      color: var(--app-muted-dark);
+      color: var(--color-text-secondary);
       font-size: 0.82rem;
     }
 
     strong {
       max-width: 65%;
-      color: var(--app-primary);
+      color: var(--color-primary);
       font-size: 0.88rem;
       font-weight: 750;
       text-align: right;
@@ -589,24 +588,24 @@ export const PromotionDetailSummary = styled.div`
 
   > h3 {
     margin: 0;
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 1.1rem;
   }
 
   > p {
     margin: 0;
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
     font-size: 0.9rem;
     line-height: 1.5;
   }
 
   > strong {
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 0.95rem;
   }
 
   .error {
-    color: var(--app-danger);
+    color: var(--color-danger);
     font-weight: 650;
   }
 `;
@@ -620,14 +619,14 @@ export const PromotionDetailsComposition = styled.section`
   .section-heading {
     h3 {
       margin: 0;
-      color: var(--app-primary);
+      color: var(--color-primary);
       font-size: 1.12rem;
       font-weight: 800;
     }
 
     p {
       margin: 5px 0 0;
-      color: var(--app-muted-dark);
+      color: var(--color-text-secondary);
       font-size: 0.82rem;
       line-height: 1.45;
     }

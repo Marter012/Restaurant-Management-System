@@ -7,7 +7,7 @@ import styled, { css } from "styled-components";
 export const ManageUserPage = styled.div`
   width: 100%;
   min-width: 0;
-  color: var(--app-ink);
+  color: var(--color-text);
   overflow: visible;
 
   &, & * {
@@ -36,10 +36,10 @@ export const MainLayout = styled.main`
 
 const panelSurface = css`
   min-width: 0;
-  border: 1px solid var(--app-border-strong);
+  border: 1px solid var(--color-border-strong);
   border-radius: 17px;
-  background: var(--app-white);
-  box-shadow: 0 4px 16px rgba(var(--app-shadow-rgb), 0.07);
+  background: var(--color-white);
+  box-shadow: 0 4px 16px var(--color-border);
 `;
 
 export const UsersPanel = styled.section<{ $mobileVisible?: boolean }>`
@@ -102,19 +102,19 @@ export const CreateUserButton = styled.button`
   gap: 8px;
   min-height: 40px;
   padding: 9px 13px;
-  border: 1px solid var(--app-primary);
+  border: 1px solid var(--color-primary);
   border-radius: 10px;
-  background: var(--app-primary);
-  color: var(--app-white);
-  font: inherit;
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-size: inherit;
   font-size: 0.77rem;
   font-weight: 800;
   white-space: nowrap;
   cursor: pointer;
   transition:
-    background var(--app-transition),
-    border-color var(--app-transition),
-    transform var(--app-transition);
+    background var(--transition-normal),
+    border-color var(--transition-normal),
+    transform var(--transition-normal);
 
   svg {
     flex: 0 0 auto;
@@ -122,8 +122,8 @@ export const CreateUserButton = styled.button`
   }
 
   &:hover {
-    border-color: var(--app-primary-active);
-    background: var(--app-primary-active);
+    border-color: var(--color-primary-hover);
+    background: var(--color-primary-hover);
     transform: translateY(-1px);
   }
 
@@ -132,7 +132,7 @@ export const CreateUserButton = styled.button`
   }
 
   &:focus-visible {
-    outline: 3px solid var(--app-accent-soft);
+    outline: 3px solid var(--color-primary-soft);
     outline-offset: 3px;
   }
 
@@ -150,8 +150,7 @@ export const CreateUserButton = styled.button`
 
 export const UsersPanelTitle = styled.h2`
   margin: 0;
-  color: var(--app-ink);
-  font-family: var(--app-font-heading);
+  color: var(--color-text);
   font-size: clamp(1.02rem, 1.5vw, 1.2rem);
   font-weight: 900;
   letter-spacing: -0.035em;
@@ -161,7 +160,7 @@ export const UsersPanelTitle = styled.h2`
 export const UsersPanelSubtitle = styled.p`
   max-width: 420px;
   margin: 5px 0 0;
-  color: var(--app-muted);
+  color: var(--color-text-secondary);
   font-size: 0.76rem;
   line-height: 1.45;
 `;
@@ -173,9 +172,9 @@ export const Filters = styled.div`
   min-width: 0;
   margin-bottom: 13px;
   padding: 4px;
-  border: 1px solid var(--app-border-strong);
+  border: 1px solid var(--color-border-strong);
   border-radius: 11px;
-  background: var(--app-surface);
+  background: var(--color-surface);
 
   @media (max-width: 380px) {
     gap: 4px;
@@ -192,23 +191,23 @@ export const FilterButton = styled.button<{ $active: boolean }>`
   min-height: 35px;
   padding: 7px 8px;
   border: 1px solid
-    ${({ $active }) => ($active ? "var(--app-border-strong)" : "transparent")};
+    ${({ $active }) => ($active ? "var(--color-border-strong)" : "transparent")};
   border-radius: 8px;
   background: ${({ $active }) =>
-    $active ? "var(--app-white)" : "transparent"};
+    $active ? "var(--color-white)" : "transparent"};
   color: ${({ $active }) =>
-    $active ? "var(--app-primary)" : "var(--app-muted)"};
-  font: inherit;
+    $active ? "var(--color-primary)" : "var(--color-text-secondary)"};
+  font-size: inherit;
   font-size: 0.72rem;
   font-weight: 800;
   white-space: nowrap;
   cursor: pointer;
   box-shadow: ${({ $active }) =>
-    $active ? "0 4px 16px rgba(var(--app-shadow-rgb), 0.07)" : "none"};
+    $active ? "0 4px 16px var(--color-border)" : "none"};
   transition:
-    background var(--app-transition),
-    color var(--app-transition),
-    border-color var(--app-transition);
+    background var(--transition-normal),
+    color var(--transition-normal),
+    border-color var(--transition-normal);
 
   span {
     display: inline-grid;
@@ -218,20 +217,20 @@ export const FilterButton = styled.button<{ $active: boolean }>`
     padding: 0 5px;
     border-radius: 20px;
     background: ${({ $active }) =>
-      $active ? "var(--app-accent-soft)" : "var(--app-border-strong)"};
+      $active ? "var(--color-primary-soft)" : "var(--color-border-strong)"};
     color: ${({ $active }) =>
-      $active ? "var(--app-primary)" : "var(--app-primary)"};
+      $active ? "var(--color-primary)" : "var(--color-primary)"};
     font-size: 0.63rem;
     font-weight: 900;
   }
 
   &:hover {
-    color: var(--app-primary);
-    background: var(--app-white);
+    color: var(--color-primary);
+    background: var(--color-white);
   }
 
   &:focus-visible {
-    outline: 2px solid var(--app-accent);
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
 
@@ -260,7 +259,7 @@ export const UsersList = styled.div`
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
-  scrollbar-color: var(--app-accent) transparent;
+  scrollbar-color: var(--color-accent) transparent;
 
   &::-webkit-scrollbar {
     width: 6px;
@@ -268,7 +267,7 @@ export const UsersList = styled.div`
 
   &::-webkit-scrollbar-thumb {
     border-radius: 10px;
-    background: var(--app-accent);
+    background: var(--color-accent);
   }
 
   @media (max-width: 1000px) {
@@ -292,41 +291,41 @@ export const UserRow = styled.button<{ $selected: boolean }>`
   padding: 11px;
   border: 2px solid
     ${({ $selected }) =>
-      $selected ? "var(--app-accent)" : "var(--app-border-strong)"};
+      $selected ? "var(--color-accent)" : "var(--color-border-strong)"};
   border-radius: 14px;
   background: ${({ $selected }) =>
-    $selected ? "var(--app-primary)" : "var(--app-surface)"};
+    $selected ? "var(--color-primary)" : "var(--color-surface)"};
   color: ${({ $selected }) =>
-    $selected ? "var(--app-white)" : "var(--app-ink)"};
+    $selected ? "var(--color-white)" : "var(--color-text)"};
   box-shadow: ${({ $selected }) =>
     $selected
-      ? "0 8px 22px rgba(var(--app-shadow-rgb), 0.20), inset 4px 0 0 var(--app-accent)"
-      : "0 2px 8px rgba(74, 40, 24, 0.045)"};
+      ? "0 8px 22px var(--color-border), inset 4px 0 0 var(--color-accent)"
+      : "0 2px 8px var(--shadow-sm)"};
   text-align: left;
   cursor: pointer;
   transition:
-    border-color var(--app-transition),
-    background var(--app-transition),
-    transform var(--app-transition);
+    border-color var(--transition-normal),
+    background var(--transition-normal),
+    transform var(--transition-normal);
 
   > svg:last-child {
     justify-self: end;
     color: ${({ $selected }) =>
-      $selected ? "var(--app-white)" : "var(--app-muted)"};
+      $selected ? "var(--color-white)" : "var(--color-text-secondary)"};
     font-size: 0.78rem;
     transition:
-      color var(--app-transition),
-      transform var(--app-transition);
+      color var(--transition-normal),
+      transform var(--transition-normal);
   }
 
   &:hover {
-    border-color: var(--app-accent);
+    border-color: var(--color-accent);
     background: ${({ $selected }) =>
-      $selected ? "var(--app-primary)" : "var(--app-surface)"};
+      $selected ? "var(--color-primary)" : "var(--color-surface)"};
 
     > svg:last-child {
       color: ${({ $selected }) =>
-        $selected ? "var(--app-white)" : "var(--app-primary)"};
+        $selected ? "var(--color-white)" : "var(--color-primary)"};
       transform: translateX(2px);
     }
   }
@@ -335,32 +334,32 @@ export const UserRow = styled.button<{ $selected: boolean }>`
     $selected &&
     css`
       > div:first-child {
-        border-color: rgba(255, 255, 255, 0.24);
-        background: rgba(255, 255, 255, 0.16);
-        color: var(--app-white);
+        border-color: var(--color-sidebar-muted);
+        background: var(--color-sidebar-surface);
+        color: var(--color-white);
       }
 
       > div:nth-child(2) > strong {
-        color: var(--app-white);
+        color: var(--color-white);
       }
 
       > div:nth-child(2) > span {
-        color: rgba(255, 255, 255, 0.78);
+        color: var(--color-sidebar-muted);
       }
 
       > div:nth-child(2) > div > span:first-child {
-        background: rgba(255, 255, 255, 0.18);
-        color: var(--app-white);
+        background: var(--color-sidebar-muted);
+        color: var(--color-white);
       }
 
       > div:nth-child(2) > div > span:last-child {
-        background: #DDF7EA;
-        color: #16794C;
+        background: var(--color-success-soft);
+        color: var(--color-success);
       }
     `}
 
   &:focus-visible {
-    outline: 3px solid var(--app-accent-soft);
+    outline: 3px solid var(--color-primary-soft);
     outline-offset: 2px;
   }
 
@@ -385,12 +384,12 @@ export const UserAvatar = styled.div<{ $active: boolean }>`
   height: 42px;
   border: 1px solid
     ${({ $active }) =>
-      $active ? "#DDF7EA" : "#FFF1D6"};
+      $active ? "var(--color-success-soft)" : "var(--color-pending-soft)"};
   border-radius: 12px;
   background: ${({ $active }) =>
-    $active ? "#DDF7EA" : "#FFF1D6"};
+    $active ? "var(--color-success-soft)" : "var(--color-pending-soft)"};
   color: ${({ $active }) =>
-    $active ? "#16794C" : "#9A5B00"};
+    $active ? "var(--color-success)" : "var(--color-pending)"};
   font-size: 1rem;
 
   @media (max-width: 600px) {
@@ -414,7 +413,7 @@ export const UserMain = styled.div`
 
 export const UserName = styled.strong`
   overflow: hidden;
-  color: var(--app-ink);
+  color: var(--color-text);
   font-size: 0.82rem;
   font-weight: 850;
   line-height: 1.3;
@@ -424,7 +423,7 @@ export const UserName = styled.strong`
 
 export const UserEmail = styled.span`
   overflow: hidden;
-  color: var(--app-muted);
+  color: var(--color-text-secondary);
   font-size: 0.7rem;
   line-height: 1.35;
   text-overflow: ellipsis;
@@ -447,8 +446,8 @@ export const UserRole = styled.span`
   max-width: 100%;
   padding: 4px 7px;
   border-radius: 20px;
-  background: var(--app-accent-soft);
-  color: var(--app-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
   font-size: 0.62rem;
   font-weight: 850;
   line-height: 1.2;
@@ -462,9 +461,9 @@ export const UserStatus = styled.span<{ $active: boolean }>`
   padding: 4px 7px;
   border-radius: 20px;
   background: ${({ $active }) =>
-    $active ? "#DDF7EA" : "#FFF1D6"};
+    $active ? "var(--color-success-soft)" : "var(--color-pending-soft)"};
   color: ${({ $active }) =>
-    $active ? "#16794C" : "#9A5B00"};
+    $active ? "var(--color-success)" : "var(--color-pending)"};
   font-size: 0.62rem;
   font-weight: 850;
   line-height: 1.2;
@@ -485,8 +484,8 @@ export const SelectedIndicator = styled.span`
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: var(--app-primary);
-  color: var(--app-white);
+  background: var(--color-primary);
+  color: var(--color-white);
   font-size: 0.65rem;
 `;
 
@@ -499,10 +498,10 @@ export const EmptyState = styled.div`
   min-width: 0;
   min-height: 150px;
   padding: 22px 16px;
-  border: 1px dashed var(--app-border-strong);
+  border: 1px dashed var(--color-border-strong);
   border-radius: 13px;
-  background: var(--app-surface);
-  color: var(--app-muted);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
   text-align: center;
 
   > div {
@@ -511,25 +510,25 @@ export const EmptyState = styled.div`
     width: 48px;
     height: 48px;
     border-radius: 14px;
-    background: var(--app-accent-soft);
-    color: var(--app-primary);
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
     font-size: 1.2rem;
   }
 
   > svg {
-    color: var(--app-muted);
+    color: var(--color-text-secondary);
     font-size: 1.2rem;
   }
 
   strong {
-    color: var(--app-ink);
+    color: var(--color-text);
     font-size: 0.88rem;
     font-weight: 850;
   }
 
   span {
     max-width: 310px;
-    color: var(--app-muted);
+    color: var(--color-text-secondary);
     font-size: 0.74rem;
     line-height: 1.5;
   }
@@ -542,11 +541,11 @@ export const EmptyState = styled.div`
     min-height: 39px;
     margin-top: 4px;
     padding: 8px 13px;
-    border: 1px solid var(--app-primary);
+    border: 1px solid var(--color-primary);
     border-radius: 9px;
-    background: var(--app-primary);
-    color: var(--app-white);
-    font: inherit;
+    background: var(--color-primary);
+    color: var(--color-white);
+    font-size: inherit;
     font-size: 0.74rem;
     font-weight: 800;
     cursor: pointer;
@@ -573,7 +572,7 @@ export const EditorPanel = styled.section<{
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
-  scrollbar-color: var(--app-accent) transparent;
+  scrollbar-color: var(--color-accent) transparent;
 
   &::-webkit-scrollbar {
     width: 6px;
@@ -581,7 +580,7 @@ export const EditorPanel = styled.section<{
 
   &::-webkit-scrollbar-thumb {
     border-radius: 10px;
-    background: var(--app-accent);
+    background: var(--color-accent);
   }
 
   ${({ $empty }) =>
@@ -628,21 +627,21 @@ export const EditorPanelHeading = styled.header`
     min-height: 27px;
     padding: 5px 9px;
     border-radius: 30px;
-    background: var(--app-accent-soft);
-    color: var(--app-primary);
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
     font-size: 0.66rem;
     font-weight: 850;
     white-space: nowrap;
   }
 
   > span[data-active="true"] {
-    background: #DDF7EA;
-    color: #16794C;
+    background: var(--color-success-soft);
+    color: var(--color-success);
   }
 
   > span[data-active="false"] {
-    background: #FFF1D6;
-    color: #9A5B00;
+    background: var(--color-pending-soft);
+    color: var(--color-pending);
   }
 
   @media (max-width: 420px) {
@@ -652,8 +651,7 @@ export const EditorPanelHeading = styled.header`
 
 export const EditorPanelTitle = styled.h2`
   margin: 0;
-  color: var(--app-ink);
-  font-family: var(--app-font-heading);
+  color: var(--color-text);
   font-size: clamp(1.08rem, 1.8vw, 1.35rem);
   font-weight: 900;
   letter-spacing: -0.035em;
@@ -662,7 +660,7 @@ export const EditorPanelTitle = styled.h2`
 
 export const EditorPanelSubtitle = styled.p`
   margin: 5px 0 0;
-  color: var(--app-muted);
+  color: var(--color-text-secondary);
   font-size: 0.75rem;
   line-height: 1.45;
 `;
@@ -673,9 +671,9 @@ export const EditorHeader = styled.div`
   min-width: 0;
   margin-bottom: 16px;
   padding: 13px;
-  border: 1px solid var(--app-border-strong);
+  border: 1px solid var(--color-border-strong);
   border-radius: 13px;
-  background: var(--app-surface);
+  background: var(--color-surface);
 
   @media (max-width: 600px) {
     margin-bottom: 13px;
@@ -698,12 +696,12 @@ export const EditorAvatar = styled.div<{ $active: boolean }>`
   height: 48px;
   border: 1px solid
     ${({ $active }) =>
-      $active ? "#DDF7EA" : "#FFF1D6"};
+      $active ? "var(--color-success-soft)" : "var(--color-pending-soft)"};
   border-radius: 14px;
   background: ${({ $active }) =>
-    $active ? "#DDF7EA" : "#FFF1D6"};
+    $active ? "var(--color-success-soft)" : "var(--color-pending-soft)"};
   color: ${({ $active }) =>
-    $active ? "#16794C" : "#9A5B00"};
+    $active ? "var(--color-success)" : "var(--color-pending)"};
   font-size: 1.2rem;
 
   @media (max-width: 420px) {
@@ -722,7 +720,7 @@ export const EditorUserInfo = styled.div`
 
 export const EditorUserName = styled.strong`
   overflow: hidden;
-  color: var(--app-ink);
+  color: var(--color-text);
   font-size: 0.9rem;
   font-weight: 900;
   line-height: 1.3;
@@ -731,7 +729,7 @@ export const EditorUserName = styled.strong`
 `;
 
 export const EditorUserRole = styled.span`
-  color: var(--app-muted);
+  color: var(--color-text-secondary);
   font-size: 0.72rem;
   line-height: 1.35;
 `;
@@ -747,9 +745,9 @@ export const ContainerSectionInfo = styled.div`
 export const Section = styled.section`
   min-width: 0;
   padding: 15px;
-  border: 1px solid var(--app-border-strong);
+  border: 1px solid var(--color-border-strong);
   border-radius: 14px;
-  background: var(--app-surface);
+  background: var(--color-surface);
 
   @media (max-width: 600px) {
     padding: 12px;
@@ -786,8 +784,8 @@ export const SectionIcon = styled.div<{ $security?: boolean }>`
   height: 38px;
   border-radius: 11px;
   background: ${({ $security }) =>
-    $security ? "var(--app-accent-soft)" : "var(--app-accent-soft)"};
-  color: var(--app-primary);
+    $security ? "var(--color-primary-soft)" : "var(--color-primary-soft)"};
+  color: var(--color-primary);
   font-size: 0.95rem;
 
   @media (max-width: 420px) {
@@ -799,7 +797,7 @@ export const SectionIcon = styled.div<{ $security?: boolean }>`
 
 export const SectionTitle = styled.h3`
   margin: 0;
-  color: var(--app-ink);
+  color: var(--color-text);
   font-size: 0.86rem;
   font-weight: 900;
   letter-spacing: -0.015em;
@@ -808,7 +806,7 @@ export const SectionTitle = styled.h3`
 
 export const SectionDescription = styled.p`
   margin: 3px 0 0;
-  color: var(--app-muted);
+  color: var(--color-text-secondary);
   font-size: 0.71rem;
   line-height: 1.45;
 `;
@@ -846,7 +844,7 @@ export const FormGroup = styled.div`
 
 export const Label = styled.label`
   display: block;
-  color: var(--app-ink);
+  color: var(--color-text);
   font-size: 0.73rem;
   font-weight: 850;
   line-height: 1.3;
@@ -858,31 +856,31 @@ const fieldStyles = css`
   min-width: 0;
   min-height: 42px;
   padding: 10px 12px;
-  border: 1px solid var(--app-border-strong);
+  border: 1px solid var(--color-border-strong);
   border-radius: 9px;
   outline: none;
-  background: var(--app-white);
-  color: var(--app-ink);
-  font: inherit;
+  background: var(--color-white);
+  color: var(--color-text);
+  font-size: inherit;
   font-size: 0.78rem;
   line-height: 1.35;
   transition:
-    border-color var(--app-transition),
-    box-shadow var(--app-transition),
-    background var(--app-transition);
+    border-color var(--transition-normal),
+    box-shadow var(--transition-normal),
+    background var(--transition-normal);
 
   &::placeholder {
-    color: var(--app-muted);
+    color: var(--color-text-secondary);
     opacity: 0.8;
   }
 
   &:hover {
-    border-color: var(--app-accent);
+    border-color: var(--color-accent);
   }
 
   &:focus {
-    border-color: var(--app-accent);
-    box-shadow: 0 0 0 3px var(--app-accent-soft);
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px var(--color-primary-soft);
   }
 
   &:disabled {
@@ -911,9 +909,9 @@ export const SecurityCard = styled.div`
   gap: 15px;
   min-width: 0;
   padding: 14px;
-  border: 1px solid var(--app-border-strong);
+  border: 1px solid var(--color-border-strong);
   border-radius: 12px;
-  background: var(--app-white);
+  background: var(--color-white);
 
   @media (max-width: 420px) {
     gap: 12px;
@@ -935,8 +933,8 @@ export const SecurityIcon = styled.div`
   width: 38px;
   height: 38px;
   border-radius: 11px;
-  background: var(--app-accent-soft);
-  color: var(--app-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
   font-size: 0.95rem;
 `;
 
@@ -948,7 +946,7 @@ export const SecurityText = styled.div`
 `;
 
 export const SecurityTitle = styled.strong`
-  color: var(--app-ink);
+  color: var(--color-text);
   font-size: 0.79rem;
   font-weight: 900;
   line-height: 1.35;
@@ -956,13 +954,13 @@ export const SecurityTitle = styled.strong`
 
 export const SecurityDescription = styled.p`
   margin: 0;
-  color: var(--app-muted);
+  color: var(--color-text-secondary);
   font-size: 0.7rem;
   line-height: 1.5;
   overflow-wrap: anywhere;
 
   strong {
-    color: var(--app-ink);
+    color: var(--color-text);
     font-weight: 800;
   }
 `;
@@ -988,21 +986,21 @@ export const SecurityStep = styled.div<{
   border: 1px solid
     ${({ $active, $completed }) =>
       $active || $completed
-        ? "var(--app-accent)"
-        : "var(--app-border-strong)"};
+        ? "var(--color-accent)"
+        : "var(--color-border-strong)"};
   border-radius: 9px;
   background: ${({ $active, $completed }) =>
     $completed
-      ? "#DDF7EA"
+      ? "var(--color-success-soft)"
       : $active
-        ? "var(--app-accent-soft)"
-        : "var(--app-surface)"};
+        ? "var(--color-primary-soft)"
+        : "var(--color-surface)"};
   color: ${({ $active, $completed }) =>
     $completed
-      ? "#16794C"
+      ? "var(--color-success)"
       : $active
-        ? "var(--app-primary)"
-        : "var(--app-muted)"};
+        ? "var(--color-primary)"
+        : "var(--color-text-secondary)"};
 `;
 
 export const SecurityStepNumber = styled.span`
@@ -1013,7 +1011,7 @@ export const SecurityStepNumber = styled.span`
   height: 21px;
   border-radius: 50%;
   background: currentColor;
-  color: var(--app-white);
+  color: var(--color-white);
   font-size: 0.63rem;
   font-weight: 900;
 `;
@@ -1044,19 +1042,19 @@ export const SendCodeButton = styled.button`
   min-width: 0;
   min-height: 44px;
   padding: 10px 12px;
-  border: 1px solid var(--app-primary);
+  border: 1px solid var(--color-primary);
   border-radius: 10px;
-  background: var(--app-primary);
-  color: var(--app-white);
-  font: inherit;
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-size: inherit;
   font-size: 0.74rem;
   font-weight: 850;
   text-align: left;
   cursor: pointer;
   transition:
-    background var(--app-transition),
-    transform var(--app-transition),
-    opacity var(--app-transition);
+    background var(--transition-normal),
+    transform var(--transition-normal),
+    opacity var(--transition-normal);
 
   > svg {
     flex: 0 0 auto;
@@ -1069,7 +1067,7 @@ export const SendCodeButton = styled.button`
   }
 
   &:hover:not(:disabled) {
-    background: var(--app-primary-active);
+    background: var(--color-primary-hover);
     transform: translateY(-1px);
   }
 
@@ -1085,9 +1083,9 @@ export const CodeArea = styled.div`
   gap: 12px;
   min-width: 0;
   padding: 12px;
-  border: 1px solid var(--app-border-strong);
+  border: 1px solid var(--color-border-strong);
   border-radius: 10px;
-  background: var(--app-surface);
+  background: var(--color-surface);
 
   @media (max-width: 380px) {
     padding: 9px;
@@ -1109,13 +1107,13 @@ export const CodeHeader = styled.div`
   }
 
   strong {
-    color: var(--app-ink);
+    color: var(--color-text);
     font-size: 0.75rem;
     font-weight: 850;
   }
 
   span {
-    color: var(--app-muted);
+    color: var(--color-text-secondary);
     font-size: 0.68rem;
     line-height: 1.4;
   }
@@ -1133,8 +1131,8 @@ export const CodeStatus = styled.span`
   flex: 0 0 auto;
   padding: 5px 8px;
   border-radius: 20px;
-  background: #DDF7EA;
-  color: #16794C;
+  background: var(--color-success-soft);
+  color: var(--color-success);
   font-size: 0.64rem;
   font-weight: 850;
   white-space: nowrap;
@@ -1187,21 +1185,21 @@ export const VerifyCodeButton = styled.button`
   min-width: 0;
   min-height: 42px;
   padding: 9px 12px;
-  border: 1px solid var(--app-primary);
+  border: 1px solid var(--color-primary);
   border-radius: 9px;
-  background: var(--app-primary);
-  color: var(--app-white);
-  font: inherit;
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-size: inherit;
   font-size: 0.74rem;
   font-weight: 850;
   cursor: pointer;
   transition:
-    background var(--app-transition),
-    opacity var(--app-transition),
-    transform var(--app-transition);
+    background var(--transition-normal),
+    opacity var(--transition-normal),
+    transform var(--transition-normal);
 
   &:hover:not(:disabled) {
-    background: var(--app-primary-active);
+    background: var(--color-primary-hover);
     transform: translateY(-1px);
   }
 
@@ -1227,14 +1225,14 @@ export const ResendButton = styled.button`
   border: 0;
   border-radius: 8px;
   background: transparent;
-  color: var(--app-primary);
-  font: inherit;
+  color: var(--color-primary);
+  font-size: inherit;
   font-size: 0.7rem;
   font-weight: 850;
   cursor: pointer;
 
   &:hover:not(:disabled) {
-    background: var(--app-accent-soft);
+    background: var(--color-primary-soft);
   }
 
   &:disabled {
@@ -1249,10 +1247,10 @@ export const SecuritySuccess = styled.div`
   gap: 10px;
   min-width: 0;
   padding: 11px;
-  border: 1px solid #DDF7EA;
+  border: 1px solid var(--color-success-soft);
   border-radius: 10px;
-  background: #DDF7EA;
-  color: #16794C;
+  background: var(--color-success-soft);
+  color: var(--color-success);
 
   > svg {
     flex: 0 0 auto;
@@ -1296,9 +1294,9 @@ export const PasswordState = styled.div`
   gap: 9px;
   min-width: 0;
   padding: 10px;
-  border: 1px solid var(--app-border-strong);
+  border: 1px solid var(--color-border-strong);
   border-radius: 9px;
-  background: var(--app-surface);
+  background: var(--color-surface);
 `;
 
 export const PasswordStateIcon = styled.div`
@@ -1308,8 +1306,8 @@ export const PasswordStateIcon = styled.div`
   width: 32px;
   height: 32px;
   border-radius: 9px;
-  background: var(--app-accent-soft);
-  color: var(--app-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
   font-size: 0.8rem;
 `;
 
@@ -1320,13 +1318,13 @@ export const PasswordStateText = styled.div`
   min-width: 0;
 
   strong {
-    color: var(--app-ink);
+    color: var(--color-text);
     font-size: 0.71rem;
     font-weight: 850;
   }
 
   span {
-    color: var(--app-muted);
+    color: var(--color-text-secondary);
     font-size: 0.66rem;
     line-height: 1.4;
   }
@@ -1346,17 +1344,17 @@ export const StatusCard = styled.button<{ $active: boolean }>`
   padding: 12px;
   border: 1px solid
     ${({ $active }) =>
-      $active ? "#DDF7EA" : "#FFF1D6"};
+      $active ? "var(--color-success-soft)" : "var(--color-pending-soft)"};
   border-radius: 11px;
   background: ${({ $active }) =>
-    $active ? "#DDF7EA" : "#FFF1D6"};
+    $active ? "var(--color-success-soft)" : "var(--color-pending-soft)"};
   color: inherit;
   text-align: left;
   cursor: pointer;
   transition:
-    border-color var(--app-transition),
-    filter var(--app-transition),
-    transform var(--app-transition);
+    border-color var(--transition-normal),
+    filter var(--transition-normal),
+    transform var(--transition-normal);
 
   &:hover {
     filter: brightness(0.98);
@@ -1364,7 +1362,7 @@ export const StatusCard = styled.button<{ $active: boolean }>`
   }
 
   &:focus-visible {
-    outline: 3px solid var(--app-accent-soft);
+    outline: 3px solid var(--color-primary-soft);
     outline-offset: 2px;
   }
 
@@ -1381,9 +1379,9 @@ export const StatusIcon = styled.div<{ $active: boolean }>`
   width: 40px;
   height: 40px;
   border-radius: 11px;
-  background: var(--app-white);
+  background: var(--color-white);
   color: ${({ $active }) =>
-    $active ? "#16794C" : "#9A5B00"};
+    $active ? "var(--color-success)" : "var(--color-pending)"};
   font-size: 1rem;
 
   @media (max-width: 420px) {
@@ -1401,14 +1399,14 @@ export const StatusContent = styled.div`
 `;
 
 export const StatusTitle = styled.strong`
-  color: var(--app-ink);
+  color: var(--color-text);
   font-size: 0.77rem;
   font-weight: 900;
   line-height: 1.3;
 `;
 
 export const StatusDescription = styled.span`
-  color: var(--app-muted);
+  color: var(--color-text-secondary);
   font-size: 0.68rem;
   line-height: 1.45;
   overflow-wrap: anywhere;
@@ -1418,7 +1416,7 @@ export const StatusArrow = styled.span`
   display: grid;
   place-items: center;
   justify-self: end;
-  color: var(--app-muted);
+  color: var(--color-text-secondary);
   font-size: 0.75rem;
 `;
 
@@ -1434,7 +1432,7 @@ export const EditorFooter = styled.footer`
   min-width: 0;
   margin-top: 16px;
   padding-top: 14px;
-  border-top: 1px solid var(--app-border-strong);
+  border-top: 1px solid var(--color-border-strong);
 
   @media (max-width: 520px) {
     position: static;
@@ -1459,17 +1457,17 @@ const actionButton = css`
   padding: 9px 15px;
   border: 1px solid transparent;
   border-radius: 9px;
-  font: inherit;
+  font-size: inherit;
   font-size: 0.75rem;
   font-weight: 850;
   white-space: nowrap;
   cursor: pointer;
   transition:
-    background var(--app-transition),
-    border-color var(--app-transition),
-    color var(--app-transition),
-    opacity var(--app-transition),
-    transform var(--app-transition);
+    background var(--transition-normal),
+    border-color var(--transition-normal),
+    color var(--transition-normal),
+    opacity var(--transition-normal),
+    transform var(--transition-normal);
 
   svg {
     flex: 0 0 auto;
@@ -1482,7 +1480,7 @@ const actionButton = css`
   }
 
   &:focus-visible {
-    outline: 3px solid var(--app-accent-soft);
+    outline: 3px solid var(--color-primary-soft);
     outline-offset: 2px;
   }
 
@@ -1501,26 +1499,26 @@ const actionButton = css`
 
 export const CancelButton = styled.button`
   ${actionButton};
-  border-color: var(--app-border-strong);
-  background: var(--app-white);
-  color: var(--app-primary);
+  border-color: var(--color-border-strong);
+  background: var(--color-white);
+  color: var(--color-primary);
 
   &:hover:not(:disabled) {
-    border-color: var(--app-accent);
-    background: var(--app-surface);
-    color: var(--app-ink);
+    border-color: var(--color-accent);
+    background: var(--color-surface);
+    color: var(--color-text);
   }
 `;
 
 export const SaveButton = styled.button`
   ${actionButton};
-  border-color: var(--app-primary);
-  background: var(--app-primary);
-  color: var(--app-white);
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-white);
 
   &:hover:not(:disabled) {
-    border-color: var(--app-primary-active);
-    background: var(--app-primary-active);
+    border-color: var(--color-primary-hover);
+    background: var(--color-primary-hover);
     transform: translateY(-1px);
   }
 
@@ -1536,10 +1534,10 @@ export const LoadingState = styled.p`
   min-width: 0;
   margin: 10px 0;
   padding: 12px;
-  border: 1px solid var(--app-border-strong);
+  border: 1px solid var(--color-border-strong);
   border-radius: 10px;
-  background: var(--app-surface);
-  color: var(--app-muted);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
   font-size: 0.75rem;
   line-height: 1.45;
 `;
@@ -1549,10 +1547,10 @@ export const ErrorMessage = styled.div`
   min-width: 0;
   margin-bottom: 13px;
   padding: 11px 13px;
-  border: 1px solid var(--app-border-strong);
+  border: 1px solid var(--color-border-strong);
   border-radius: 10px;
-  background: #FFF1D6;
-  color: var(--app-ink);
+  background: var(--color-pending-soft);
+  color: var(--color-text);
   font-size: 0.76rem;
   line-height: 1.5;
   overflow-wrap: anywhere;
@@ -1566,10 +1564,10 @@ export const SuccessMessage = styled.div`
   min-width: 0;
   margin-bottom: 13px;
   padding: 11px 13px;
-  border: 1px solid #DDF7EA;
+  border: 1px solid var(--color-success-soft);
   border-radius: 10px;
-  background: #DDF7EA;
-  color: #16794C;
+  background: var(--color-success-soft);
+  color: var(--color-success);
   font-size: 0.76rem;
   font-weight: 750;
   line-height: 1.5;
@@ -1603,7 +1601,7 @@ export const InitialCredentialsPage = styled.main`
   width: 100%;
   min-height: calc(100dvh - 100px);
   padding: 30px 20px;
-  color: var(--app-ink);
+  color: var(--color-text);
   background-color: red !important;
   @media (max-width: 600px) {
     justify-content: flex-start;
@@ -1624,7 +1622,7 @@ export const InitialCredentialsHeading = styled.header`
 export const InitialCredentialsEyebrow = styled.span`
   display: block;
   margin-bottom: 7px;
-  color: var(--app-accent);
+  color: var(--color-accent);
   font-size: 0.7rem;
   font-weight: 900;
   letter-spacing: 0.12em;
@@ -1633,8 +1631,7 @@ export const InitialCredentialsEyebrow = styled.span`
 
 export const InitialCredentialsTitle = styled.h1`
   margin: 0;
-  color: var(--app-ink);
-  font-family: var(--app-font-heading);
+  color: var(--color-text);
   font-size: clamp(1.8rem, 3vw, 2.5rem);
   font-weight: 900;
   letter-spacing: -0.045em;
@@ -1643,7 +1640,7 @@ export const InitialCredentialsTitle = styled.h1`
 
 export const InitialCredentialsSubtitle = styled.p`
   margin: 7px 0 0;
-  color: var(--app-muted);
+  color: var(--color-text-secondary);
   font-size: 0.88rem;
   line-height: 1.5;
 `;
@@ -1653,10 +1650,10 @@ export const InitialCredentialsCard = styled.section`
   max-width: 720px;
   height: 95%;
   padding: 25px;
-  border: 1px solid var(--app-border-strong);
+  border: 1px solid var(--color-border-strong);
   border-radius: 19px;
-  background: var(--app-white);
-  box-shadow: 0 12px 30px rgba(var(--app-shadow-rgb), 0.09);
+  background: var(--color-white);
+  box-shadow: 0 12px 30px var(--color-border);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -1674,9 +1671,9 @@ export const InitialCredentialsInfo = styled.div`
   gap: 11px;
   margin-bottom: 20px;
   padding: 11px 13px;
-  border: 1px solid var(--app-border-strong);
+  border: 1px solid var(--color-border-strong);
   border-radius: 11px;
-  background: var(--app-surface);
+  background: var(--color-surface);
 `;
 
 export const InitialCredentialsInfoIcon = styled.div`
@@ -1686,8 +1683,8 @@ export const InitialCredentialsInfoIcon = styled.div`
   width: 37px;
   height: 37px;
   border-radius: 10px;
-  background: var(--app-accent-soft);
-  color: var(--app-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
   font-size: 0.9rem;
 `;
 
@@ -1698,13 +1695,13 @@ export const InitialCredentialsInfoText = styled.div`
   min-width: 0;
 
   strong {
-    color: var(--app-ink);
+    color: var(--color-text);
     font-size: 0.78rem;
     font-weight: 900;
   }
 
   span {
-    color: var(--app-muted);
+    color: var(--color-text-secondary);
     font-size: 0.7rem;
     line-height: 1.4;
   }
@@ -1744,7 +1741,7 @@ export const InitialCredentialsGroup = styled.div<{ $fullWidth?: boolean }>`
 `;
 
 export const InitialCredentialsLabel = styled.label`
-  color: var(--app-ink);
+  color: var(--color-text);
   font-size: 0.74rem;
   font-weight: 850;
 `;
@@ -1754,31 +1751,31 @@ export const InitialCredentialsInput = styled.input`
   min-width: 0;
   min-height: 43px;
   padding: 10px 12px;
-  border: 1px solid var(--app-border-strong);
+  border: 1px solid var(--color-border-strong);
   border-radius: 9px;
   outline: none;
-  background: var(--app-surface);
-  color: var(--app-ink);
-  font: inherit;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: inherit;
   font-size: 0.78rem;
   transition:
-    border-color var(--app-transition),
-    background var(--app-transition),
-    box-shadow var(--app-transition);
+    border-color var(--transition-normal),
+    background var(--transition-normal),
+    box-shadow var(--transition-normal);
 
   &::placeholder {
-    color: var(--app-muted);
+    color: var(--color-text-secondary);
     opacity: 0.75;
   }
 
   &:hover:not(:disabled) {
-    border-color: var(--app-accent);
+    border-color: var(--color-accent);
   }
 
   &:focus {
-    border-color: var(--app-accent);
-    background: var(--app-white);
-    box-shadow: 0 0 0 3px var(--app-accent-soft);
+    border-color: var(--color-accent);
+    background: var(--color-white);
+    box-shadow: 0 0 0 3px var(--color-primary-soft);
   }
 
   &:disabled {
@@ -1795,26 +1792,26 @@ export const InitialCredentialsButton = styled.button`
   gap: 8px;
   min-height: 43px;
   padding: 10px 17px;
-  border: 1px solid var(--app-primary);
+  border: 1px solid var(--color-primary);
   border-radius: 9px;
-  background: var(--app-primary);
-  color: var(--app-white);
-  font: inherit;
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-size: inherit;
   font-size: 0.76rem;
   font-weight: 850;
   cursor: pointer;
   transition:
-    background var(--app-transition),
-    transform var(--app-transition),
-    opacity var(--app-transition);
+    background var(--transition-normal),
+    transform var(--transition-normal),
+    opacity var(--transition-normal);
 
   svg {
     font-size: 0.85rem;
   }
 
   &:hover:not(:disabled) {
-    border-color: var(--app-primary-active);
-    background: var(--app-primary-active);
+    border-color: var(--color-primary-hover);
+    background: var(--color-primary-hover);
     transform: translateY(-1px);
   }
 
@@ -1838,7 +1835,7 @@ export const InitialCredentialsLoading = styled.p`
   justify-content: center;
   min-height: 180px;
   margin: 0;
-  color: var(--app-muted);
+  color: var(--color-text-secondary);
   font-size: 0.85rem;
   font-weight: 700;
 `;
@@ -1846,10 +1843,10 @@ export const InitialCredentialsLoading = styled.p`
 export const InitialCredentialsError = styled.div`
   margin-bottom: 16px;
   padding: 10px 12px;
-  border: 1px solid var(--app-border-strong);
+  border: 1px solid var(--color-border-strong);
   border-radius: 9px;
-  background: var(--app-accent-soft);
-  color: var(--app-ink);
+  background: var(--color-primary-soft);
+  color: var(--color-text);
   font-size: 0.75rem;
   line-height: 1.5;
 `;
@@ -1860,10 +1857,10 @@ export const InitialCredentialsSuccess = styled.div`
   gap: 9px;
   margin-bottom: 16px;
   padding: 10px 12px;
-  border: 1px solid #DDF7EA;
+  border: 1px solid var(--color-success-soft);
   border-radius: 9px;
-  background: #DDF7EA;
-  color: #16794C;
+  background: var(--color-success-soft);
+  color: var(--color-success);
   font-size: 0.75rem;
   font-weight: 750;
   line-height: 1.5;

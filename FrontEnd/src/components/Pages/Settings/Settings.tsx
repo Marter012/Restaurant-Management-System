@@ -1,23 +1,26 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { FaCashRegister, FaCog, FaPrint, FaUsers } from "react-icons/fa";
+import {
+  FaCashRegister,
+  FaCog,
+  FaPrint,
+  FaUsers,
+  FaStore,
+} from "react-icons/fa";
 
 import ManageUser from "../../ManageUsers/ManageUser.tsx";
 import HistoryCash from "../../HistoryCash/HistoryCash.tsx";
 import PrintStatus from "../../PrintStatusModal/PrintStatusModal.tsx";
 import SettingsGeneral from "./SettingsGeneral.tsx";
 
-import {
-  SettingsTabs,
-  SettingsTab,
-  SettingsPanel,
-} from "./SettingsStyles.ts";
+import { SettingsTabs, SettingsTab, SettingsPanel } from "./SettingsStyles.ts";
 
 import { ContainerPage } from "../PageStyles.ts";
 import type { RootState } from "../../../store/store.ts";
+import SettingsCommercial from "./SettingsCommercial.tsx";
 
-type SettingsSection = "general" | "users" | "printing" | "cash";
+type SettingsSection = "general" | "commercial" | "users" | "printing" | "cash";
 
 interface SettingsLocationState {
   section?: unknown;
@@ -71,6 +74,18 @@ const Settings = () => {
             <FaCog /> <span>General</span>
           </SettingsTab>
           <SettingsTab
+            id="settings-tab-commercial"
+            type="button"
+            role="tab"
+            aria-selected={activeSection === "commercial"}
+            aria-controls="settings-panel"
+            tabIndex={activeSection === "commercial" ? 0 : -1}
+            $active={activeSection === "commercial"}
+            onClick={() => setActiveSection("commercial")}
+          >
+            <FaStore /> <span>Establecimiento</span>
+          </SettingsTab>
+          <SettingsTab
             id="settings-tab-users"
             type="button"
             role="tab"
@@ -122,6 +137,7 @@ const Settings = () => {
         ) : (
           <>
             {activeSection === "general" && <SettingsGeneral />}
+            {activeSection === "commercial" && <SettingsCommercial />}
             {activeSection === "users" && <ManageUser />}
             {activeSection === "printing" && <PrintStatus />}
             {activeSection === "cash" && <HistoryCash />}

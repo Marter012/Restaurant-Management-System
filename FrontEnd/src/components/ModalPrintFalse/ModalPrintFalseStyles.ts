@@ -2,15 +2,15 @@ import styled, { keyframes } from "styled-components";
 
 const pulse = keyframes`
   0% {
-    box-shadow: 0 0 0 0 rgba(var(--app-accent-rgb), 0.25);
+    box-shadow: 0 0 0 0 var(--color-accent);
   }
 
   70% {
-    box-shadow: 0 0 0 10px rgba(var(--app-accent-rgb), 0);
+    box-shadow: 0 0 0 10px transparent;
   }
 
   100% {
-    box-shadow: 0 0 0 0 rgba(var(--app-accent-rgb), 0);
+    box-shadow: 0 0 0 0 transparent;
   }
 `;
 
@@ -40,11 +40,11 @@ export const PrintStatusIcon = styled.div`
   align-items: center;
   justify-content: center;
 
-  border: 1px solid var(--app-accent);
+  border: 1px solid var(--color-accent);
   border-radius: 50%;
 
-  background-color: var(--app-accent-soft);
-  color: var(--app-primary);
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary);
 
   font-size: 38px;
   font-weight: 800;
@@ -66,10 +66,10 @@ export const PrintStatusIndicator = styled.span`
   width: 14px;
   height: 14px;
 
-  border: 3px solid var(--app-white);
+  border: 3px solid var(--color-white);
   border-radius: 50%;
 
-  background-color: var(--app-primary);
+  background-color: var(--color-primary);
 `;
 
 export const PrintStatusBadge = styled.span`
@@ -79,11 +79,11 @@ export const PrintStatusBadge = styled.span`
 
   padding: 7px 12px;
 
-  border: 1px solid var(--app-accent);
+  border: 1px solid var(--color-accent);
   border-radius: 999px;
 
-  background-color: var(--app-accent-soft);
-  color: var(--app-primary);
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary);
 
   font-size: 12px;
   font-weight: 700;
@@ -95,7 +95,7 @@ export const PrintStatusTitle = styled.h3`
   width: 100%;
   margin: 0;
 
-  color: var(--app-ink);
+  color: var(--color-text);
 
   font-size: clamp(20px, 4vw, 25px);
   font-weight: 800;
@@ -110,7 +110,7 @@ export const PrintStatusDescription = styled.p`
 
   margin: 0;
 
-  color: var(--app-muted);
+  color: var(--color-text-secondary);
 
   font-size: 14px;
   font-weight: 400;
@@ -118,4 +118,3 @@ export const PrintStatusDescription = styled.p`
 
   overflow-wrap: anywhere;
 `;
-

@@ -7,6 +7,11 @@ export interface Product {
   image?: string | null;
   quantity: number;
   price: number;
+  discount_percentage?: number | null;
+  effective_discount_percentage?: number;
+  discount_amount?: number;
+  final_price?: number;
+  discount_source?: "general" | "individual" | null;
   category: string;
   status: boolean;
   has_garnish?: boolean;
@@ -18,6 +23,7 @@ export interface ProductFormValues {
   name: string;
   image?: string | null;
   price: number;
+  discount_percentage?: number | null;
   category: string;
   has_garnish?: boolean;
   garnish_options?: string[];

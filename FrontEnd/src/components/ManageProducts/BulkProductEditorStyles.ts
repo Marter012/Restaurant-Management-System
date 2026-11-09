@@ -16,16 +16,16 @@ export const BulkEditorContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
-  color: var(--app-ink);
+  color: var(--color-text);
   box-sizing: border-box;
 
   .bulk-editor-error {
     margin: 0;
     padding: 12px 15px;
-    border: 1px solid rgba(189, 57, 50, 0.25);
+    border: 1px solid color-mix(in srgb, var(--color-danger) 25%, transparent);
     border-radius: 12px;
-    background: #fff0ed;
-    color: #a8322c;
+    background: var(--color-danger-soft);
+    color: var(--color-danger);
     font-size: 0.88rem;
     line-height: 1.45;
   }
@@ -35,17 +35,17 @@ export const BulkEditorContainer = styled.div`
     align-items: flex-start;
     gap: 10px;
     padding: 12px 15px;
-    border: 1px solid var(--app-border);
+    border: 1px solid var(--color-border);
     border-radius: 12px;
-    background: var(--app-surface);
-    color: var(--app-muted-dark);
+    background: var(--color-surface);
+    color: var(--color-text-secondary);
     font-size: 0.82rem;
     line-height: 1.45;
 
     svg {
       flex: 0 0 auto;
       margin-top: 2px;
-      color: var(--app-accent);
+      color: var(--color-accent);
     }
   }
 
@@ -61,9 +61,9 @@ export const BulkEditorToolbar = styled.div`
   align-items: end;
   gap: 14px;
   padding: 16px;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 15px;
-  background: var(--app-surface);
+  background: var(--color-surface);
   box-sizing: border-box;
 
   .category-control {
@@ -73,7 +73,7 @@ export const BulkEditorToolbar = styled.div`
     gap: 7px;
 
     > span {
-      color: var(--app-muted-dark);
+      color: var(--color-text-secondary);
       font-size: 0.78rem;
       font-weight: 800;
       letter-spacing: 0.035em;
@@ -85,18 +85,18 @@ export const BulkEditorToolbar = styled.div`
       min-width: 0;
       height: 48px;
       padding: 0 13px;
-      border: 1px solid var(--app-border);
+      border: 1px solid var(--color-border);
       border-radius: 10px;
-      background: var(--app-white);
-      color: var(--app-ink);
+      background: var(--color-white);
+      color: var(--color-text);
       font: inherit;
       font-size: 0.9rem;
       outline: none;
       cursor: pointer;
 
       &:focus-visible {
-        border-color: var(--app-accent);
-        box-shadow: 0 0 0 3px rgba(var(--app-accent-rgb), 0.13);
+        border-color: var(--color-accent);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 13%, transparent);
       }
     }
   }
@@ -108,14 +108,14 @@ export const BulkEditorToolbar = styled.div`
     align-items: center;
     gap: 11px;
     padding: 0 14px;
-    border: 1px solid var(--app-border);
+    border: 1px solid var(--color-border);
     border-radius: 10px;
-    background: var(--app-white);
-    color: var(--app-muted-dark);
+    background: var(--color-white);
+    color: var(--color-text-secondary);
 
     &:focus-within {
-      border-color: var(--app-accent);
-      box-shadow: 0 0 0 3px rgba(var(--app-accent-rgb), 0.13);
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 13%, transparent);
     }
 
     svg {
@@ -130,13 +130,13 @@ export const BulkEditorToolbar = styled.div`
       border: 0;
       outline: 0;
       background: transparent !important;
-      color: var(--app-ink);
+      color: var(--color-text);
       font: inherit;
       font-size: 0.9rem;
     }
 
     input::placeholder {
-      color: var(--app-muted);
+      color: var(--color-text-secondary);
     }
   }
 
@@ -149,7 +149,7 @@ export const BulkEditorToolbar = styled.div`
   }
 
   .edit-modes-label {
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
     font-size: 0.78rem;
     font-weight: 800;
     text-transform: uppercase;
@@ -161,10 +161,10 @@ export const BulkEditorToolbar = styled.div`
     gap: 7px;
     min-height: 38px;
     padding: 0 11px;
-    border: 1px solid var(--app-border);
+    border: 1px solid var(--color-border);
     border-radius: 9px;
-    background: var(--app-white);
-    color: var(--app-muted-dark);
+    background: var(--color-white);
+    color: var(--color-text-secondary);
     font-size: 0.82rem;
     font-weight: 750;
     white-space: nowrap;
@@ -172,13 +172,13 @@ export const BulkEditorToolbar = styled.div`
     transition: border-color 150ms ease, background 150ms ease;
 
     &.is-active {
-      border-color: var(--app-accent);
-      background: var(--app-surface-soft);
-      color: var(--app-primary);
+      border-color: var(--color-accent);
+      background: var(--color-surface-muted);
+      color: var(--color-primary);
     }
 
     input {
-      accent-color: var(--app-primary);
+      accent-color: var(--color-primary);
       width: 16px;
       height: 16px;
       margin: 0;
@@ -224,7 +224,7 @@ export const BulkEditorListTable = styled(ListTable)`
     overflow: auto;
     box-sizing: border-box;
     scrollbar-width: thin;
-    scrollbar-color: var(--app-accent) var(--app-surface-soft);
+    scrollbar-color: var(--color-accent) var(--color-surface-muted);
   }
 
   .table-scroll::-webkit-scrollbar {
@@ -233,11 +233,11 @@ export const BulkEditorListTable = styled(ListTable)`
   }
 
   .table-scroll::-webkit-scrollbar-track {
-    background: var(--app-surface-soft);
+    background: var(--color-surface-muted);
   }
 
   .table-scroll::-webkit-scrollbar-thumb {
-    background: var(--app-accent);
+    background: var(--color-accent);
     border-radius: 20px;
   }
 
@@ -248,17 +248,17 @@ export const BulkEditorListTable = styled(ListTable)`
     gap: 12px;
     align-items: center;
     padding: 16px 18px;
-    background: var(--app-surface-soft) !important;
+    background: var(--color-surface-muted) !important;
     background-image: none !important;
     border: 0 !important;
-    border-bottom: 1px solid var(--app-border) !important;
+    border-bottom: 1px solid var(--color-border) !important;
     box-shadow: none !important;
     box-sizing: border-box;
 
     h4 {
       min-width: 0;
       margin: 0;
-      color: var(--app-primary) !important;
+      color: var(--color-primary) !important;
       background: transparent !important;
       font-size: 0.78rem;
       font-weight: 850;
@@ -281,14 +281,14 @@ export const BulkEditorListTable = styled(ListTable)`
     padding: 0;
     gap: 0;
     box-sizing: border-box;
-    background: var(--app-white) !important;
+    background: var(--color-white) !important;
     background-image: none !important;
   }
 
   .bulk-empty {
     margin: 0;
     padding: 32px 16px;
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
     text-align: center;
     font-size: 0.9rem;
   }
@@ -305,10 +305,10 @@ export const BulkEditorListTable = styled(ListTable)`
 
 export const BulkEditorListRow = styled(TableRow)`
   && {
-    background: var(--app-white) !important;
+    background: var(--color-white) !important;
     background-image: none !important;
     border: 0 !important;
-    border-bottom: 1px solid var(--app-border) !important;
+    border-bottom: 1px solid var(--color-border) !important;
     border-radius: 0 !important;
     box-shadow: none !important;
   }
@@ -322,30 +322,30 @@ export const BulkEditorListRow = styled(TableRow)`
   margin: 0;
   padding: 11px 18px;
   border: 0;
-  border-bottom: 1px solid var(--app-border);
+  border-bottom: 1px solid var(--color-border);
   border-radius: 0;
-  background: var(--app-white);
-  color: var(--app-ink);
+  background: var(--color-white);
+  color: var(--color-text);
   box-shadow: none;
   box-sizing: border-box;
   transition: background 150ms ease;
 
   &&:nth-child(even) {
-    background: var(--app-surface) !important;
+    background: var(--color-surface) !important;
   }
 
   &&.is-selected {
-    background: var(--app-white) !important;
+    background: var(--color-white) !important;
   }
 
   &&:nth-child(even).is-selected {
-    background: var(--app-surface) !important;
+    background: var(--color-surface) !important;
   }
 
   &&:hover {
     z-index: 0;
-    background: var(--app-surface-soft) !important;
-    border-color: var(--app-border) !important;
+    background: var(--color-surface-muted) !important;
+    border-color: var(--color-border) !important;
     box-shadow: none !important;
   }
 
@@ -364,22 +364,22 @@ export const BulkEditorListRow = styled(TableRow)`
       display: grid;
       place-items: center;
       margin: 0;
-      border: 1px solid var(--app-border-strong);
+      border: 1px solid var(--color-border-strong);
       border-radius: 6px;
-      background: var(--app-white);
+      background: var(--color-white);
       cursor: pointer;
 
       &::after {
         content: "✓";
-        color: var(--app-white);
+        color: var(--color-white);
         font-size: 0.82rem;
         font-weight: 900;
         transform: scale(0);
       }
 
       &:checked {
-        border-color: var(--app-primary);
-        background: var(--app-primary);
+        border-color: var(--color-primary);
+        background: var(--color-primary);
       }
 
       &:checked::after {
@@ -398,7 +398,7 @@ export const BulkEditorListRow = styled(TableRow)`
       height: 46px;
       border-radius: 9px;
       object-fit: cover;
-      background: var(--app-surface-soft);
+      background: var(--color-surface-muted);
     }
 
     .product-copy {
@@ -410,7 +410,7 @@ export const BulkEditorListRow = styled(TableRow)`
 
     strong {
       min-width: 0;
-      color: var(--app-ink);
+      color: var(--color-text);
       font-size: 0.88rem;
       font-weight: 800;
       overflow: hidden;
@@ -419,7 +419,7 @@ export const BulkEditorListRow = styled(TableRow)`
     }
 
     .product-copy span {
-      color: var(--app-muted-dark);
+      color: var(--color-text-secondary);
       font-size: 0.72rem;
       font-weight: 650;
       overflow: hidden;
@@ -437,7 +437,7 @@ export const BulkEditorListRow = styled(TableRow)`
   }
 
   .cell-value {
-    color: var(--app-ink);
+    color: var(--color-text);
     font-size: 0.9rem;
     font-weight: 800;
     font-variant-numeric: tabular-nums;
@@ -450,10 +450,10 @@ export const BulkEditorListRow = styled(TableRow)`
     height: 44px;
     box-sizing: border-box;
     padding: 0 12px;
-    border: 1px solid var(--app-border);
+    border: 1px solid var(--color-border);
     border-radius: 9px;
-    background: var(--app-surface-soft);
-    color: var(--app-ink);
+    background: var(--color-surface-muted);
+    color: var(--color-text);
     font: inherit;
     font-size: 0.88rem;
     font-weight: 750;
@@ -463,15 +463,15 @@ export const BulkEditorListRow = styled(TableRow)`
     transition: border-color 150ms ease, box-shadow 150ms ease;
 
     &:focus-visible {
-      border-color: var(--app-accent);
-      box-shadow: 0 0 0 3px rgba(var(--app-accent-rgb), 0.14);
-      background: var(--app-white);
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 14%, transparent);
+      background: var(--color-white);
     }
 
     &:disabled {
       opacity: 0.62;
-      background: var(--app-surface);
-      color: var(--app-muted-dark);
+      background: var(--color-surface);
+      color: var(--color-text-secondary);
       cursor: not-allowed;
     }
   }
@@ -480,7 +480,7 @@ export const BulkEditorListRow = styled(TableRow)`
     gap: 7px;
 
     > span {
-      color: var(--app-primary);
+      color: var(--color-primary);
       font-size: 0.9rem;
       font-weight: 850;
     }
@@ -558,7 +558,7 @@ export const BulkEditorFooterSummary = styled.div`
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
-  color: var(--app-muted-dark);
+  color: var(--color-text-secondary);
   font-size: 0.84rem;
   font-weight: 700;
 
@@ -569,8 +569,8 @@ export const BulkEditorFooterSummary = styled.div`
     height: 36px;
     padding: 0 8px;
     border-radius: 10px;
-    background: var(--app-surface-soft);
-    color: var(--app-primary);
+    background: var(--color-surface-muted);
+    color: var(--color-primary);
     font-size: 1rem;
     font-weight: 900;
     font-variant-numeric: tabular-nums;
@@ -579,8 +579,8 @@ export const BulkEditorFooterSummary = styled.div`
   .summary-changes {
     padding: 6px 9px;
     border-radius: 999px;
-    background: rgba(var(--app-accent-rgb), 0.13);
-    color: var(--app-primary);
+    background: color-mix(in srgb, var(--color-accent) 13%, transparent);
+    color: var(--color-primary);
     font-size: 0.74rem;
     font-weight: 800;
   }
@@ -594,12 +594,12 @@ export const BulkEditorButton = styled.button<{ $secondary?: boolean }>`
   justify-content: center;
   gap: 9px;
   padding: 0 18px;
-  border: 1px solid ${({ $secondary }) => ($secondary ? "var(--app-border)" : "transparent")};
+  border: 1px solid ${({ $secondary }) => ($secondary ? "var(--color-border)" : "transparent")};
   border-radius: 11px;
   background: ${({ $secondary }) =>
-    $secondary ? "var(--app-white)" : "var(--app-primary)"};
+    $secondary ? "var(--color-white)" : "var(--color-primary)"};
   color: ${({ $secondary }) =>
-    $secondary ? "var(--app-primary)" : "var(--app-white)"};
+    $secondary ? "var(--color-primary)" : "var(--color-white)"};
   font: inherit;
   font-size: 0.86rem;
   font-weight: 850;

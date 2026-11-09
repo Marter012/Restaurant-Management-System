@@ -9,7 +9,8 @@ export const DashboardHeader = styled.header`
   justify-content: space-between;
   gap: 22px;
   padding: 4px 2px 18px;
-  color: var(--app-ink);
+  color: var(--color-text);
+  font-family: var(--font-family-base);
 
   @media (max-width: 760px) {
     flex-direction: column;
@@ -25,7 +26,7 @@ export const HeaderLeft = styled.div`
 export const HeaderEyebrow = styled.span`
   display: block;
   margin-bottom: 6px;
-  color: var(--app-accent);
+  color: var(--color-accent);
   font-size: 0.68rem;
   font-weight: 800;
   letter-spacing: 0.13em;
@@ -33,8 +34,8 @@ export const HeaderEyebrow = styled.span`
 
 export const HeaderTitle = styled.h1`
   margin: 0;
-  color: var(--app-ink);
-  font-family: var(--app-font-heading);
+  color: var(--color-text);
+  font-family: var(--font-family-heading);
   font-size: clamp(1.65rem, 2.5vw, 2.15rem);
   font-weight: 850;
   letter-spacing: -0.045em;
@@ -43,7 +44,7 @@ export const HeaderTitle = styled.h1`
 
 export const HeaderSubtitle = styled.p`
   margin: 6px 0 0;
-  color: var(--app-muted);
+  color: var(--color-text-muted);
   font-size: 0.88rem;
   line-height: 1.45;
 `;
@@ -52,7 +53,8 @@ export const HeaderRight = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  width: 50%;
+  width: auto;
+  min-width: 0;
   @media (max-width: 760px) {
     justify-content: flex-start;
   }
@@ -63,7 +65,8 @@ export const HeaderTools = styled.div`
   align-items: center;
   justify-content: flex-end;
   gap: 12px;
-  width: 50%;
+  width: auto;
+  min-width: 0;
   /* TABLET: reserva espacio para fecha/turno y perfil sin comprimir el banner. */
   @media (min-width: 621px) and (max-width: 1024px) {
     width: auto;
@@ -96,7 +99,7 @@ export const HeaderTools = styled.div`
 
     & > :last-child {
       width: min(200px, 100%) !important;
-      margin-left: 0 auto;
+      margin-left: auto;
     }
   }
 `;
@@ -107,23 +110,23 @@ export const DatePill = styled.div`
   align-items: center;
   gap: 9px;
   padding: 8px 13px;
-  border: 1px solid var(--app-border);
-  border-radius: var(--app-radius);
-  background: var(--app-surface);
-  color: var(--app-muted-dark);
-  box-shadow: var(--app-shadow-xs);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-sm);
   font-size: 0.76rem;
   white-space: nowrap;
 
   svg {
-    color: var(--app-accent);
+    color: var(--color-accent);
     font-size: 0.95rem;
   }
 
   strong {
     padding-left: 9px;
-    border-left: 1px solid var(--app-border);
-    color: var(--app-primary);
+    border-left: 1px solid var(--color-border);
+    color: var(--color-primary);
     font-size: 0.82rem;
     font-weight: 850;
   }
@@ -141,20 +144,29 @@ export const Profile = styled.div`
   display: flex;
   align-items: center;
   gap: 9px;
-  width: 200px !important;
+  width: auto;
+  min-width: 0;
+  max-width: 220px;
   padding: 5px 7px 5px 6px;
-  border: 1px solid var(--app-border);
-  border-radius: var(--app-radius);
-  background: var(--app-surface);
-  box-shadow: var(--app-shadow-xs);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+
+  transition:
+    border-color var(--transition-normal),
+    background-color var(--transition-normal),
+    box-shadow var(--transition-normal);
 
   &:hover {
-    background: var(--app-danger-soft);
-    color: var(--app-danger);
+    border-color: var(--color-border-strong);
+    background: var(--color-surface-muted);
+    box-shadow: var(--shadow-md);
   }
-  &:hover .buttonExit{
-    background-color: #db3030;
-    color: var(--app-surface);
+
+  &:hover .buttonExit {
+    background-color: var(--color-danger-soft);
+    color: var(--color-danger);
   }
   cursor: pointer;
 `;
@@ -166,8 +178,8 @@ export const ProfileAvatar = styled.div`
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: var(--app-accent-soft);
-  color: var(--app-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
   font-size: 0.84rem;
   font-weight: 850;
 `;
@@ -181,7 +193,7 @@ export const ProfileText = styled.div`
   strong {
     max-width: 124px;
     overflow: hidden;
-    color: var(--app-ink);
+    color: var(--color-text);
     font-size: 0.76rem;
     font-weight: 800;
     text-overflow: ellipsis;
@@ -189,27 +201,35 @@ export const ProfileText = styled.div`
   }
 
   span {
-    color: var(--app-muted);
+    color: var(--color-text-muted);
     font-size: 0.67rem;
   }
 `;
 
 export const LogoutButton = styled.button`
-  width: 32px;
-  height: 32px;
-  flex: 0 0 32px;
   display: grid;
   place-items: center;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
   border: 0;
-  border-radius: 9px;
+  border-radius: var(--radius-sm);
   background: transparent;
-  color: var(--app-muted-dark);
+  color: var(--color-text-muted);
   cursor: pointer;
   transition:
-    background var(--app-transition),
-    color var(--app-transition);
+    background-color var(--transition-normal),
+    color var(--transition-normal);
 
-  
+  &:hover {
+    background: var(--color-danger-soft);
+    color: var(--color-danger);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
 `;
 
 export const HeroBanner = styled.section<{ $image: string }>`
@@ -222,16 +242,16 @@ export const HeroBanner = styled.section<{ $image: string }>`
   align-items: center;
   overflow: hidden;
   padding: 22px clamp(20px, 3vw, 34px);
-  border: 1px solid rgba(var(--app-primary-rgb), 0.12);
-  border-radius: var(--app-radius-xl);
-  background-color: var(--app-primary);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 12%, transparent);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-primary);
   background-image:
     linear-gradient(
       90deg,
-      var(--app-primary) 0%,
-      rgba(var(--app-primary-rgb), 0.97) 37%,
-      rgba(var(--app-primary-rgb), 0.68) 59%,
-      rgba(var(--app-primary-rgb), 0.04) 100%
+      var(--color-primary) 0%,
+      color-mix(in srgb, var(--color-primary) 97%, transparent) 37%,
+      color-mix(in srgb, var(--color-primary) 68%, transparent) 59%,
+      color-mix(in srgb, var(--color-primary) 4%, transparent) 100%
     ),
     url(${({ $image }) => $image});
   background-position:
@@ -241,7 +261,7 @@ export const HeroBanner = styled.section<{ $image: string }>`
   background-size:
     cover,
     auto 100%;
-  box-shadow: var(--app-shadow-sm);
+  box-shadow: var(--shadow-md);
 
   &::after {
     content: "";
@@ -251,9 +271,9 @@ export const HeroBanner = styled.section<{ $image: string }>`
     height: 176px;
     right: 33%;
     top: -78px;
-    border: 2px solid rgba(var(--app-white-rgb), 0.1);
+    border: 2px solid color-mix(in srgb, var(--color-white) 10%, transparent);
     border-radius: 50%;
-    box-shadow: 0 0 0 18px rgba(var(--app-white-rgb), 0.035);
+    box-shadow: 0 0 0 18px color-mix(in srgb, var(--color-white) 3.5%, transparent);
   }
 
   /* TABLET: permite que el texto y las herramientas compartan el banner
@@ -277,7 +297,7 @@ export const HeroContent = styled.div`
   position: relative;
   z-index: 1;
   max-width: min(700px, 72%);
-  color: var(--app-white);
+  color: var(--color-white);
 
   @media (max-width: 1024px) {
     max-width: min(100%, 440px);
@@ -299,7 +319,7 @@ export const HeroContent = styled.div`
 export const HeroEyebrow = styled.span`
   display: block;
   margin-bottom: 7px;
-  color: var(--app-accent-soft);
+  color: var(--color-primary-soft);
   font-size: 0.64rem;
   font-weight: 850;
   letter-spacing: 0.16em;
@@ -307,8 +327,8 @@ export const HeroEyebrow = styled.span`
 
 export const HeroTitle = styled.h2`
   margin: 0;
-  color: var(--app-white);
-  font-family: var(--app-font-heading);
+  color: var(--color-white);
+  font-family: var(--font-family-heading);
   font-size: clamp(1.3rem, 2.5vw, 1.85rem);
   font-weight: 850;
   letter-spacing: -0.04em;
@@ -327,7 +347,7 @@ export const HeroTitle = styled.h2`
 
 export const HeroDescription = styled.p`
   margin: 7px 0 0;
-  color: rgba(var(--app-white-rgb), 0.86);
+  color: color-mix(in srgb, var(--color-white) 86%, transparent);
   font-size: 0.83rem;
   line-height: 1.45;
 
@@ -363,17 +383,17 @@ export const StatsGrid = styled.section`
 export const StatCard = styled.article`
   min-width: 0;
   padding: 15px 16px 14px;
-  border: 1px solid var(--app-border);
-  border-radius: var(--app-radius-lg);
-  background: var(--app-surface);
-  box-shadow: var(--app-shadow-xs);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
   transition:
-    transform var(--app-transition),
-    box-shadow var(--app-transition);
+    transform var(--transition-normal),
+    box-shadow var(--transition-normal);
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: var(--app-shadow-sm);
+    box-shadow: var(--shadow-md);
   }
 
   @media (max-width: 620px) {
@@ -390,7 +410,7 @@ export const StatTopline = styled.div`
 
 export const StatLabel = styled.span`
   min-width: 0;
-  color: var(--app-muted-dark);
+  color: var(--color-text);
   font-size: 0.75rem;
   font-weight: 700;
 `;
@@ -398,8 +418,8 @@ export const StatLabel = styled.span`
 export const StatValue = styled.strong<{ $compact?: boolean }>`
   display: block;
   margin-top: 5px;
-  color: var(--app-ink);
-  font-family: var(--app-font-heading);
+  color: var(--color-text);
+  font-family: var(--font-family-heading);
   font-size: ${({ $compact }) =>
     $compact ? "1.08rem" : "clamp(1.2rem, 1.8vw, 1.55rem)"};
   font-weight: 850;
@@ -415,15 +435,15 @@ export const StatIcon = styled.div`
   display: grid;
   place-items: center;
   border-radius: 13px;
-  background: var(--app-surface-soft);
-  color: var(--app-primary);
+  background: var(--color-surface-muted);
+  color: var(--color-primary);
   font-size: 1.08rem;
 `;
 
 export const StatFootnote = styled.span`
   display: block;
   margin-top: 8px;
-  color: var(--app-muted);
+  color: var(--color-text-muted);
   font-size: 0.67rem;
   line-height: 1.3;
 `;
@@ -440,16 +460,16 @@ export const StatusPill = styled.span<{
   border-radius: 999px;
   background: ${({ $status }) =>
     $status === "success"
-      ? "var(--app-success-soft)"
+      ? "var(--color-success-soft)"
       : $status === "danger"
-        ? "var(--app-danger-soft)"
-        : "var(--app-warning-soft)"};
+        ? "var(--color-danger-soft)"
+        : "var(--color-warning-soft)"};
   color: ${({ $status }) =>
     $status === "success"
-      ? "var(--app-success)"
+      ? "var(--color-success)"
       : $status === "danger"
-        ? "var(--app-danger)"
-        : "var(--app-warning)"};
+        ? "var(--color-danger)"
+        : "var(--color-warning)"};
   font-size: 0.66rem;
   font-weight: 800;
   overflow-wrap: anywhere;
@@ -478,10 +498,10 @@ export const MainGrid = styled.section`
 export const Panel = styled.article`
   min-width: 0;
   padding: 18px 19px 16px;
-  border: 1px solid var(--app-border);
-  border-radius: var(--app-radius-lg);
-  background: var(--app-surface);
-  box-shadow: var(--app-shadow-xs);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
 `;
 
 export const ActivityPanel = styled(Panel)`
@@ -502,8 +522,8 @@ export const PanelHeading = styled.div`
 
 export const PanelTitle = styled.h2`
   margin: 0;
-  color: var(--app-ink);
-  font-family: var(--app-font-heading);
+  color: var(--color-text);
+  font-family: var(--font-family-heading);
   font-size: 1rem;
   font-weight: 850;
   letter-spacing: -0.025em;
@@ -511,7 +531,7 @@ export const PanelTitle = styled.h2`
 
 export const PanelSubtitle = styled.p`
   margin: 5px 0 0;
-  color: var(--app-muted);
+  color: var(--color-text-muted);
   font-size: 0.72rem;
   line-height: 1.4;
 `;
@@ -522,8 +542,8 @@ export const ChartLegend = styled.div`
   gap: 6px;
   padding: 6px 9px;
   border-radius: 999px;
-  background: var(--app-surface-soft);
-  color: var(--app-muted-dark);
+  background: var(--color-surface-muted);
+  color: var(--color-text);
   font-size: 0.64rem;
   font-weight: 700;
   white-space: nowrap;
@@ -532,7 +552,7 @@ export const ChartLegend = styled.div`
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: var(--app-primary);
+    background: var(--color-primary);
   }
 
   @media (max-width: 520px) {
@@ -565,7 +585,7 @@ export const ChartYAxis = styled.div`
   flex-direction: column;
   justify-content: space-between;
   padding: 0 0 25px;
-  color: var(--app-muted);
+  color: var(--color-text-muted);
   font-size: 0.64rem;
   text-align: right;
 
@@ -582,7 +602,7 @@ export const ChartPlot = styled.div`
   gap: 9px;
   min-width: 0;
   padding: 0 4px 25px;
-  border-bottom: 1px solid var(--app-border);
+  border-bottom: 1px solid var(--color-border);
 `;
 
 export const ChartGridLine = styled.i`
@@ -591,7 +611,7 @@ export const ChartGridLine = styled.i`
   right: 0;
   z-index: 0;
   height: 1px;
-  background: rgba(var(--app-border-rgb), 0.65);
+  background: color-mix(in srgb, var(--color-border) 65%, transparent);
 
   &:nth-child(1) {
     top: 0;
@@ -630,19 +650,19 @@ export const ChartBar = styled.i<{ $height: number; $active?: boolean }>`
   border-radius: 8px 8px 3px 3px;
   background: ${({ $active }) =>
     $active
-      ? "linear-gradient(180deg, var(--app-accent), var(--app-primary))"
-      : "linear-gradient(180deg, var(--app-accent-soft), var(--app-accent))"};
-  box-shadow: 0 3px 8px rgba(var(--app-shadow-rgb), 0.1);
+      ? "linear-gradient(180deg, var(--color-accent), var(--color-primary))"
+      : "linear-gradient(180deg, var(--color-primary-soft), var(--color-accent))"};
+  box-shadow: 0 3px 8px color-mix(in srgb, var(--color-text) 10%, transparent);
   transition:
     height 220ms ease,
-    filter var(--app-transition);
+    filter var(--transition-normal);
 `;
 
 export const ChartLabel = styled.span<{ $active?: boolean }>`
   position: absolute;
   bottom: 0;
   color: ${({ $active }) =>
-    $active ? "var(--app-primary)" : "var(--app-muted)"};
+    $active ? "var(--color-primary)" : "var(--color-text-muted)"};
   font-size: 0.68rem;
   font-weight: ${({ $active }) => ($active ? 850 : 600)};
   text-transform: capitalize;
@@ -655,13 +675,13 @@ export const ChartTooltip = styled.span`
   max-width: 126px;
   padding: 5px 7px;
   border-radius: 8px;
-  background: var(--app-primary);
-  color: var(--app-white);
+  background: var(--color-primary);
+  color: var(--color-white);
   font-size: 0.62rem;
   font-weight: 800;
   text-align: center;
   white-space: nowrap;
-  box-shadow: var(--app-shadow-sm);
+  box-shadow: var(--shadow-md);
 `;
 
 export const ActivityList = styled.div`
@@ -681,7 +701,7 @@ export const ActivityItem = styled.div`
   gap: 10px;
   min-width: 0;
   padding: 10px 0;
-  border-bottom: 1px solid rgba(var(--app-border-rgb), 0.62);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 62%, transparent);
 
   &:last-child {
     border-bottom: 0;
@@ -701,14 +721,14 @@ export const ActivityIcon = styled.div<{ $tone: ActivityTone }>`
   border-radius: 50%;
   background: ${({ $tone }) =>
     $tone === "cash"
-      ? "var(--app-success-soft)"
+      ? "var(--color-success-soft)"
       : $tone === "promotions"
-        ? "var(--app-accent-soft)"
+        ? "var(--color-primary-soft)"
         : $tone === "products"
-          ? "var(--app-warning-soft)"
-          : "var(--app-surface-soft)"};
+          ? "var(--color-warning-soft)"
+          : "var(--color-surface-muted)"};
   color: ${({ $tone }) =>
-    $tone === "cash" ? "var(--app-success)" : "var(--app-primary)"};
+    $tone === "cash" ? "var(--color-success)" : "var(--color-primary)"};
   font-size: 1rem;
 
   @media (max-width: 520px) {
@@ -724,7 +744,7 @@ export const ActivityCopy = styled.div`
 export const ActivityTitle = styled.strong`
   display: block;
   overflow: hidden;
-  color: var(--app-ink);
+  color: var(--color-text);
   font-size: 0.76rem;
   font-weight: 800;
   text-overflow: ellipsis;
@@ -735,14 +755,14 @@ export const ActivityDescription = styled.span`
   display: block;
   overflow: hidden;
   margin-top: 3px;
-  color: var(--app-muted);
+  color: var(--color-text-muted);
   font-size: 0.68rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
 export const ActivityTime = styled.time`
-  color: var(--app-muted);
+  color: var(--color-text-muted);
   font-size: 0.66rem;
   white-space: nowrap;
 
@@ -756,18 +776,18 @@ export const ViewAllButton = styled.button`
   padding: 7px 11px;
   border: 1px solid transparent;
   border-radius: 10px;
-  background: var(--app-accent-soft);
-  color: var(--app-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
   font: inherit;
   font-size: 0.7rem;
   font-weight: 800;
   cursor: pointer;
   transition:
-    background var(--app-transition),
-    transform var(--app-transition);
+    background var(--transition-normal),
+    transform var(--transition-normal);
 
   &:hover {
-    background: var(--app-primary-soft);
+    background: var(--color-primary-soft);
     transform: translateY(-1px);
   }
 `;
@@ -775,10 +795,10 @@ export const ViewAllButton = styled.button`
 export const QuickAccessSection = styled.section`
   width: 100%;
   padding: 17px 18px 18px;
-  border: 1px solid var(--app-border);
-  border-radius: var(--app-radius-lg);
-  background: var(--app-surface);
-  box-shadow: var(--app-shadow-xs);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
 `;
 
 export const QuickAccessHeader = styled.div`
@@ -793,20 +813,20 @@ export const QuickAccessTitle = styled.h2`
   align-items: center;
   gap: 9px;
   margin: 0;
-  color: var(--app-ink);
-  font-family: var(--app-font-heading);
+  color: var(--color-text);
+  font-family: var(--font-family-heading);
   font-size: 1rem;
   font-weight: 850;
 
   svg {
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 1.22rem;
   }
 `;
 
 export const QuickAccessDescription = styled.p`
   margin: 5px 0 0 29px;
-  color: var(--app-muted);
+  color: var(--color-text-muted);
   font-size: 0.72rem;
 `;
 
@@ -838,27 +858,27 @@ export const QuickAccessButton = styled.button`
   justify-content: flex-start;
   gap: 10px;
   padding: 10px 12px;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 13px;
-  background: var(--app-paper);
-  color: var(--app-primary);
+  background: var(--color-surface);
+  color: var(--color-primary);
   text-align: left;
   cursor: pointer;
   transition:
-    transform var(--app-transition),
-    border-color var(--app-transition),
-    background var(--app-transition),
-    box-shadow var(--app-transition);
+    transform var(--transition-normal),
+    border-color var(--transition-normal),
+    background var(--transition-normal),
+    box-shadow var(--transition-normal);
 
   &:hover {
     transform: translateY(-2px);
-    border-color: var(--app-border-strong);
-    background: var(--app-surface);
-    box-shadow: var(--app-shadow-sm);
+    border-color: var(--color-border-strong);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-md);
   }
 
   &:focus-visible {
-    outline: 3px solid rgba(var(--app-accent-rgb), 0.28);
+    outline: 3px solid color-mix(in srgb, var(--color-accent) 28%, transparent);
     outline-offset: 2px;
   }
 `;
@@ -870,13 +890,13 @@ export const QuickAccessIcon = styled.span`
   display: grid;
   place-items: center;
   border-radius: 11px;
-  background: var(--app-accent-soft);
-  color: var(--app-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
   font-size: 1.08rem;
 `;
 
 export const QuickAccessText = styled.span`
-  color: var(--app-ink);
+  color: var(--color-text);
   font-size: 0.72rem;
   font-weight: 800;
   line-height: 1.3;
@@ -888,10 +908,10 @@ export const AdminPreference = styled.section`
   justify-content: space-between;
   gap: 14px;
   padding: 13px 16px;
-  border: 1px solid var(--app-border);
-  border-left: 4px solid var(--app-accent);
-  border-radius: var(--app-radius);
-  background: var(--app-surface);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-accent);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
 
   @media (max-width: 560px) {
     align-items: flex-start;
@@ -906,13 +926,13 @@ export const AdminPreferenceCopy = styled.div`
   min-width: 0;
 
   strong {
-    color: var(--app-ink);
+    color: var(--color-text);
     font-size: 0.78rem;
     font-weight: 850;
   }
 
   span {
-    color: var(--app-muted);
+    color: var(--color-text-muted);
     font-size: 0.7rem;
     line-height: 1.45;
   }
@@ -925,10 +945,10 @@ export const SettingControl = styled.button<{ $enabled: boolean }>`
   gap: 10px;
   min-width: 142px;
   padding: 8px 10px;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 999px;
-  background: var(--app-paper);
-  color: var(--app-primary);
+  background: var(--color-surface);
+  color: var(--color-primary);
   font: inherit;
   font-size: 0.7rem;
   font-weight: 800;
@@ -942,8 +962,8 @@ export const SettingControl = styled.button<{ $enabled: boolean }>`
     flex: 0 0 34px;
     border-radius: 999px;
     background: ${({ $enabled }) =>
-      $enabled ? "var(--app-success)" : "var(--app-border-strong)"};
-    transition: background var(--app-transition);
+      $enabled ? "var(--color-success)" : "var(--color-border-strong)"};
+    transition: background var(--transition-normal);
   }
 
   i::after {
@@ -954,8 +974,8 @@ export const SettingControl = styled.button<{ $enabled: boolean }>`
     width: 13px;
     height: 13px;
     border-radius: 50%;
-    background: var(--app-white);
-    transition: left var(--app-transition);
+    background: var(--color-white);
+    transition: left var(--transition-normal);
   }
 
   &:disabled {
@@ -983,22 +1003,22 @@ export const ActivityRow = styled.div`
   align-items: center;
   gap: 12px;
   padding: 13px 5px;
-  border-bottom: 1px solid var(--app-border);
+  border-bottom: 1px solid var(--color-border);
 
   strong {
-    color: var(--app-ink);
+    color: var(--color-text);
     font-size: 0.77rem;
   }
 
   span {
-    color: var(--app-muted-dark);
+    color: var(--color-text);
     font-size: 0.75rem;
     line-height: 1.4;
     overflow-wrap: anywhere;
   }
 
   time {
-    color: var(--app-muted);
+    color: var(--color-text-muted);
     font-size: 0.68rem;
     white-space: nowrap;
   }
@@ -1022,12 +1042,12 @@ export const EmptyState = styled.div`
   justify-content: center;
   gap: 9px;
   padding: 18px;
-  color: var(--app-muted);
+  color: var(--color-text-muted);
   font-size: 0.76rem;
   text-align: center;
 
   svg {
-    color: var(--app-accent);
+    color: var(--color-accent);
     font-size: 1.35rem;
   }
 `;

@@ -9,15 +9,16 @@ export const CashRegisterNotice = styled.section`
   gap: 16px;
   margin: 18px 0 22px;
   padding: 20px 22px;
-  border: 1px solid var(--app-accent-soft);
-  border-left: 5px solid var(--app-danger);
-  border-radius: 16px;
-  background: var(--app-white);
-  box-shadow: 0 8px 24px rgba(var(--app-shadow-rgb), 0.07);
+  border: 1px solid var(--color-primary-soft);
+  border-left: 5px solid var(--color-danger);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-md);
+
   @media (max-width: 600px) {
     gap: 12px;
     padding: 16px;
-    border-radius: 13px;
+    border-radius: var(--radius-md);
   }
 `;
 
@@ -27,9 +28,9 @@ export const CashRegisterNoticeIcon = styled.div`
   flex: 0 0 44px;
   display: grid;
   place-items: center;
-  border-radius: 13px;
-  background: var(--app-accent-soft);
-  color: var(--app-danger);
+  border-radius: var(--radius-md);
+  background: var(--color-primary-soft);
+  color: var(--color-danger);
   font-size: 1.55rem;
 `;
 
@@ -41,7 +42,7 @@ export const CashRegisterNoticeContent = styled.div`
 
   h2 {
     margin: 0;
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 1.08rem;
     font-weight: 800;
     line-height: 1.3;
@@ -49,7 +50,7 @@ export const CashRegisterNoticeContent = styled.div`
 
   p {
     margin: 0;
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
     font-size: 0.92rem;
     line-height: 1.5;
   }
@@ -66,11 +67,11 @@ export const CashRegisterNoticeDetail = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  color: var(--app-primary);
+  color: var(--color-primary);
   font-size: 0.88rem;
 
   svg {
-    color: var(--app-accent);
+    color: var(--color-accent);
     font-size: 1.1rem;
   }
 

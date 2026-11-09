@@ -190,6 +190,7 @@ function EditOrderContent({
       }
     } finally {
       setSubmitting(false);
+      onSubmittingChange?.(false);
     }
   };
 
@@ -237,24 +238,62 @@ function EditOrderContent({
         const changeAmount = (index: number, raw: string) => {
           const next = [...payments];
           if (!next.length) return;
-          const balanceIndex = next.findIndex((_, i) => i !== index);
-          const fixed = next.reduce(
-            (sum, p, i) =>
-              i === index || i === balanceIndex
-                ? sum
-                : sum + Math.max(0, Number(p.amount) || 0),
-            0,
-          );
-          const amount = Math.min(
-            Math.max(0, Number(raw) || 0),
-            Math.max(0, total - fixed),
-          );
-          next[index] = { ...next[index], amount: Number(amount.toFixed(2)) };
-          if (balanceIndex >= 0)
-            next[balanceIndex] = {
-              ...next[balanceIndex],
-              amount: Number(Math.max(0, total - fixed - amount).toFixed(2)),
+
+          const entered = Math.max(0, Number(raw) || 0);
+
+          if (index === 0) {
+            const otherPaymentsTotal = next
+              .slice(1)
+              .reduce(
+                (sum, payment) =>
+                  sum + Math.max(0, Number(payment.amount) || 0),
+                0,
+              );
+
+            next[0] = {
+              ...next[0],
+              amount: Number(
+                Math.min(
+                  entered,
+                  Math.max(0, total - otherPaymentsTotal),
+                ).toFixed(2),
+              ),
             };
+          } else {
+            const otherPaymentsTotal = next.reduce(
+              (sum, payment, itemIndex) =>
+                itemIndex === 0 || itemIndex === index
+                  ? sum
+                  : sum + Math.max(0, Number(payment.amount) || 0),
+              0,
+            );
+
+            const amount = Math.min(
+              entered,
+              Math.max(0, total - otherPaymentsTotal),
+            );
+
+            next[index] = {
+              ...next[index],
+              amount: Number(amount.toFixed(2)),
+            };
+
+            const remainingPaymentsTotal = next
+              .slice(1)
+              .reduce(
+                (sum, payment) =>
+                  sum + Math.max(0, Number(payment.amount) || 0),
+                0,
+              );
+
+            next[0] = {
+              ...next[0],
+              amount: Number(
+                Math.max(0, total - remainingPaymentsTotal).toFixed(2),
+              ),
+            };
+          }
+
           setFieldValue("payments", next);
         };
 
@@ -470,9 +509,6 @@ function EditOrderContent({
                                 <option value="transfer">Transferencia</option>
                                 <option value="qr">QR</option>
                                 <option value="debit_card">Débito</option>
-                                <option value="mercado_pago">
-                                  Mercado Pago
-                                </option>
                               </select>
                             </label>
                             <label>

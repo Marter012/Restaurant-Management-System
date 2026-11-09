@@ -67,7 +67,6 @@ const paymentNames: Record<string, string> = {
   qr: "QR",
   debit: "Débito",
   debit_card: "Débito",
-  mercado_pago: "Mercado Pago",
   pending: "Pendiente",
 };
 

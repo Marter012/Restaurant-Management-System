@@ -14,7 +14,7 @@ export const ProductOptionsContainer = styled.div`
   box-sizing: border-box;
   padding: 4px 0 12px;
 
-  color: var(--app-ink);
+  color: var(--color-text);
 
   @media (max-width: 600px) {
     gap: 16px;
@@ -66,9 +66,9 @@ export const ProductImageWrapper = styled.div`
   overflow: hidden;
   box-sizing: border-box;
 
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 19px;
-  background: var(--app-canvas);
+  background: var(--color-background);
 
   @media (max-width: 900px) {
     grid-area: image;
@@ -101,7 +101,7 @@ export const ProductImagePlaceholder = styled.div`
   place-items: center;
   width: 100%;
   height: 100%;
-  color: var(--app-accent);
+  color: var(--color-accent);
   font-size: 42px;
 `;
 
@@ -115,11 +115,11 @@ export const ProductImageOverlay = styled.div`
 
   width: 38px;
   height: 38px;
-  border: 1px solid rgba(var(--app-shadow-rgb), 0.12);
+  border: 1px solid color-mix(in srgb, var(--color-text) 12%, transparent);
   border-radius: 11px;
 
-  background: rgba(74, 40, 24, 0.88);
-  color: white;
+  background: var(--color-sidebar);
+  color: var(--color-white);
   font-size: 17px;
   pointer-events: none;
 
@@ -155,7 +155,7 @@ export const ProductTitle = styled.h2`
   margin: 0;
   min-width: 0;
 
-  color: var(--app-primary);
+  color: var(--color-primary);
   font-size: clamp(25px, 3vw, 36px);
   font-weight: 850;
   line-height: 1.15;
@@ -227,22 +227,22 @@ export const ProductBadge = styled.span<BadgeProps>`
   ${({ variant }) =>
     variant === "category" &&
     `
-      background: #f0dcc3;
-      color: #70401b;
+      background: var(--color-primary-soft);
+      color: var(--color-primary);
     `}
 
   ${({ variant }) =>
     variant === "active" &&
     `
-      background: #dcebd9;
-      color: #16733a;
+      background: var(--color-success-soft);
+      color: var(--color-success);
     `}
 
   ${({ variant }) =>
     variant === "inactive" &&
     `
-      background: #f5dada;
-      color: #a51e18;
+      background: var(--color-danger-soft);
+      color: var(--color-danger);
     `}
 
   @media (max-width: 480px) {
@@ -255,7 +255,7 @@ export const ProductBadge = styled.span<BadgeProps>`
 
 export const ProductDescriptionText = styled.p`
   margin: 0;
-  color: var(--app-muted-dark);
+  color: var(--color-text-secondary);
   font-size: 0.9rem;
   line-height: 1.5;
   overflow-wrap: anywhere;
@@ -300,9 +300,9 @@ export const ProductMetric = styled.div`
   box-sizing: border-box;
   padding: 12px;
 
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 14px;
-  background: var(--app-surface);
+  background: var(--color-surface);
 
   @media (max-width: 600px) {
     min-height: 65px;
@@ -319,8 +319,8 @@ export const MetricIcon = styled.div`
   height: 38px;
   border-radius: 11px;
 
-  background: var(--app-primary-soft);
-  color: var(--app-accent);
+  background: var(--color-primary-soft);
+  color: var(--color-accent);
   font-size: 18px;
 
   @media (max-width: 480px) {
@@ -340,7 +340,7 @@ export const MetricInformation = styled.div`
 `;
 
 export const MetricLabel = styled.span`
-  color: var(--app-muted-dark);
+  color: var(--color-text-secondary);
   font-size: 0.74rem;
   font-weight: 600;
   line-height: 1.3;
@@ -354,15 +354,15 @@ interface MetricValueProps {
 
 export const MetricValue = styled.span<MetricValueProps>`
   min-width: 0;
-  color: var(--app-primary);
+  color: var(--color-primary);
   font-size: 1rem;
   font-weight: 850;
   line-height: 1.3;
   overflow-wrap: anywhere;
   word-break: normal;
 
-  ${({ $danger }) => $danger && "color: #a51e18;"}
-  ${({ $success }) => $success && "color: #16733a;"}
+  ${({ $danger }) => $danger && "color: var(--color-danger);"}
+  ${({ $success }) => $success && "color: var(--color-success);"}
 
   @media (max-width: 480px) {
     font-size: 0.94rem;
@@ -399,9 +399,9 @@ export const ProductDetailCard = styled.div`
   box-sizing: border-box;
   padding: 16px;
 
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 16px;
-  background: var(--app-white);
+  background: var(--color-white);
 
   @media (max-width: 600px) {
     min-height: auto;
@@ -415,7 +415,7 @@ export const ProductDetailHeader = styled.div`
   align-items: center;
   gap: 10px;
   min-width: 0;
-  color: var(--app-accent);
+  color: var(--color-accent);
 
   svg {
     flex: 0 0 auto;
@@ -425,7 +425,7 @@ export const ProductDetailHeader = styled.div`
   h3 {
     min-width: 0;
     margin: 0;
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 0.98rem;
     font-weight: 800;
     line-height: 1.3;
@@ -455,8 +455,8 @@ export const ProductDetailContent = styled.div`
   padding: 11px;
 
   border-radius: 11px;
-  background: var(--app-surface);
-  color: var(--app-ink);
+  background: var(--color-surface);
+  color: var(--color-text);
 
   font-size: 0.85rem;
   line-height: 1.5;
@@ -489,10 +489,10 @@ export const ProductChip = styled.span`
   box-sizing: border-box;
   padding: 7px 10px;
 
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 30px;
-  background: var(--app-primary-soft);
-  color: var(--app-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
 
   font-size: 0.77rem;
   font-weight: 700;
@@ -528,7 +528,7 @@ export const ProductActions = styled.footer`
   min-width: 0;
   margin-top: 4px;
   padding-top: 18px;
-  border-top: 1px solid var(--app-border);
+  border-top: 1px solid var(--color-border);
 
   @media (max-width: 750px) {
     grid-template-columns: minmax(0, 1fr);
@@ -569,9 +569,9 @@ export const DeleteIcon = styled.div<DeleteIconProps>`
   border-radius: 50%;
 
   background: ${({ $danger }) =>
-    $danger ? "#f8e1db" : "#dcebd9"};
+    $danger ? "var(--color-danger-soft)" : "var(--color-success-soft)"};
   color: ${({ $danger }) =>
-    $danger ? "#a51e18" : "#16733a"};
+    $danger ? "var(--color-danger)" : "var(--color-success)"};
 
   font-size: 29px;
 
@@ -585,7 +585,7 @@ export const DeleteIcon = styled.div<DeleteIconProps>`
 
 export const DeleteTitle = styled.h3`
   margin: 0;
-  color: var(--app-primary);
+  color: var(--color-primary);
   font-size: 1.25rem;
   font-weight: 800;
   line-height: 1.3;
@@ -599,7 +599,7 @@ export const DeleteTitle = styled.h3`
 export const DeleteDescription = styled.p`
   max-width: 520px;
   margin: 0;
-  color: var(--app-ink);
+  color: var(--color-text);
   font-size: 0.9rem;
   line-height: 1.5;
   overflow-wrap: anywhere;
@@ -616,8 +616,8 @@ export const DeleteProductName = styled.strong`
   padding: 10px 16px;
   border-radius: 11px;
 
-  background: var(--app-surface);
-  color: var(--app-primary);
+  background: var(--color-surface);
+  color: var(--color-primary);
   font-size: 0.92rem;
   overflow-wrap: anywhere;
 `;
@@ -653,10 +653,9 @@ export const DeleteButton = styled.button<DeleteIconProps>`
   border: none;
   border-radius: 11px;
   background: ${({ $danger }) =>
-    $danger ? "#a51e18" : "#16733a"};
-  color: white;
-
-  font-family: inherit;
+    $danger ? "var(--color-danger)" : "var(--color-success)"};
+  color: var(--color-white);
+  font: inherit;
   font-size: 0.86rem;
   font-weight: 700;
   cursor: pointer;
@@ -683,18 +682,17 @@ export const DeleteCancelButton = styled.button`
   box-sizing: border-box;
   padding: 10px 20px;
 
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 11px;
   background: transparent;
-  color: var(--app-primary);
-
-  font-family: inherit;
+  color: var(--color-primary);
+  font: inherit;
   font-size: 0.86rem;
   font-weight: 700;
   cursor: pointer;
 
   &:hover {
-    background: var(--app-surface-soft);
+    background: var(--color-surface-muted);
   }
 
   &:disabled {

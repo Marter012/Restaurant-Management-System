@@ -11,14 +11,15 @@ interface ModalContentProps {
   $scroll?: "active" | "false";
 }
 
-// =========================================================
-// CONTENEDOR PRINCIPAL
-// =========================================================
+/* =====================================================
+   MODAL CONTAINER
+===================================================== */
 
 export const ModalContainer = styled.div<ModalContainerProps>`
   position: relative;
   display: flex;
   flex-direction: column;
+
   ${InputStyles}
 
   width: ${({ $size = "default" }) => {
@@ -32,7 +33,7 @@ export const ModalContainer = styled.div<ModalContainerProps>`
   max-width: calc(100vw - 24px);
 
   height: ${({ $size }) =>
-    $size === "compact" ? "auto" : "min(95dvh, 900px)"};
+    $size === "compact" ? "auto" : "min(90dvh, 900px)"};
 
   max-height: ${({ $size }) =>
     $size === "compact"
@@ -42,104 +43,86 @@ export const ModalContainer = styled.div<ModalContainerProps>`
   min-height: 0;
   box-sizing: border-box;
   overflow: hidden;
-  border: 1px solid rgba(var(--app-shadow-rgb), 0.12);
-  border-radius: 22px;
-  background: var(--app-white);
-  color: var(--app-primary-active);
-  box-shadow:
-    0 28px 70px rgba(var(--app-shadow-rgb), 0.28),
-    0 8px 24px rgba(var(--app-shadow-rgb), 0.12);
 
-  // =========================================================
-  // TABLET
-  // =========================================================
+  border: 1px solid var(--modal-border);
+  border-radius: var(--radius-xl);
+  background: var(--modal-background);
+  color: var(--color-text);
+
+  box-shadow: var(--modal-shadow);
 
   @media (max-width: 900px) {
     width: ${({ $size }) =>
-      $size === "compact" ? "min(620px, calc(100vw - 32px))" : "95vw"};
-
-    min-width: 0;
-
-    min-width: ${({ $size }) =>
       $size === "compact"
         ? "min(620px, calc(100vw - 32px))"
-        : "95vw"} !important;
-    height: ${({ $size }) => ($size === "compact" ? "auto" : "90dvh")};
+        : "calc(100vw - 40px)"};
+
+    max-width: calc(100vw - 32px);
+    height: ${({ $size }) =>
+      $size === "compact" ? "auto" : "min(88dvh, 820px)"};
 
     max-height: ${({ $size }) =>
-      $size === "compact" ? "min(520px, calc(100dvh - 32px))" : "90dvh"};
+      $size === "compact"
+        ? "min(520px, calc(100dvh - 32px))"
+        : "calc(100dvh - 32px)"};
 
-    border-radius: 18px;
+    border-radius: var(--radius-lg);
   }
-
-  // =========================================================
-  // CELULAR
-  // =========================================================
 
   @media (max-width: 600px) {
-    width: ${({ $size }) =>
-      $size === "compact" ? "min(620px, calc(100vw - 32px))" : "80vw"};
+    width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
 
-    min-width: 0;
+    height: ${({ $size }) =>
+      $size === "compact" ? "auto" : "min(90dvh, 760px)"};
 
-    max-width: ${({ $size }) =>
-      $size === "compact" ? "min(620px, calc(100vw - 32px))" : "80vw"};
-
-    height: ${({ $size }) => ($size === "compact" ? "auto" : "90dvh")};
-
-    max-height: ${({ $size }) =>
-      $size === "compact" ? "min(520px, calc(100dvh - 32px))" : "90dvh"};
-
-    border-radius: 16px;
+    max-height: calc(100dvh - 24px);
+    border-radius: var(--radius-md);
   }
 
-  // =========================================================
-  // CELULAR PEQUEÑO
-  // =========================================================
-
   @media (max-width: 380px) {
-    width: ${({ $size }) =>
-      $size === "compact" ? "min(620px, calc(100vw - 32px))" : "80vw"};
-
-    max-width: ${({ $size }) =>
-      $size === "compact" ? "min(620px, calc(100vw - 32px))" : "80vw"};
-
-    border-radius: 14px;
+    width: calc(100vw - 16px);
+    max-width: calc(100vw - 16px);
+    max-height: calc(100dvh - 16px);
+    border-radius: var(--radius-md);
   }
 `;
 
-// =========================================================
-// HEADER
-// =========================================================
+/* =====================================================
+   HEADER
+===================================================== */
 
 export const ModalHeader = styled.header`
   position: relative;
-  z-index: 5;
+  z-index: 1;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+
   flex: 0 0 auto;
   padding: 18px 24px;
-  border-bottom: 1px solid var(--app-border);
-  background: var(--app-surface);
-  color: var(--app-primary);
+
+  border-bottom: 1px solid var(--modal-border);
+  background: var(--color-surface);
+  color: var(--color-text);
 
   @media (max-width: 600px) {
-    padding: 14px 16px;
     gap: 10px;
+    padding: 14px 16px;
   }
 
   @media (max-width: 380px) {
-    padding: 11px 12px;
     gap: 8px;
+    padding: 11px 12px;
   }
 `;
 
 export const HeaderIdentity = styled.div`
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   min-width: 0;
 
   @media (max-width: 600px) {
@@ -154,39 +137,40 @@ export const HeaderIdentity = styled.div`
 export const HeaderIcon = styled.div`
   display: grid;
   place-items: center;
-  flex: 0 0 58px;
-  width: 58px;
-  height: 58px;
-  border-radius: 16px;
-  background: var(--app-primary);
-  color: var(--app-canvas);
+  flex: 0 0 48px;
+
+  width: 48px;
+  height: 48px;
+
+  border: 1px solid var(--color-primary-soft);
+  border-radius: var(--radius-md);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
 
   svg {
-    width: 27px;
-    height: 27px;
+    width: 23px;
+    height: 23px;
   }
 
   @media (max-width: 600px) {
-    flex-basis: 46px;
-    width: 46px;
-    height: 46px;
-    border-radius: 13px;
+    flex-basis: 42px;
+    width: 42px;
+    height: 42px;
 
     svg {
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
     }
   }
 
   @media (max-width: 380px) {
-    flex-basis: 38px;
-    width: 38px;
-    height: 38px;
-    border-radius: 11px;
+    flex-basis: 36px;
+    width: 36px;
+    height: 36px;
 
     svg {
-      width: 19px;
-      height: 19px;
+      width: 18px;
+      height: 18px;
     }
   }
 `;
@@ -196,39 +180,41 @@ export const HeaderText = styled.div`
 
   h2 {
     margin: 0;
-    color: var(--app-primary-active);
-    font-size: clamp(1.05rem, 2vw, 1.45rem);
-    font-weight: 800;
+    color: var(--color-text);
+    font-family: var(--font-family-heading);
+    font-size: clamp(var(--font-size-lg), 2vw, var(--font-size-xl));
+    font-weight: 700;
     line-height: 1.25;
+    letter-spacing: -0.025em;
     overflow-wrap: anywhere;
   }
 
   p {
-    margin: 5px 0 0;
-    color: var(--app-muted-dark);
-    font-size: 0.88rem;
+    margin: 4px 0 0;
+    color: var(--color-text-secondary);
+    font-family: var(--font-family-description);
+    font-size: var(--font-size-sm);
     line-height: 1.4;
   }
 
   @media (max-width: 600px) {
     h2 {
-      font-size: clamp(0.98rem, 4vw, 1.18rem);
+      font-size: var(--font-size-md);
     }
 
     p {
       margin-top: 3px;
-      font-size: 0.78rem;
-      line-height: 1.35;
+      font-size: var(--font-size-xs);
     }
   }
 
   @media (max-width: 380px) {
     h2 {
-      font-size: 0.94rem;
+      font-size: var(--font-size-sm);
     }
 
     p {
-      font-size: 0.72rem;
+      font-size: 0.7rem;
     }
   }
 `;
@@ -236,25 +222,33 @@ export const HeaderText = styled.div`
 export const CloseButton = styled.button`
   display: grid;
   place-items: center;
-  flex-shrink: 0;
-  width: 46px;
-  height: 46px;
+  flex: 0 0 40px;
+
+  width: 40px;
+  height: 40px;
   padding: 0;
-  border: 0;
-  border-radius: 13px;
-  background: var(--app-accent);
-  color: var(--app-primary-active);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+
   cursor: pointer;
+
   transition:
-    filter 0.18s ease,
-    transform 0.18s ease;
+    background-color var(--transition-normal),
+    border-color var(--transition-normal),
+    color var(--transition-normal),
+    transform var(--transition-fast);
 
   svg {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
   }
 
   &:hover {
-    filter: brightness(1.08);
+    border-color: var(--color-danger-soft);
+    background: var(--color-danger-soft);
+    color: var(--color-danger);
   }
 
   &:active {
@@ -262,44 +256,51 @@ export const CloseButton = styled.button`
   }
 
   &:focus-visible {
-    outline: 2px solid var(--app-primary);
-    outline-offset: 3px;
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
   }
 
   @media (max-width: 600px) {
-    width: 38px;
-    height: 38px;
+    flex-basis: 36px;
+    width: 36px;
+    height: 36px;
   }
 
   @media (max-width: 380px) {
+    flex-basis: 32px;
     width: 32px;
     height: 32px;
-    border-radius: 9px;
 
     svg {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
     }
   }
 `;
 
-// =========================================================
-// CONTENIDO
-// =========================================================
+/* =====================================================
+   CONTENT
+===================================================== */
 
 export const ModalContent = styled.div<ModalContentProps>`
   flex: 1 1 auto;
+  width: 100%;
   min-width: 0;
   min-height: 0;
-  width: 100%;
   box-sizing: border-box;
+
   padding: 20px 24px;
+
   overflow-x: hidden;
   overflow-y: ${({ $scroll = "active" }) =>
     $scroll === "active" ? "auto" : "hidden"};
+
   overscroll-behavior: contain;
-  text-align: left;
   scrollbar-width: thin;
-  scrollbar-color: var(--app-accent) transparent;
+  scrollbar-color: var(--color-border-strong) transparent;
+
+  color: var(--color-text);
+  font-family: var(--font-family-base);
+  text-align: left;
 
   form {
     width: 100%;
@@ -311,6 +312,19 @@ export const ModalContent = styled.div<ModalContentProps>`
     min-width: 0;
   }
 
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: var(--color-border-strong);
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-light);
+  }
+
   @media (max-width: 600px) {
     padding: 16px;
   }
@@ -320,25 +334,30 @@ export const ModalContent = styled.div<ModalContentProps>`
   }
 `;
 
-// =========================================================
-// FOOTER
-// =========================================================
+/* =====================================================
+   FOOTER
+===================================================== */
 
 export const ModalFooter = styled.footer`
   flex: 0 0 auto;
   width: 100%;
   min-width: 0;
   box-sizing: border-box;
+
   padding: 16px 24px;
-  border-top: 1px solid var(--app-border);
-  background: var(--app-surface);
+
+  border-top: 1px solid var(--modal-border);
+  background: var(--color-surface);
 
   @media (max-width: 600px) {
-    padding: 12px;
+    padding: 12px 16px;
+  }
+
+  @media (max-width: 380px) {
+    padding: 10px 12px;
   }
 `;
 
-// Cancelar y las acciones comparten el mismo sistema de layout.
 export const FooterControls = styled.div`
   display: flex;
   align-items: center;
@@ -355,7 +374,6 @@ export const FooterControls = styled.div`
     align-items: stretch;
     justify-items: stretch;
     gap: 8px;
-    width: 100%;
 
     > div {
       display: contents;
@@ -401,7 +419,7 @@ export const FooterActions = styled.div`
       padding: 8px 7px;
       white-space: normal;
       overflow-wrap: anywhere;
-      font-size: 0.78rem;
+      font-size: var(--font-size-xs);
     }
   }
 `;
@@ -410,33 +428,36 @@ export const CancelButton = styled.button`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   flex: 0 0 auto;
+
   width: fit-content;
   min-width: 128px;
   min-height: 44px;
   box-sizing: border-box;
-  padding: 10px 20px;
+  padding: 10px 18px;
 
-  border: 1px solid var(--app-border);
-  border-radius: 10px;
-  background: var(--app-white);
-  color: var(--app-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
 
-  font-family: inherit;
-  font-size: 0.86rem;
-  font-weight: 700;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
   white-space: nowrap;
+
   cursor: pointer;
 
   transition:
-    background 0.18s ease,
-    border-color 0.18s ease,
-    transform 0.18s ease;
+    background-color var(--transition-normal),
+    border-color var(--transition-normal),
+    color var(--transition-normal),
+    transform var(--transition-fast);
 
   &:hover {
-    background: var(--app-surface-soft);
-    border-color: var(--app-accent);
+    border-color: var(--color-border-strong);
+    background: var(--color-surface-hover);
+    color: var(--color-text);
   }
 
   &:active {
@@ -444,7 +465,7 @@ export const CancelButton = styled.button`
   }
 
   &:focus-visible {
-    outline: 2px solid var(--app-primary);
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
 
@@ -452,6 +473,6 @@ export const CancelButton = styled.button`
     min-width: 0;
     min-height: 44px;
     padding: 8px 7px;
-    font-size: 0.78rem;
+    font-size: var(--font-size-xs);
   }
 `;

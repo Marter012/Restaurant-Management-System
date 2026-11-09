@@ -192,20 +192,61 @@ function CreateOrderContent({
     const current = [...(values.payments ?? [])];
     if (!current.length) return;
 
-    const otherPaymentsTotal = current.reduce(
-      (sum, payment, itemIndex) =>
-        sum +
-        (itemIndex === index ? 0 : Math.max(0, Number(payment.amount) || 0)),
-      0,
-    );
-
-    const available = Math.max(0, totalPrice - otherPaymentsTotal);
     const entered = Math.max(0, Number(rawValue) || 0);
 
-    current[index] = {
-      ...current[index],
-      amount: Number(Math.min(entered, available).toFixed(2)),
-    };
+    // Si modificamos el primer medio, respetamos los importes restantes.
+    if (index === 0) {
+      const otherPaymentsTotal = current
+        .slice(1)
+        .reduce(
+          (sum, payment) => sum + Math.max(0, Number(payment.amount) || 0),
+          0,
+        );
+
+      current[0] = {
+        ...current[0],
+        amount: Number(
+          Math.min(
+            entered,
+            Math.max(0, totalPrice - otherPaymentsTotal),
+          ).toFixed(2),
+        ),
+      };
+    } else {
+      // Los demás medios se modifican individualmente.
+      const otherPaymentsTotal = current.reduce(
+        (sum, payment, itemIndex) =>
+          itemIndex === 0 || itemIndex === index
+            ? sum
+            : sum + Math.max(0, Number(payment.amount) || 0),
+        0,
+      );
+
+      const amount = Math.min(
+        entered,
+        Math.max(0, totalPrice - otherPaymentsTotal),
+      );
+
+      current[index] = {
+        ...current[index],
+        amount: Number(amount.toFixed(2)),
+      };
+
+      // El primer medio absorbe el saldo restante.
+      const remainingPaymentsTotal = current
+        .slice(1)
+        .reduce(
+          (sum, payment) => sum + Math.max(0, Number(payment.amount) || 0),
+          0,
+        );
+
+      current[0] = {
+        ...current[0],
+        amount: Number(
+          Math.max(0, totalPrice - remainingPaymentsTotal).toFixed(2),
+        ),
+      };
+    }
 
     setFieldValue("payments", current);
   };
@@ -299,8 +340,7 @@ function CreateOrderContent({
           name="customer_name"
           placeholder="Nombre del cliente"
           autoComplete="off"
-                    data-capitalize-words="true"
-
+          data-capitalize-words="true"
         />
         <ObservationField>
           <label htmlFor="new-order-observations">
@@ -582,7 +622,6 @@ function CreateOrderContent({
                     <option value="transfer">Transferencia</option>
                     <option value="debit_card">Débito</option>
                     <option value="qr">QR</option>
-                    <option value="mercado_pago">Mercado Pago</option>
                   </Field>
                   <ErrorMessage
                     className="errorMessage"
@@ -633,7 +672,6 @@ function CreateOrderContent({
                       <option value="transfer">Transferencia</option>
                       <option value="qr">QR</option>
                       <option value="debit_card">Débito</option>
-                      <option value="mercado_pago">Mercado Pago</option>
                     </Field>
                     <Field name={`payments.${index}.amount`}>
                       {({ field }: FieldProps<number>) => (
@@ -968,7 +1006,6 @@ function CreateOrderContent({
                     placeholder="Ej.: más cheddar"
                     aria-label="Nombre del ingrediente extra"
                     data-capitalize-words="true"
-
                   />
                   <ExtraIngredientsAddButton
                     type="button"

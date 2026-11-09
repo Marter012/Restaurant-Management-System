@@ -11,10 +11,10 @@ export const ProductsSection = styled.section`
   min-height: 0;
   box-sizing: border-box;
   padding: clamp(12px, 1.5vw, 20px);
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 22px;
-  background: var(--app-paper);
-  box-shadow: var(--app-shadow-sm);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-md);
   overflow: hidden;
 `;
 
@@ -27,8 +27,7 @@ export const ProductsHeader = styled.header`
 
   h3 {
     margin: 0;
-    color: var(--app-ink);
-    font-family: var(--app-font-heading);
+    color: var(--color-text);
     font-size: clamp(1.2rem, 1.8vw, 1.55rem);
     font-weight: 850;
     letter-spacing: -0.035em;
@@ -45,20 +44,20 @@ export const SearchInput = styled.input`
   min-width: 0;
   min-height: 46px;
   padding: 10px 15px;
-  border: 1px solid var(--app-border-strong) !important;
+  border: 1px solid var(--color-border-strong) !important;
   border-radius: 13px !important;
-  background: var(--app-surface) !important;
-  color: var(--app-ink);
+  background: var(--color-surface) !important;
+  color: var(--color-text);
   font-size: 0.9rem;
 
   &::placeholder {
-    color: var(--app-muted);
+    color: var(--color-text-light);
   }
 
   &:focus {
     outline: none;
-    border-color: var(--app-accent) !important;
-    box-shadow: 0 0 0 3px rgba(var(--app-accent-rgb), 0.12);
+    border-color: var(--color-accent) !important;
+    box-shadow: 0 0 0 3px var(--color-primary-soft);
   }
 `;
 
@@ -67,10 +66,10 @@ export const CategorySelect = styled.select`
   min-width: 0;
   min-height: 46px;
   padding: 9px 13px;
-  border: 1px solid var(--app-border-strong) !important;
+  border: 1px solid var(--color-border-strong) !important;
   border-radius: 13px !important;
-  background: var(--app-surface) !important;
-  color: var(--app-ink);
+  background: var(--color-surface) !important;
+  color: var(--color-text);
   font-weight: 700;
 `;
 
@@ -101,14 +100,14 @@ export const ProductGrid = styled.div`
   overscroll-behavior: contain;
   padding: 2px 5px 5px 2px;
   scrollbar-width: thin;
-  scrollbar-color: var(--app-accent) transparent;
+  scrollbar-color: var(--color-accent) transparent;
 
   &::-webkit-scrollbar {
     width: 6px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: var(--app-accent);
+    background: var(--color-accent);
     border-radius: 10px;
   }
 
@@ -146,13 +145,13 @@ export const ProductQuantityControls = styled.div`
   min-height: 42px;
   margin-top: auto;
   padding: 3px 5px;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 13px;
-  background: var(--app-surface-soft);
+  background: var(--color-surface-hover);
   box-sizing: border-box;
 
   strong {
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 0.95rem;
     font-weight: 900;
     line-height: 1;
@@ -166,18 +165,18 @@ export const ProductQuantityControls = styled.div`
     min-height: 34px;
     margin: 0;
     padding: 0;
-    border: 1px solid var(--app-accent);
+    border: 1px solid var(--color-accent);
     border-radius: 9px;
-    background: var(--app-accent);
-    color: var(--app-white);
+    background: var(--color-accent);
+    color: var(--color-white);
     font-size: 1.35rem;
     font-weight: 800;
     line-height: 1;
     cursor: pointer;
-    transition: background var(--app-transition), transform var(--app-transition);
+    transition: background var(--transition-normal), transform var(--transition-normal);
 
     &:hover:not(:disabled) {
-      background: var(--app-accent-hover);
+      background: var(--color-primary-hover);
       transform: translateY(-1px);
     }
 
@@ -187,7 +186,7 @@ export const ProductQuantityControls = styled.div`
     }
 
     &:focus-visible {
-      outline: 3px solid rgba(var(--app-accent-rgb), 0.25);
+      outline: 3px solid var(--color-primary-soft);
       outline-offset: 2px;
     }
   }
@@ -205,19 +204,19 @@ export const ProductCard = styled.article`
   box-sizing: border-box;
   overflow: hidden;
   padding: 9px;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 17px;
-  background: var(--app-surface);
-  box-shadow: var(--app-shadow-xs);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
   transition:
-    transform var(--app-transition),
-    border-color var(--app-transition),
-    box-shadow var(--app-transition);
+    transform var(--transition-normal),
+    border-color var(--transition-normal),
+    box-shadow var(--transition-normal);
 
   &:hover {
     transform: translateY(-2px);
-    border-color: var(--app-accent);
-    box-shadow: var(--app-shadow-sm);
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-md);
   }
 
   .product-header {
@@ -238,7 +237,7 @@ export const ProductCard = styled.article`
     background: linear-gradient(
       180deg,
       transparent 0%,
-      rgba(0, 0, 0, 0.72) 100%
+      var(--modal-overlay) 100%
     );
   }
 
@@ -248,7 +247,7 @@ export const ProductCard = styled.article`
     height: 115px;
     min-height: 115px;
     object-fit: cover;
-    background: var(--app-surface-soft);
+    background: var(--color-surface-hover);
     transition: transform 220ms ease;
   }
 
@@ -264,12 +263,12 @@ export const ProductCard = styled.article`
     bottom: 8px;
     left: 8px;
     margin: 0;
-    color: #fff;
+    color: var(--color-white);
     font-size: clamp(0.78rem, 1vw, 0.95rem);
     font-weight: 850;
     line-height: 1.2;
     text-align: center;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+    text-shadow: 0 1px 4px var(--shadow-md);
     overflow-wrap: anywhere;
   }
 
@@ -283,11 +282,11 @@ export const ProductCard = styled.article`
     gap: 5px;
     max-width: calc(100% - 16px);
     padding: 5px 9px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid var(--color-border-strong);
     border-radius: 999px;
-    background: #b42318;
-    color: #fff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    background: var(--color-danger);
+    color: var(--color-white);
+    box-shadow: 0 2px 8px var(--shadow-sm);
     font-size: 0.68rem;
     font-weight: 850;
     line-height: 1.15;
@@ -300,7 +299,7 @@ export const ProductCard = styled.article`
       width: 14px;
       height: 14px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.2);
+      background: var(--color-surface-muted);
       font-size: 0.65rem;
     }
   }
@@ -321,7 +320,7 @@ export const ProductCard = styled.article`
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    color: var(--app-muted);
+    color: var(--color-text-light);
     font-size: 0.72rem;
     font-weight: 650;
   }
@@ -330,7 +329,7 @@ export const ProductCard = styled.article`
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background:"var(--app-accent)";
+    background: var(--color-accent);
   }
 
   .product-name {
@@ -340,7 +339,7 @@ export const ProductCard = styled.article`
 
   .product-name h4 {
     margin: 0;
-    color: var(--app-ink);
+    color: var(--color-text);
     font-size: clamp(0.78rem, 0.95vw, 0.94rem);
     font-weight: 850;
     line-height: 1.3;
@@ -348,13 +347,13 @@ export const ProductCard = styled.article`
   }
 
   .product-name small {
-    color: var(--app-muted);
+    color: var(--color-text-light);
     font-size: 0.69rem;
     line-height: 1.35;
   }
 
   .product-price {
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 1.12rem;
     font-weight: 900;
     letter-spacing: -0.025em;
@@ -369,19 +368,19 @@ export const ProductCard = styled.article`
     flex: 0 0 auto;
     margin-top: auto;
     padding: 8px 10px;
-    border: 1px solid var(--app-accent);
+    border: 1px solid var(--color-accent);
     border-radius: 10px;
-    background: var(--app-accent);
-    color: var(--app-white);
+    background: var(--color-accent);
+    color: var(--color-white);
     font-size: 0.76rem;
     font-weight: 850;
     text-transform: capitalize;
     cursor: pointer;
-    transition: background var(--app-transition), transform var(--app-transition);
+    transition: background var(--transition-normal), transform var(--transition-normal);
 
     &:hover:not(:disabled) {
-      border-color: var(--app-accent-hover);
-      background: var(--app-accent-hover);
+      border-color: var(--color-primary-hover);
+      background: var(--color-primary-hover);
       transform: translateY(-1px);
     }
 
@@ -403,8 +402,8 @@ export const ProductCard = styled.article`
     width: 100%;
     margin-top: 7px;
     padding-top: 7px;
-    border-top: 1px solid var(--app-border);
-    color: var(--app-muted-dark);
+    border-top: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
     font-size: 0.68rem;
 
     ${ProductQuantityControls} {
@@ -459,7 +458,7 @@ export const ModalOverlay = styled.div`
   justify-content: center;
   overflow-y: auto;
   padding: 20px;
-  background: var(--app-overlay);
+  background: var(--modal-overlay);
   backdrop-filter: blur(7px);
 `;
 
@@ -468,51 +467,50 @@ export const PromotionModal = styled.div`
   gap: 13px;
   width: min(100%, 440px);
   padding: 25px;
-  border: 1px solid var(--app-border);
-  border-radius: var(--app-radius-xl);
-  background: var(--app-paper);
-  box-shadow: var(--app-shadow-lg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
 
   h3 {
     margin: 0;
-    color: var(--app-primary);
-    font-family: var(--app-font-heading);
+    color: var(--color-primary);
   }
 
   p {
     margin: 0;
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
     line-height: 1.6;
   }
 
   button {
     min-height: 42px;
     padding: 10px 14px;
-    border: 1px solid var(--app-primary);
-    border-radius: var(--app-radius-sm);
-    background: var(--app-primary);
-    color: var(--app-white);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-sm);
+    background: var(--color-primary);
+    color: var(--color-white);
     font-weight: 800;
   }
 
   button:hover {
-    background: var(--app-primary-hover);
+    background: var(--color-primary-hover);
   }
 
   .cancel-button {
-    border-color: var(--app-border);
-    background: var(--app-surface);
-    color: var(--app-muted-dark);
+    border-color: var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text-secondary);
   }
 `;
 
 export const GarnishModal = styled.div`
   width: min(100%, 490px);
   padding: clamp(20px, 4vw, 28px);
-  border: 1px solid var(--app-border);
-  border-radius: var(--app-radius-xl);
-  background: var(--app-paper);
-  box-shadow: var(--app-shadow-lg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
 
   .garnish-modal-top {
     display: flex;
@@ -528,34 +526,33 @@ export const GarnishModal = styled.div`
     width: 46px;
     height: 46px;
     border-radius: 14px;
-    background: var(--app-primary-soft);
-    color: var(--app-primary);
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
     font-size: 1.4rem;
   }
 
   .garnish-modal-heading h3 {
     margin: 0 0 5px;
-    color: var(--app-ink);
-    font-family: var(--app-font-heading);
+    color: var(--color-text);
   }
 
   .garnish-modal-subtitle {
     display: grid;
     gap: 3px;
     margin: 0;
-    color: var(--app-muted);
+    color: var(--color-text-light);
     font-size: 0.86rem;
   }
 
   .garnish-product-name {
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-weight: 850;
   }
 
   .garnish-field-label {
     display: block;
     margin-bottom: 7px;
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
     font-size: 0.82rem;
     font-weight: 800;
   }
@@ -568,9 +565,9 @@ export const GarnishModal = styled.div`
     width: 100%;
     min-height: 46px;
     padding: 10px 13px;
-    border: 1px solid var(--app-border-strong) !important;
-    border-radius: var(--app-radius-sm) !important;
-    background: var(--app-surface) !important;
+    border: 1px solid var(--color-border-strong) !important;
+    border-radius: var(--radius-sm) !important;
+    background: var(--color-surface) !important;
   }
 
   .garnish-modal-actions {
@@ -584,17 +581,17 @@ export const GarnishModal = styled.div`
   .garnish-modal-actions button {
     min-height: 42px;
     padding: 9px 15px;
-    border: 1px solid var(--app-primary);
-    border-radius: var(--app-radius-sm);
-    background: var(--app-primary);
-    color: var(--app-white);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-sm);
+    background: var(--color-primary);
+    color: var(--color-white);
     font-weight: 800;
   }
 
   .garnish-modal-actions .garnish-cancel-button {
-    border-color: var(--app-border);
-    background: var(--app-surface);
-    color: var(--app-muted-dark);
+    border-color: var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text-secondary);
   }
 
   .garnish-modal-actions button:disabled {
@@ -620,9 +617,9 @@ export const ProductTypeTabs = styled.nav`
   min-height: 53px;
   flex: 0 0 auto;
   overflow: hidden;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 13px;
-  background: var(--app-surface-soft);
+  background: var(--color-surface-hover);
 `;
 
 export const ProductTypeTab = styled.button<{ $active: boolean }>`
@@ -633,15 +630,15 @@ export const ProductTypeTab = styled.button<{ $active: boolean }>`
   min-width: 0;
   padding: 10px 12px;
   border: 1px solid
-    ${({ $active }) => ($active ? "var(--app-primary)" : "transparent")};
+    ${({ $active }) => ($active ? "var(--color-primary)" : "transparent")};
   border-radius: 11px;
   background: ${({ $active }) =>
-    $active ? "var(--app-primary)" : "transparent"};
+    $active ? "var(--color-primary)" : "transparent"};
   color: ${({ $active }) =>
-    $active ? "var(--app-white)" : "var(--app-primary)"};
+    $active ? "var(--color-white)" : "var(--color-primary)"};
   font-size: 1rem;
   font-weight: 900;
-  transition: var(--app-transition);
+  transition: var(--transition-normal);
   cursor: pointer;
 
   span {
@@ -651,6 +648,6 @@ export const ProductTypeTab = styled.button<{ $active: boolean }>`
 
   &:hover {
     background: ${({ $active }) =>
-      $active ? "var(--app-primary-hover)" : "var(--app-primary-soft)"};
+      $active ? "var(--color-primary-hover)" : "var(--color-primary-soft)"};
   }
 `;

@@ -103,6 +103,10 @@ const CashDashboardContent = ({
 
     const uniqueMethods = [...new Set(methods)];
 
+    if (uniqueMethods.length > 2) {
+      return "Más de 2 pagos";
+    }
+
     if (uniqueMethods.length > 0) {
       return uniqueMethods
         .map((method) => methodLabels[String(method)] ?? String(method))

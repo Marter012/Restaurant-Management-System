@@ -13,7 +13,7 @@ export const FormContainer = styled.div`
   min-width: 0;
   min-height: 100%;
   box-sizing: border-box;
-  color: var(--app-ink);
+  color: var(--color-text);
 
   ${InputStyles}
   .fieldsForm {
@@ -68,7 +68,7 @@ export const FormGroup = styled.div`
   box-sizing: border-box;
 
   > label:not(.garnish-toggle) {
-    color: var(--app-ink);
+    color: var(--color-text);
     font-size: 0.88rem;
     font-weight: 750;
     line-height: 1.35;
@@ -83,11 +83,11 @@ export const FormGroup = styled.div`
     min-height: 49px;
     box-sizing: border-box;
     padding: 12px 15px;
-    border: 1px solid var(--app-border);
+    border: 1px solid var(--color-border);
     border-radius: 12px;
-    background: var(--app-white);
-    color: var(--app-ink);
-    font-family: inherit;
+    background: var(--color-white);
+    color: var(--color-text);
+  font: inherit;
     font-size: 0.92rem;
     font-weight: 500;
     outline: none;
@@ -97,24 +97,24 @@ export const FormGroup = styled.div`
       box-shadow 180ms ease;
 
     &::placeholder {
-      color: var(--app-muted);
+      color: var(--color-text-secondary);
       font-weight: 400;
       opacity: 0.9;
     }
 
     &:hover:not(:disabled) {
-      border-color: var(--app-accent);
+      border-color: var(--color-accent);
     }
 
     &:focus {
-      border-color: var(--app-primary);
-      background: var(--app-white);
-      box-shadow: 0 0 0 3px rgba(var(--app-primary-rgb), 0.11);
+      border-color: var(--color-primary);
+      background: var(--color-white);
+      box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.11);
     }
 
     &:disabled {
-      background: var(--app-surface-soft);
-      color: var(--app-muted);
+      background: var(--color-surface-muted);
+      color: var(--color-text-secondary);
       cursor: not-allowed;
     }
   }
@@ -132,8 +132,8 @@ export const FormGroup = styled.div`
       padding: 0 13px;
       border: 0;
       border-radius: 8px;
-      background: var(--app-primary);
-      color: var(--app-white);
+      background: var(--color-primary);
+      color: var(--color-white);
       font: inherit;
       font-size: 0.82rem;
       font-weight: 700;
@@ -203,7 +203,7 @@ export const FormGroup = styled.div`
 
     > small {
       padding: 0 2px;
-      color: var(--app-muted-dark);
+      color: var(--color-text-secondary);
       font-size: 0.78rem;
       line-height: 1.5;
     }
@@ -221,22 +221,22 @@ export const FormGroup = styled.div`
     min-height: 68px;
     box-sizing: border-box;
     padding: 13px 15px;
-    border: 1px solid var(--app-border);
+    border: 1px solid var(--color-border);
     border-radius: 13px;
-    background: var(--app-white);
+    background: var(--color-white);
     cursor: pointer;
     transition:
       border-color 180ms ease,
       background-color 180ms ease;
 
     &:hover {
-      border-color: var(--app-accent);
-      background: var(--app-surface-soft);
+      border-color: var(--color-accent);
+      background: var(--color-surface-muted);
     }
 
     &:has(.garnish-checkbox:checked) {
-      border-color: var(--app-accent);
-      background: var(--app-primary-soft);
+      border-color: var(--color-accent);
+      background: var(--color-primary-soft);
     }
 
     .garnish-checkbox {
@@ -248,7 +248,7 @@ export const FormGroup = styled.div`
       flex: 0 0 19px;
       margin: 0;
       padding: 0;
-      accent-color: var(--app-primary);
+      accent-color: var(--color-primary);
       cursor: pointer;
       box-shadow: none;
     }
@@ -261,14 +261,14 @@ export const FormGroup = styled.div`
       min-width: 0;
 
       strong {
-        color: var(--app-primary);
+        color: var(--color-primary);
         font-size: 0.88rem;
         font-weight: 800;
         line-height: 1.35;
       }
 
       small {
-        color: var(--app-muted-dark);
+        color: var(--color-text-secondary);
         font-size: 0.78rem;
         line-height: 1.45;
       }
@@ -283,23 +283,23 @@ export const FormGroup = styled.div`
     min-width: 0;
     box-sizing: border-box;
     padding: 15px;
-    border: 1px solid var(--app-border);
+    border: 1px solid var(--color-border);
     border-radius: 12px;
-    background: var(--app-surface-soft);
+    background: var(--color-surface-muted);
     animation: garnishReveal 180ms ease-out;
 
     > label {
-      color: var(--app-ink);
+      color: var(--color-text);
       font-size: 0.84rem;
       font-weight: 750;
     }
 
     input {
-      background: var(--app-white);
+      background: var(--color-white);
     }
 
     small {
-      color: var(--app-muted-dark);
+      color: var(--color-text-secondary);
       font-size: 0.76rem;
       line-height: 1.45;
     }
@@ -336,7 +336,7 @@ export const ErrorText = styled.span`
 
   margin-top: 1px;
 
-  color: var(--app-danger);
+  color: var(--color-danger);
   font-size: 0.75rem;
   font-weight: 600;
   line-height: 1.4;
@@ -390,11 +390,11 @@ export const CategorySuggestions = styled.div`
   overflow-y: auto;
 
   padding: 5px;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 11px;
 
-  background: var(--app-white);
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.14);
+  background: var(--color-white);
+  box-shadow: var(--shadow-md);
 
   overscroll-behavior: contain;
 
@@ -404,7 +404,7 @@ export const CategorySuggestions = styled.div`
 
   &::-webkit-scrollbar-thumb {
     border-radius: 10px;
-    background: var(--app-accent);
+    background: var(--color-accent);
   }
 `;
 
@@ -420,9 +420,8 @@ export const CategorySuggestion = styled.button`
   border-radius: 7px;
 
   background: transparent;
-  color: var(--app-ink);
-
-  font-family: inherit;
+  color: var(--color-text);
+  font: inherit;
   font-size: 0.87rem;
   font-weight: 600;
   text-align: left;
@@ -432,7 +431,7 @@ export const CategorySuggestion = styled.button`
 
   &:hover,
   &:focus-visible {
-    background: var(--app-primary-soft);
+    background: var(--color-primary-soft);
     outline: none;
   }
 `;
@@ -452,10 +451,10 @@ export const IngredientSuggestions = styled.div`
 
   padding: 13px;
 
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
 
-  background: var(--app-surface-soft);
+  background: var(--color-surface-muted);
 
   .ingredient-chips {
     display: flex;
@@ -474,13 +473,13 @@ export const IngredientSuggestions = styled.div`
 
     &::-webkit-scrollbar-thumb {
       border-radius: 10px;
-      background: var(--app-accent);
+      background: var(--color-accent);
     }
   }
 
   .no-ingredients {
     margin: 0;
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
     font-size: 0.8rem;
     line-height: 1.5;
   }
@@ -494,13 +493,13 @@ export const IngredientSuggestionsTitle = styled.div`
   gap: 6px;
 
   span {
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 0.82rem;
     font-weight: 800;
   }
 
   small {
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
     font-size: 0.72rem;
   }
 `;
@@ -518,17 +517,16 @@ export const IngredientChip = styled.button<{ $selected: boolean }>`
 
   border: 1px solid
     ${({ $selected }) =>
-      $selected ? "var(--app-primary)" : "var(--app-border)"};
+      $selected ? "var(--color-primary)" : "var(--color-border)"};
 
   border-radius: 20px;
 
   background: ${({ $selected }) =>
-    $selected ? "var(--app-primary)" : "var(--app-white)"};
+    $selected ? "var(--color-primary)" : "var(--color-white)"};
 
   color: ${({ $selected }) =>
-    $selected ? "var(--app-white)" : "var(--app-ink)"};
-
-  font-family: inherit;
+    $selected ? "var(--color-white)" : "var(--color-text)"};
+  font: inherit;
   font-size: 0.77rem;
   font-weight: 700;
 
@@ -546,12 +544,12 @@ export const IngredientChip = styled.button<{ $selected: boolean }>`
   }
 
   &:hover {
-    border-color: var(--app-primary);
+    border-color: var(--color-primary);
     transform: translateY(-1px);
   }
 
   &:focus-visible {
-    outline: 2px solid var(--app-accent);
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
 `;

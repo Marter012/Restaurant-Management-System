@@ -7,20 +7,20 @@ const field = css`
   min-width: 0;
   min-height: 42px;
   padding: 9px 12px;
-  border: 1px solid var(--app-border) !important;
-  border-radius: var(--app-radius-sm) !important;
-  color: var(--app-ink);
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-sm) !important;
+  color: var(--color-text);
   font-size: 0.86rem;
 
   &:focus {
-    border-color: var(--app-accent) !important;
+    border-color: var(--color-accent) !important;
   }
 `;
 
 const softCard = css`
-  border: 1px solid var(--app-border);
-  border-radius: var(--app-radius);
-  background: var(--app-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
 `;
 
 export const OrderSection = styled.section`
@@ -32,10 +32,10 @@ export const OrderSection = styled.section`
   gap: 12px;
   min-width: 0;
   padding: clamp(16px, 1.45vw, 20px);
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 22px;
-  background: var(--app-paper);
-  box-shadow: var(--app-shadow-sm);
+  background: var(--color-background);
+  box-shadow: var(--shadow-sm);
   > * {
     min-width: 0;
   }
@@ -48,7 +48,7 @@ export const OrderHeader = styled.header`
   display: grid;
   gap: 8px;
   padding-bottom: 13px;
-  border-bottom: 1px solid var(--app-border);
+  border-bottom: 1px solid var(--color-border);
   .order-heading {
     display: flex;
     align-items: center;
@@ -58,8 +58,7 @@ export const OrderHeader = styled.header`
   }
   h3 {
     margin: 0;
-    color: var(--app-primary);
-    font-family: var(--app-font-heading);
+    color: var(--color-primary);
     font-size: clamp(1.15rem, 1.45vw, 1.4rem);
     font-weight: 900;
     letter-spacing: -0.03em;
@@ -68,14 +67,14 @@ export const OrderHeader = styled.header`
     flex: 0 0 auto;
     padding: 8px 12px;
     border-radius: 999px;
-    background: var(--app-accent-soft);
-    color: var(--app-primary);
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
     font-size: 0.78rem;
     font-weight: 900;
     white-space: nowrap;
   }
   > label {
-    color: var(--app-ink);
+    color: var(--color-text);
     font-size: 0.84rem;
     font-weight: 800;
   }
@@ -108,13 +107,13 @@ export const OrderItems = styled.div`
   min-height: 72px;
   overflow-y: auto;
   padding: 4px 10px;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 14px;
-  background: var(--app-surface);
+  background: var(--color-surface);
   > p {
     margin: 0;
     padding: 17px 2px;
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
     font-size: 0.88rem;
   }
 `;
@@ -126,7 +125,7 @@ export const OrderItem = styled.div`
   gap: 9px;
   min-width: 0;
   padding: 8px 2px;
-  border-bottom: 1px solid var(--app-border);
+  border-bottom: 1px solid var(--color-border);
   &:last-child {
     border-bottom: 0;
   }
@@ -135,27 +134,27 @@ export const OrderItem = styled.div`
     height: 54px;
     border-radius: 10px;
     object-fit: cover;
-    background: var(--app-surface-soft);
+    background: var(--color-surface-muted);
   }
   > div:first-of-type {
     min-width: 0;
   }
   h4 {
     margin: 0;
-    color: var(--app-ink);
+    color: var(--color-text);
     font-size: 0.88rem;
     font-weight: 900;
   }
   small {
     display: block;
     margin-top: 2px;
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
     font-size: 0.72rem;
   }
   > div > span {
     display: block;
     margin-top: 4px;
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 0.83rem;
     font-weight: 900;
   }
@@ -182,18 +181,18 @@ export const QuantityControls = styled.div`
     width: 38px;
     height: 38px;
     padding: 0;
-    border: 1px solid var(--app-accent);
+    border: 1px solid var(--color-accent);
     border-radius: 11px;
-    background: var(--app-accent);
-    color: var(--app-white);
+    background: var(--color-accent);
+    color: var(--color-white);
     font-size: 1.1rem;
     font-weight: 900;
     cursor: pointer;
-    transition: var(--app-transition);
+    transition: var(--transition-normal);
 
     &:hover:not(:disabled) {
-      background: var(--app-primary);
-      border-color: var(--app-primary);
+      background: var(--color-primary);
+      border-color: var(--color-primary);
     }
 
     &:disabled {
@@ -204,7 +203,7 @@ export const QuantityControls = styled.div`
 
   strong {
     flex: 0 0 26px;
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 0.9rem;
     font-weight: 900;
     text-align: center;
@@ -221,9 +220,9 @@ export const DataSection = styled.section`
   display: grid;
   gap: 11px;
   padding: 13px;
-  border: 1px solid var(--app-border);
-  border-radius: var(--app-radius);
-  background: var(--app-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
 `;
 
 export const DataSectionHeading = styled.div`
@@ -232,7 +231,7 @@ export const DataSectionHeading = styled.div`
   justify-content: space-between;
   gap: 10px;
   strong {
-    color: var(--app-ink);
+    color: var(--color-text);
     font-size: 0.88rem;
     font-weight: 850;
   }
@@ -240,8 +239,7 @@ export const DataSectionHeading = styled.div`
 
 export const SectionTitleSectionTitle = styled.h4`
   margin: 0;
-  color: var(--app-ink);
-  font-family: var(--app-font-heading);
+  color: var(--color-text);
   font-size: 0.92rem;
   font-weight: 850;
 `;
@@ -262,12 +260,12 @@ export const PaymentStatusSelect = styled.select<{ $status?: string }>`
   ${field}
   border-color: ${({ $status }) =>
     $status === "paid"
-      ? "var(--app-success)"
-      : "var(--app-warning)"} !important;
+      ? "var(--color-success)"
+      : "var(--color-pending)"} !important;
   background: ${({ $status }) =>
     $status === "paid"
-      ? "var(--app-success-soft)"
-      : "var(--app-warning-soft)"} !important;
+      ? "var(--color-success-soft)"
+      : "var(--color-pending-soft)"} !important;
 `;
 
 export const FieldsGrid = styled.div`
@@ -279,7 +277,7 @@ export const FieldsGrid = styled.div`
     display: grid;
     gap: 6px;
     min-width: 0;
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
     font-size: 0.76rem;
     font-weight: 800;
     position: relative;
@@ -288,10 +286,10 @@ export const FieldsGrid = styled.div`
   label .errorMessage {
     width: 100%;
     height: 20px;
-    color: black;
+    color: var(--color-danger);
     font-size: 0.7rem;
     font-weight: 700;
-    background-color: red !important;
+    background-color: var(--color-danger-soft);
     border-radius: 10px;
     text-align: center;
     position: absolute;
@@ -305,7 +303,7 @@ export const CombinedPayments = styled.div`
   display: grid;
   gap: 8px;
   padding-top: 11px;
-  border-top: 1px solid var(--app-border);
+  border-top: 1px solid var(--color-border);
 `;
 
 export const CombinedPaymentsHeading = styled.div`
@@ -313,21 +311,21 @@ export const CombinedPaymentsHeading = styled.div`
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  color: var(--app-muted-dark);
+  color: var(--color-text-secondary);
   font-size: 0.8rem;
   font-weight: 850;
   button {
     min-height: 31px;
     padding: 5px 10px;
-    border: 1px solid var(--app-border);
+    border: 1px solid var(--color-border);
     border-radius: 8px;
-    background: var(--app-accent-soft);
-    color: var(--app-primary);
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
     font-size: 0.73rem;
     font-weight: 850;
   }
   button:hover {
-    background: var(--app-primary-soft);
+    background: var(--color-primary-soft);
   }
 `;
 
@@ -337,13 +335,13 @@ export const CombinedPaymentRow = styled.div`
   align-items: center;
   gap: 8px;
   padding: 8px;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 9px;
-  background: var(--app-surface-soft);
+  background: var(--color-surface-muted);
   label {
     display: grid;
     gap: 4px;
-    color: var(--app-muted);
+    color: var(--color-text-light);
     font-size: 0.68rem;
     font-weight: 800;
   }
@@ -357,10 +355,10 @@ export const CombinedPaymentRow = styled.div`
   button {
     min-height: 34px;
     padding: 6px 9px;
-    border: 1px solid var(--app-danger);
+    border: 1px solid var(--color-danger);
     border-radius: 8px;
-    background: var(--app-danger-soft);
-    color: var(--app-danger);
+    background: var(--color-danger-soft);
+    color: var(--color-danger);
     font-size: 0.72rem;
     font-weight: 800;
   }
@@ -383,15 +381,15 @@ export const OptionCard = styled.div`
   position: relative;
   min-width: 0;
   overflow: hidden;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 14px;
-  background: var(--app-surface-soft);
+  background: var(--color-surface-muted);
   transition:
-    border-color var(--app-transition),
-    background var(--app-transition);
+    border-color var(--transition-normal),
+    background var(--transition-normal);
   &.is-modified {
-    border-color: var(--app-accent);
-    background: var(--app-accent-soft);
+    border-color: var(--color-accent);
+    background: var(--color-primary-soft);
   }
   > button:not(.button-delete) {
     display: flex;
@@ -404,7 +402,7 @@ export const OptionCard = styled.div`
     border: 0;
     border-radius: inherit;
     background: transparent;
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-weight: 850;
     text-align: left;
     cursor: pointer;
@@ -417,12 +415,12 @@ export const OptionCard = styled.div`
       font-size: 0.82rem;
     }
     .containerInfo small {
-      color: var(--app-muted);
+      color: var(--color-text-light);
       font-size: 0.67rem;
       font-weight: 650;
     }
     &:hover {
-      background: var(--app-primary-soft);
+      background: var(--color-primary-soft);
     }
   }
   @media (max-width: 500px) {
@@ -449,8 +447,8 @@ export const OptionClear = styled.button`
   padding: 0;
   border: 0;
   border-radius: 50%;
-  background: var(--app-danger-soft);
-  color: var(--app-danger);
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
   font-size: 1rem;
 `;
 
@@ -461,8 +459,8 @@ export const SpanTextOptionStatus = styled.span`
   width: 27px;
   height: 27px;
   border-radius: 9px;
-  background: var(--app-paper);
-  color: var(--app-primary);
+  background: var(--color-background);
+  color: var(--color-primary);
   font-size: 1rem;
   font-weight: 900;
 `;
@@ -482,7 +480,7 @@ export const SubtotalRow = styled.div`
   gap: 5px;
   padding: 10px 12px;
   border-radius: 10px;
-  background: var(--app-surface-soft);
+  background: var(--color-surface-muted);
 `;
 
 export const SubtotalInfo = styled.div`
@@ -490,16 +488,16 @@ export const SubtotalInfo = styled.div`
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  color: var(--app-muted-dark);
+  color: var(--color-text-secondary);
   font-size: 0.84rem;
   strong {
-    color: var(--app-ink);
+    color: var(--color-text);
     font-weight: 850;
   }
 `;
 
 export const SpanTextDiscount = styled.span`
-  color: var(--app-success);
+  color: var(--color-success);
   font-size: 0.78rem;
   font-weight: 850;
   text-align: right;
@@ -512,12 +510,12 @@ export const TotalRow = styled.div`
   flex-wrap: wrap;
   gap: 9px;
   padding: 11px 13px;
-  border: 1px solid var(--app-accent-soft);
-  border-radius: var(--app-radius);
+  border: 1px solid var(--color-primary-soft);
+  border-radius: var(--radius-lg);
   background: linear-gradient(
     110deg,
-    var(--app-accent-soft),
-    var(--app-accent)
+    var(--color-primary-soft),
+    var(--color-accent)
   );
 `;
 
@@ -527,14 +525,12 @@ export const TotalInfo = styled.div`
   justify-content: space-between;
   gap: 12px;
   width: 100%;
-  color: var(--app-primary);
+  color: var(--color-primary);
   strong:first-child {
-    font-family: var(--app-font-heading);
     font-size: 1.15rem;
     font-weight: 900;
   }
   strong:last-child {
-    font-family: var(--app-font-heading);
     font-size: 1.3rem;
     font-weight: 900;
   }
@@ -543,10 +539,10 @@ export const TotalInfo = styled.div`
 export const PromotionsToggle = styled.button`
   justify-self: start;
   padding: 4px 8px;
-  border: 1px solid rgba(var(--app-primary-rgb), 0.2);
+  border: 1px solid var(--color-border-strong);
   border-radius: 7px;
-  background: rgba(var(--app-white-rgb), 0.55);
-  color: var(--app-primary);
+  background: var(--color-surface);
+  color: var(--color-primary);
   font-size: 0.7rem;
   font-weight: 850;
 `;
@@ -555,19 +551,19 @@ export const PromotionsDetails = styled.div`
   display: grid;
   gap: 6px;
   padding: 10px 12px;
-  border: 1px dashed var(--app-border-strong);
+  border: 1px dashed var(--color-border-strong);
   border-radius: 10px;
-  background: var(--app-surface);
+  background: var(--color-surface);
 `;
 
 export const PromotionRow = styled.div`
   display: flex;
   justify-content: space-between;
   gap: 10px;
-  color: var(--app-muted-dark);
+  color: var(--color-text-secondary);
   font-size: 0.76rem;
   strong {
-    color: var(--app-primary);
+    color: var(--color-primary);
     white-space: nowrap;
   }
 `;
@@ -578,7 +574,7 @@ export const StickyError = styled.div`
   z-index: 100;
   width: 100%;
   padding: 8px 0;
-  background: var(--app-paper);
+  background: var(--color-background);
 
   > p {
     margin: 0;
@@ -588,20 +584,20 @@ export const StickyError = styled.div`
 export const Error = styled.p<{ $paid?: boolean }>`
   margin: 0;
   padding: 10px 12px;
-  border-radius: var(--app-radius-sm);
+  border-radius: var(--radius-sm);
   font-size: 0.8rem;
   font-weight: 750;
 
   && {
     border: 1px solid
       ${({ $paid }) =>
-        $paid ? "var(--app-success)" : "var(--app-danger)"} !important;
+        $paid ? "var(--color-success)" : "var(--color-danger)"} !important;
 
     background: ${({ $paid }) =>
-      $paid ? "var(--app-success-soft)" : "var(--app-danger-soft)"} !important;
+      $paid ? "var(--color-success-soft)" : "var(--color-danger-soft)"} !important;
 
     color: ${({ $paid }) =>
-      $paid ? "var(--app-success)" : "var(--app-danger)"} !important;
+      $paid ? "var(--color-success)" : "var(--color-danger)"} !important;
   }
 `;
 
@@ -614,7 +610,7 @@ export const DetailsModalOverlay = styled.div`
   justify-content: center;
   overflow-y: auto;
   padding: 20px;
-  background: var(--app-overlay);
+  background: var(--modal-overlay);
   backdrop-filter: blur(7px);
 `;
 
@@ -623,10 +619,10 @@ export const DetailsModal = styled.div`
   max-height: calc(100dvh - 40px);
   overflow-y: auto;
   padding: 22px;
-  border: 1px solid var(--app-border);
-  border-radius: var(--app-radius-xl);
-  background: var(--app-paper);
-  box-shadow: var(--app-shadow-lg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-background);
+  box-shadow: var(--shadow-lg);
 `;
 
 export const DetailsModalHeader = styled.header`
@@ -640,15 +636,14 @@ export const DetailsModalHeader = styled.header`
     gap: 5px;
   }
   span {
-    color: var(--app-accent-hover);
+    color: var(--color-primary-hover);
     font-size: 0.66rem;
     font-weight: 900;
     letter-spacing: 0.13em;
   }
   h3 {
     margin: 0;
-    color: var(--app-ink);
-    font-family: var(--app-font-heading);
+    color: var(--color-text);
     font-size: 1.35rem;
   }
   button {
@@ -656,10 +651,10 @@ export const DetailsModalHeader = styled.header`
     place-items: center;
     width: 34px;
     height: 34px;
-    border: 1px solid var(--app-border);
+    border: 1px solid var(--color-border);
     border-radius: 50%;
-    background: var(--app-surface);
-    color: var(--app-primary);
+    background: var(--color-surface);
+    color: var(--color-primary);
     font-size: 1.3rem;
   }
 `;
@@ -673,14 +668,14 @@ export const DetailsPanel = styled.div`
 export const AddExtraButton = styled.button`
   min-height: 39px;
   padding: 8px 13px;
-  border: 1px solid var(--app-accent);
-  border-radius: var(--app-radius-sm);
-  background: var(--app-accent);
-  color: var(--app-white);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  background: var(--color-accent);
+  color: var(--color-white);
   font-size: 0.8rem;
   font-weight: 850;
   &:hover {
-    background: var(--app-accent-hover);
+    background: var(--color-primary-hover);
   }
 `;
 
@@ -695,20 +690,20 @@ export const ExtraItem = styled.div`
   justify-content: space-between;
   gap: 10px;
   padding: 9px 11px;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 9px;
-  background: var(--app-surface-soft);
-  color: var(--app-ink);
+  background: var(--color-surface-muted);
+  color: var(--color-text);
   font-size: 0.8rem;
   strong {
-    color: var(--app-primary);
+    color: var(--color-primary);
   }
 `;
 
 export const FieldLabelExtraNameField = styled.label`
   display: grid;
   gap: 6px;
-  color: var(--app-muted-dark);
+  color: var(--color-text-secondary);
   font-size: 0.76rem;
   font-weight: 800;
   input {
@@ -717,7 +712,7 @@ export const FieldLabelExtraNameField = styled.label`
 `;
 
 export const SmallTextDiscountHint = styled.small`
-  color: var(--app-muted);
+  color: var(--color-text-light);
   font-size: 0.72rem;
   line-height: 1.45;
 `;
@@ -731,7 +726,7 @@ export const IngredientModalOverlay = styled.div`
   justify-content: center;
   overflow-y: auto;
   padding: 18px;
-  background: var(--app-overlay);
+  background: var(--modal-overlay);
   backdrop-filter: blur(7px);
 `;
 
@@ -740,10 +735,10 @@ export const IngredientModal = styled.div`
   max-height: calc(100dvh - 36px);
   overflow-y: auto;
   padding: clamp(18px, 3vw, 26px);
-  border: 1px solid var(--app-border);
-  border-radius: var(--app-radius-xl);
-  background: var(--app-paper);
-  box-shadow: var(--app-shadow-lg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-background);
+  box-shadow: var(--shadow-lg);
 `;
 
 export const IngredientModalHeading = styled.header`
@@ -752,20 +747,19 @@ export const IngredientModalHeading = styled.header`
   margin-bottom: 18px;
   h3 {
     margin: 0;
-    color: var(--app-ink);
-    font-family: var(--app-font-heading);
+    color: var(--color-text);
     font-size: 1.25rem;
   }
   p {
     margin: 0;
-    color: var(--app-muted);
+    color: var(--color-text-light);
     font-size: 0.83rem;
     line-height: 1.5;
   }
 `;
 
 export const SpanTextIngredientModalEyebrow = styled.span`
-  color: var(--app-accent-hover);
+  color: var(--color-primary-hover);
   font-size: 0.66rem;
   font-weight: 900;
   letter-spacing: 0.14em;
@@ -780,17 +774,17 @@ export const IngredientOptionsList = styled.div`
     align-items: center;
     gap: 10px;
     padding: 11px 12px;
-    border: 1px solid var(--app-border);
-    border-radius: var(--app-radius-sm);
-    background: var(--app-surface-soft);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-muted);
     cursor: pointer;
     span {
-      color: var(--app-ink);
+      color: var(--color-text);
       font-size: 0.83rem;
       font-weight: 750;
     }
     small {
-      color: var(--app-success);
+      color: var(--color-success);
       font-size: 0.7rem;
       font-weight: 850;
     }
@@ -798,14 +792,14 @@ export const IngredientOptionsList = styled.div`
       width: 17px;
       height: 17px;
       margin: 0;
-      accent-color: var(--app-primary);
+      accent-color: var(--color-primary);
     }
     &.is-removed {
-      border-color: var(--app-danger);
-      background: var(--app-danger-soft);
+      border-color: var(--color-danger);
+      background: var(--color-danger-soft);
     }
     &.is-removed small {
-      color: var(--app-danger);
+      color: var(--color-danger);
     }
   }
 `;
@@ -815,20 +809,20 @@ export const ExtraIngredientsSection = styled.section`
   gap: 10px;
   margin-top: 17px;
   padding: 13px;
-  border: 1px solid var(--app-border);
-  border-radius: var(--app-radius);
-  background: var(--app-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
 `;
 
 export const ExtraIngredientsHeader = styled.header`
   h4 {
     margin: 0 0 3px;
-    color: var(--app-ink);
+    color: var(--color-text);
     font-size: 0.86rem;
   }
   p {
     margin: 0;
-    color: var(--app-muted);
+    color: var(--color-text-light);
     font-size: 0.73rem;
     line-height: 1.45;
   }
@@ -851,14 +845,14 @@ export const ExtraIngredientsInput = styled.input`
 export const ExtraIngredientsAddButton = styled.button`
   min-height: 42px;
   padding: 8px 13px;
-  border: 1px solid var(--app-accent);
-  border-radius: var(--app-radius-sm);
-  background: var(--app-accent);
-  color: var(--app-white);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  background: var(--color-accent);
+  color: var(--color-white);
   font-size: 0.78rem;
   font-weight: 850;
   &:hover:not(:disabled) {
-    background: var(--app-accent-hover);
+    background: var(--color-primary-hover);
   }
   &:disabled {
     opacity: 0.45;
@@ -877,10 +871,10 @@ export const ExtraIngredientTag = styled.span`
   align-items: center;
   gap: 7px;
   padding: 5px 8px 5px 10px;
-  border: 1px solid var(--app-border-strong);
+  border: 1px solid var(--color-border-strong);
   border-radius: 999px;
-  background: var(--app-accent-soft);
-  color: var(--app-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
   font-size: 0.74rem;
   font-weight: 750;
 `;
@@ -893,15 +887,15 @@ export const ExtraIngredientRemoveButton = styled.button`
   padding: 0;
   border: 0;
   border-radius: 50%;
-  background: var(--app-danger-soft);
-  color: var(--app-danger);
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
   font-size: 0.9rem;
   font-weight: 900;
 `;
 
 export const ExtraIngredientsEmpty = styled.p`
   margin: 0;
-  color: var(--app-muted);
+  color: var(--color-text-light);
   font-size: 0.74rem;
 `;
 
@@ -912,14 +906,14 @@ export const IngredientModalActions = styled.footer`
   gap: 9px;
   margin-top: 19px;
   padding-top: 14px;
-  border-top: 1px solid var(--app-border);
+  border-top: 1px solid var(--color-border);
   button {
     min-height: 40px;
     padding: 9px 13px;
-    border: 1px solid var(--app-primary);
-    border-radius: var(--app-radius-sm);
-    background: var(--app-primary);
-    color: var(--app-white);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-sm);
+    background: var(--color-primary);
+    color: var(--color-white);
     font-size: 0.78rem;
     font-weight: 850;
   }
@@ -933,9 +927,9 @@ export const IngredientModalActions = styled.footer`
 
 export const IngredientCancel = styled.button`
   && {
-    border-color: var(--app-border);
-    background: var(--app-surface);
-    color: var(--app-muted-dark);
+    border-color: var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text-secondary);
   }
 `;
 
@@ -944,10 +938,10 @@ export const IngredientEditButton = styled.button`
   min-height: 31px;
   margin-top: 5px;
   padding: 5px 9px;
-  border: 1px solid var(--app-border-strong);
+  border: 1px solid var(--color-border-strong);
   border-radius: 8px;
-  background: var(--app-accent-soft);
-  color: var(--app-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
   font-size: 0.7rem;
   font-weight: 850;
 `;
@@ -956,18 +950,18 @@ export const IngredientSummary = styled.div`
   display: grid;
   gap: 4px;
   margin-top: 6px;
-  color: var(--app-muted);
+  color: var(--color-text-light);
   font-size: 0.72rem;
   line-height: 1.45;
 `;
 
 export const SmallTextAddedIngredients = styled.small`
-  color: var(--app-success);
+  color: var(--color-success);
   font-weight: 750;
 `;
 
 export const SmallTextRemovedIngredients = styled.small`
-  color: var(--app-danger);
+  color: var(--color-danger);
   font-weight: 750;
 `;
 
@@ -996,14 +990,14 @@ export const DeliveryTimeRow = styled.div`
     display: flex;
     align-items: center;
     gap: 8px;
-    color: var(--app-ink);
+    color: var(--color-text);
     font-size: 0.83rem;
     font-weight: 800;
   }
 
   label span {
     flex-shrink: 0;
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 1.15rem;
   }
 
@@ -1033,7 +1027,7 @@ export const ObservationField = styled.div`
   width: 100%;
 
   label {
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 0.85rem;
     font-weight: 700;
   }
@@ -1048,21 +1042,22 @@ export const ObservationTextarea = styled.textarea`
   box-sizing: border-box;
   padding: 10px 12px;
   resize: vertical;
-  border: 1px solid var(--app-accent);
+  border: 1px solid var(--color-accent);
   border-radius: 9px;
-  background: var(--app-white);
-  color: var(--app-primary);
-  font: inherit;
+  background: var(--color-white);
+  color: var(--color-primary);
+  font-size: inherit;
+  font-weight: inherit;
   font-size: 0.88rem;
   line-height: 1.5;
   outline: none;
 
   &::placeholder {
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
   }
 
   &:focus {
-    border-color: var(--app-primary);
-    box-shadow: 0 0 0 3px rgba(var(--app-shadow-rgb), 0.1);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-soft);
   }
 `;

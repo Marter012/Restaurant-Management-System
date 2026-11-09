@@ -11,7 +11,7 @@ import ModalForm from "../../components/ModalForm/ModalForm.tsx";
 import type { RootState } from "../../store/store.ts";
 import type { IOrder } from "../../interfaces/Order.ts";
 
-import { ContainerManageOrders, EmptyMessage } from "./ManageOrderStyles.ts";
+import { ContainerManageOrders, EmptyMessage, OrdersTableRow } from "./ManageOrderStyles.ts";
 
 import { getDateOnly } from "../Utils/Formats.tsx";
 
@@ -20,7 +20,6 @@ import { buildOrderTicket } from "../Tickets/OrderTicket.ts";
 
 import ModalPrintFalse from "../ModalPrintFalse/ModalPrintFalse.tsx";
 
-import { OrdersTableRow } from "../Tables/ListTableStyles.ts";
 import ModalOrderEdit from "../Modals/ModalOrder/ModalOrderEdit.tsx";
 import ModalOrderOptions from "../Modals/ModalOrder/ModalOrderOptions.tsx";
 import { ActionButton } from "../Utils/ButtonStyles.ts";
@@ -200,6 +199,9 @@ const ManageOrder = ({
           },
         ];
 
+    if (payments.length > 2) {
+      return "Más de 2 pagos";
+    }
     return [
       ...new Set(
         payments.map(
@@ -568,6 +570,7 @@ const ManageOrder = ({
         footerActions={
           modalMode === "edit" && selectedOrder && !readOnly ? (
             <ActionButton
+              key="save-order-button"
               type="submit"
               form="manage-order-form"
               disabled={isSubmitting}
@@ -578,6 +581,7 @@ const ManageOrder = ({
             selectedOrder &&
             canModifyOrder(selectedOrder) ? (
             <ActionButton
+              key="edit-order-button"
               className="ligth"
               type="button"
               onClick={handleEditAction}

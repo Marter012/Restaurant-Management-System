@@ -123,6 +123,11 @@ const ProductForm = ({
           const formattedValues = {
             ...values,
             category: formatCategory(values.category),
+            discount_percentage:
+              values.discount_percentage == null ||
+              String(values.discount_percentage).trim() === ""
+                ? null
+                : Number(values.discount_percentage),
 
             garnish_options: values.has_garnish
               ? String(values.garnish_options ?? "")
@@ -322,6 +327,28 @@ const ProductForm = ({
                     <ErrorMessage name="price" component={ErrorText} />
                   </FormGroup>
                 </div>
+
+
+
+                <FormGroup>
+                  <label htmlFor="discount_percentage">
+                    Descuento individual (%)
+                  </label>
+                  <Field
+                    id="discount_percentage"
+                    name="discount_percentage"
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="0.1"
+                    placeholder="Sin descuento individual"
+                  />
+                  <small>
+                    Si lo configurás, este porcentaje tiene prioridad sobre el descuento general del establecimiento.
+                    Dejá el campo vacío para utilizar el descuento general cuando esté activo.
+                  </small>
+                  <ErrorMessage name="discount_percentage" component={ErrorText} />
+                </FormGroup>
 
                 {/* CATEGORÍA */}
 

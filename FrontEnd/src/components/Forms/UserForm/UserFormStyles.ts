@@ -24,7 +24,7 @@ export const FormGroup = styled.div`
     display: flex;
     align-items: center;
     gap: 7px;
-    color: var(--app-ink);
+    color: var(--color-text);
     font-size: 13px;
     font-weight: 800;
     line-height: 1.4;
@@ -35,7 +35,7 @@ export const FormGroup = styled.div`
       height: 6px;
       flex: 0 0 6px;
       border-radius: 50%;
-      background: var(--app-accent);
+      background: var(--color-accent);
       content: "";
     }
   }
@@ -48,37 +48,34 @@ export const FormGroup = styled.div`
     height: 48px;
     box-sizing: border-box;
     padding: 0 14px;
-    border: 1.5px solid var(--app-border-strong) !important;
-    border-radius: 11px;
-    background: var(--app-surface) !important;
-    color: var(--app-ink) !important;
-    font-family: inherit;
+    border: 1.5px solid var(--color-border-strong) !important;
+    border-radius: var(--radius-md);
+    background: var(--color-surface) !important;
+    color: var(--color-text) !important;
     font-size: 14px;
     font-weight: 550;
     line-height: 1.4;
     outline: none;
-    box-shadow: var(--app-shadow-xs);
+    box-shadow: var(--shadow-sm);
     transition:
       border-color 180ms ease,
       box-shadow 180ms ease,
       background 180ms ease;
 
     &::placeholder {
-      color: var(--app-muted);
+      color: var(--color-text-secondary);
       opacity: 0.9;
     }
 
     &:hover:not(:disabled) {
-      border-color: var(--app-accent) !important;
-      background: var(--app-white) !important;
+      border-color: var(--color-accent) !important;
+      background: var(--color-white) !important;
     }
 
     &:focus {
-      border-color: var(--app-primary) !important;
-      background: var(--app-white) !important;
-      box-shadow:
-        0 0 0 3px var(--app-accent-soft),
-        var(--app-shadow-sm) !important;
+      border-color: var(--color-primary) !important;
+      background: var(--color-white) !important;
+      box-shadow: 0 0 0 3px var(--color-primary-soft) !important;
     }
 
     &:disabled {
@@ -93,9 +90,9 @@ export const FormGroup = styled.div`
   }
 
   input:-webkit-autofill {
-    -webkit-box-shadow: 0 0 0 1000px var(--app-surface) inset;
-    -webkit-text-fill-color: var(--app-ink);
-    caret-color: var(--app-ink);
+    -webkit-box-shadow: 0 0 0 1000px var(--color-surface) inset;
+    -webkit-text-fill-color: var(--color-text);
+    caret-color: var(--color-text);
   }
 
   @media (max-width: 600px) {
@@ -120,10 +117,10 @@ export const ErrorText = styled.span`
   max-width: 100%;
   margin-top: 1px;
   padding: 5px 8px;
-  border-left: 3px solid var(--app-danger);
-  border-radius: 0 6px 6px 0;
-  background: var(--app-warning-soft);
-  color: var(--app-danger);
+  border-left: 3px solid var(--color-danger);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
   font-size: 11px;
   font-weight: 700;
   line-height: 1.4;
@@ -147,12 +144,11 @@ export const FormActions = styled.div`
 
 export const CancelButton = styled.button`
   min-height: 43px;
-  border: 1px solid var(--app-border-strong);
-  border-radius: 10px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
   padding: 10px 18px;
-  background: var(--app-white);
-  color: var(--app-primary);
-  font-family: inherit;
+  background: var(--color-white);
+  color: var(--color-primary);
   font-size: 13px;
   font-weight: 800;
   cursor: pointer;
@@ -162,8 +158,8 @@ export const CancelButton = styled.button`
     transform 180ms ease;
 
   &:hover:not(:disabled) {
-    border-color: var(--app-accent);
-    background: var(--app-surface);
+    border-color: var(--color-accent);
+    background: var(--color-surface);
   }
 
   &:active:not(:disabled) {
@@ -176,19 +172,18 @@ export const CancelButton = styled.button`
   }
 
   &:focus-visible {
-    outline: 3px solid var(--app-accent-soft);
+    outline: 3px solid var(--color-primary-soft);
     outline-offset: 2px;
   }
 `;
 
 export const SubmitButton = styled.button`
   min-height: 43px;
-  border: 1px solid var(--app-primary);
-  border-radius: 10px;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-md);
   padding: 10px 18px;
-  background: var(--app-primary);
-  color: var(--app-white);
-  font-family: inherit;
+  background: var(--color-primary);
+  color: var(--color-white);
   font-size: 13px;
   font-weight: 850;
   cursor: pointer;
@@ -199,9 +194,9 @@ export const SubmitButton = styled.button`
     transform 180ms ease;
 
   &:hover:not(:disabled) {
-    border-color: var(--app-primary-active);
-    background: var(--app-primary-active);
-    box-shadow: var(--app-shadow-sm);
+    border-color: var(--color-primary-hover);
+    background: var(--color-primary-hover);
+    box-shadow: var(--shadow-sm);
     transform: translateY(-1px);
   }
 
@@ -215,7 +210,7 @@ export const SubmitButton = styled.button`
   }
 
   &:focus-visible {
-    outline: 3px solid var(--app-accent-soft);
+    outline: 3px solid var(--color-primary-soft);
     outline-offset: 2px;
   }
 `;

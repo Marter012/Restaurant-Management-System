@@ -10,7 +10,7 @@ import { TableRow } from "../../components/Tables/ListTableStyles.ts";
  */
 export const CashMovementTable = styled(ListTable)`
   /* El contenedor conserva el espacio del panel, pero no agrega una segunda tarjeta. */
-  background: var(--app-white);
+  background: var(--color-white);
   border: none;
   border-radius: 0;
   box-shadow: none;
@@ -40,14 +40,14 @@ export const CashMovementTable = styled(ListTable)`
       minmax(110px, 1fr);
     gap: 8px;
     padding: 10px 8px;
-    background: var(--app-surface-soft) !important;
+    background: var(--color-surface-hover) !important;
     background-image: none !important;
     border: none;
-    border-bottom: 1px solid var(--app-accent-soft);
+    border-bottom: 1px solid var(--color-primary-soft);
     box-shadow: none;
 
     h4 {
-      color: var(--app-muted-dark);
+      color: var(--color-text-secondary);
       font-size: 10px;
       font-weight: 800;
       line-height: 1.3;
@@ -71,7 +71,7 @@ export const CashMovementTable = styled(ListTable)`
     flex: 0 0 auto;
     padding: 0;
     gap: 0;
-    background: var(--app-white);
+    background: var(--color-white);
     box-sizing: border-box;
   }
 
@@ -111,32 +111,33 @@ export const CashMovementRow = styled(TableRow)`
   margin: 0;
   padding: 12px 8px;
   border: none;
-  border-bottom: 1px solid var(--app-accent-soft);
+  border-bottom: 1px solid var(--color-primary-soft);
   border-radius: 0;
-  background: var(--app-white);
-  color: var(--app-primary);
+  background: var(--color-white);
+  color: var(--color-primary);
   font-size: 12px;
   line-height: 1.4;
   box-shadow: none;
 
   transition: background-color 0.2s ease;
   cursor: pointer;
+
   &:hover {
     z-index: auto;
-    background: var(--app-surface-soft);
-    border-color: var(--app-accent-soft);
+    background: var(--color-surface-hover);
+    border-color: var(--color-primary-soft);
     box-shadow: none;
     transform: none;
   }
 
   &:focus-within {
-    border-color: var(--app-accent-soft);
+    border-color: var(--color-primary-soft);
     box-shadow: none;
   }
 
   .movement-description {
     min-width: 0;
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 12px;
     font-weight: 500;
   }
@@ -155,7 +156,7 @@ export const CashMovementRow = styled(TableRow)`
 
   .movement-method {
     min-width: 0;
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 12px;
   }
 
@@ -167,7 +168,7 @@ export const CashMovementRow = styled(TableRow)`
     width: 100%;
     padding: 5px 8px;
     border: none;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     font-size: 10px;
     font-weight: 800;
     line-height: 1.2;
@@ -175,30 +176,30 @@ export const CashMovementRow = styled(TableRow)`
   }
 
   .movement-badge.income {
-    background: var(--app-success);
-    color: white;
+    background: var(--color-success-soft);
+    color: var(--color-success);
   }
 
   .movement-badge.expense {
-    background: var(--app-danger);
-    color: black;
+    background: var(--color-danger-soft);
+    color: var(--color-danger);
   }
 
   .movement-badge.pending {
-    background: var(--app-warning);
-    color: black;
+    background: var(--color-pending-soft);
+    color: var(--color-pending);
   }
 
   .movement-badge.partially_paid {
-    background: var(--app-warning-soft);
-    color: black;
+    background: var(--color-partial-soft);
+    color: var(--color-partial);
   }
 
   .movement-amount {
     display: block;
     min-width: 0;
     overflow: visible;
-    color: var(--app-primary);
+    color: var(--color-primary);
     text-align: right;
     font-size: 12px;
     font-weight: 800;
@@ -207,11 +208,11 @@ export const CashMovementRow = styled(TableRow)`
   }
 
   .movement-amount.positive {
-    color: var(--app-primary);
+    color: var(--color-success);
   }
 
   .movement-amount.negative {
-    color: var(--app-danger);
+    color: var(--color-danger);
   }
 
   @media (max-width: 760px) {
@@ -250,6 +251,6 @@ export const CashMovementRow = styled(TableRow)`
 export const CashMovementEmpty = styled.div`
   padding: 25px;
   text-align: center;
-  color: var(--app-muted-dark);
+  color: var(--color-text-secondary);
   font-size: 12px;
 `;

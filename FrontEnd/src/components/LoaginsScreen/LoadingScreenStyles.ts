@@ -24,7 +24,7 @@ export const Container = styled.div`
   box-sizing: border-box;
   overflow-y: auto;
 
-  background: var(--app-surface-soft);
+  background: var(--color-surface-hover);
 `;
 
 export const Content = styled.div`
@@ -54,7 +54,7 @@ export const Brand = styled.div`
   h1 {
     margin: 0;
 
-    color: var(--app-primary);
+    color: var(--color-primary);
 
     font-size: 25px;
     font-weight: 700;
@@ -74,7 +74,7 @@ export const BrandSubtitle = styled.span`
 
   margin-top: 7px;
 
-  color: var(--app-muted-dark);
+  color: var(--color-text-secondary);
 
   font-size: 14px;
 
@@ -98,8 +98,8 @@ export const Spinner = styled.div`
 
   border-radius: 50%;
 
-  border: 6px solid var(--app-accent-soft);
-  border-top-color: var(--app-muted-dark);
+  border: 6px solid var(--color-primary-soft);
+  border-top-color: var(--color-text-secondary);
 
   animation: ${spin} 1s linear infinite;
 
@@ -114,7 +114,7 @@ export const Spinner = styled.div`
 export const Title = styled.h2`
   margin: 0;
 
-  color: var(--app-primary);
+  color: var(--color-primary);
 
   font-size: 20px;
   font-weight: 600;
@@ -127,7 +127,7 @@ export const Title = styled.h2`
 export const Subtitle = styled.p`
   margin: 8px 0 28px;
 
-  color: var(--app-muted-dark);
+  color: var(--color-text-secondary);
 
   font-size: 14px;
 `;
@@ -144,11 +144,11 @@ export const StatusContainer = styled.div`
 
   box-sizing: border-box;
 
-  background: rgba(var(--app-white-rgb), 0.45);
+  background: var(--color-surface-hover);
 
-  border: 1px solid var(--app-accent-soft);
+  border: 1px solid var(--color-primary-soft);
 
-  border-radius: 14px;
+  border-radius: var(--radius-lg);
 
   @media (max-width: 600px) {
     padding: 16px;
@@ -166,7 +166,7 @@ export const StatusItem = styled.div<StatusProps>`
   gap: 10px;
 
   color: ${({ $completed }) =>
-    $completed ? "var(--app-primary)" : "var(--app-muted-dark)"};
+    $completed ? "var(--color-primary)" : "var(--color-text-secondary)"};
 
   font-size: 14px;
 
@@ -190,10 +190,10 @@ export const StatusIcon = styled.span<StatusProps>`
   border-radius: 50%;
 
   color: ${({ $completed }) =>
-    $completed ? "var(--app-white)" : "var(--app-muted)"};
+    $completed ? "var(--color-white)" : "var(--color-text-secondary)"};
 
   background: ${({ $completed }) =>
-    $completed ? "var(--app-muted-dark)" : "transparent"};
+    $completed ? "var(--color-primary)" : "transparent"};
 
   font-size: 13px;
 
@@ -208,10 +208,10 @@ export const RetryButton = styled.button`
   padding: 11px 28px;
 
   border: none;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
 
-  background: var(--app-muted-dark);
-  color: var(--app-white);
+  background: var(--color-primary);
+  color: var(--color-white);
 
   font-size: 14px;
   font-weight: 600;
@@ -223,7 +223,7 @@ export const RetryButton = styled.button`
     transform 0.2s ease;
 
   &:hover {
-    background: var(--app-primary);
+    background: var(--color-primary-hover);
     transform: translateY(-1px);
   }
 

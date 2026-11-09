@@ -9,11 +9,11 @@ export const PrintCenter = styled.div`
   gap: 18px;
   padding: clamp(14px, 1.5vw, 22px);
   box-sizing: border-box;
-  color: var(--app-primary-active);
-  background: var(--app-white);
-  border: 1px solid rgba(var(--app-shadow-rgb), 0.1);
+  color: var(--color-primary-hover);
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
   border-radius: 20px;
-  box-shadow: 0 8px 28px rgba(var(--app-shadow-rgb), 0.055);
+  box-shadow: var(--shadow-md);
 `;
 
 export const PrintCenterHeader = styled.header`
@@ -22,7 +22,7 @@ export const PrintCenterHeader = styled.header`
   justify-content: space-between;
   gap: 20px;
   padding: 2px 2px 18px;
-  border-bottom: 1px solid rgba(var(--app-shadow-rgb), 0.1);
+  border-bottom: 1px solid var(--color-border);
 
   @media (max-width: 760px) {
     align-items: flex-start;
@@ -33,7 +33,7 @@ export const PrintCenterHeader = styled.header`
 export const PrintCenterEyebrow = styled.span`
   display: inline-block;
   margin-bottom: 7px;
-  color: var(--app-accent);
+  color: var(--color-accent);
   font-size: 0.68rem;
   font-weight: 850;
   letter-spacing: 0.11em;
@@ -45,7 +45,7 @@ export const PrintCenterTitle = styled.h2`
   align-items: center;
   gap: 10px;
   margin: 0;
-  color: var(--app-primary-active);
+  color: var(--color-primary-hover);
   font-size: clamp(1.25rem, 2vw, 1.65rem);
   line-height: 1.2;
   font-weight: 850;
@@ -53,7 +53,7 @@ export const PrintCenterTitle = styled.h2`
 
   svg {
     flex: 0 0 auto;
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 1.45em;
   }
 `;
@@ -61,7 +61,7 @@ export const PrintCenterTitle = styled.h2`
 export const PrintCenterLead = styled.p`
   max-width: 740px;
   margin: 7px 0 0;
-  color: var(--app-muted-dark);
+  color: var(--color-text-secondary);
   font-size: 0.84rem;
   line-height: 1.5;
 `;
@@ -92,21 +92,28 @@ export const PrintCenterStatus = styled.div<{ $active?: boolean }>`
   column-gap: 9px;
   align-items: center;
   padding: 10px 13px;
-  border: 1px solid ${({ $active }) => $active ? "rgba(39, 128, 63, 0.16)" : "rgba(var(--app-accent-rgb), 0.2)"};
+  border: 1px solid
+    ${({ $active }) =>
+      $active ? "var(--color-success-soft)" : "var(--color-border)"};
   border-radius: 13px;
-  background: ${({ $active }) => $active ? "rgba(57, 149, 75, 0.09)" : "var(--app-surface-soft)"};
+  background: ${({ $active }) =>
+    $active ? "var(--color-success-soft)" : "var(--color-surface-hover)"};
 
   > span {
     grid-row: 1 / span 2;
     width: 9px;
     height: 9px;
     border-radius: 50%;
-    background: ${({ $active }) => $active ? "#27964b" : "var(--app-accent)"};
-    box-shadow: 0 0 0 4px ${({ $active }) => $active ? "rgba(39, 150, 75, 0.1)" : "rgba(var(--app-accent-rgb), 0.1)"};
+    background: ${({ $active }) =>
+      $active ? "var(--color-success)" : "var(--color-accent)"};
+    box-shadow: 0 0 0 4px
+      ${({ $active }) =>
+        $active ? "var(--color-success-soft)" : "var(--color-surface-muted)"};
   }
 
   strong {
-    color: ${({ $active }) => $active ? "#26763c" : "var(--app-primary)"};
+    color: ${({ $active }) =>
+      $active ? "var(--color-success)" : "var(--color-primary)"};
     font-size: 0.78rem;
     font-weight: 850;
   }
@@ -116,7 +123,7 @@ export const PrintCenterStatus = styled.div<{ $active?: boolean }>`
     display: block;
     overflow: hidden;
     margin-top: 2px;
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
     font-size: 0.68rem;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -147,10 +154,10 @@ export const StatusCard = styled.article<{ $active?: boolean }>`
   min-height: 135px;
   overflow: hidden;
   padding: 16px;
-  border: 1px solid ${({ $active }) => $active ? "rgba(var(--app-primary-rgb), 0.15)" : "rgba(var(--app-shadow-rgb), 0.12)"};
+  border: 1px solid ${({ $active }) => ($active ? "var(--color-border-strong)" : "var(--color-border)")};
   border-radius: 16px;
-  background: ${({ $active }) => $active ? "linear-gradient(145deg, var(--app-white), var(--app-surface-soft))" : "var(--app-white)"};
-  box-shadow: 0 4px 14px rgba(var(--app-shadow-rgb), 0.035);
+  background: ${({ $active }) => ($active ? "linear-gradient(145deg, var(--color-white), var(--color-surface-hover))" : "var(--color-white)")};
+  box-shadow: var(--shadow-sm);
 
   &::after {
     content: "";
@@ -160,7 +167,7 @@ export const StatusCard = styled.article<{ $active?: boolean }>`
     right: -42px;
     bottom: -48px;
     border-radius: 50%;
-    background: rgba(var(--app-primary-rgb), 0.045);
+    background: var(--color-surface-muted);
     pointer-events: none;
   }
 `;
@@ -178,8 +185,10 @@ export const StatusIcon = styled.div<{ $active?: boolean }>`
   display: grid;
   place-items: center;
   border-radius: 12px;
-  background: ${({ $active }) => $active ? "rgba(57, 149, 75, 0.1)" : "rgba(var(--app-accent-rgb), 0.1)"};
-  color: ${({ $active }) => $active ? "#278444" : "var(--app-primary)"};
+  background: ${({ $active }) =>
+    $active ? "var(--color-success-soft)" : "var(--color-surface-muted)"};
+  color: ${({ $active }) =>
+    $active ? "var(--color-success)" : "var(--color-primary)"};
 
   svg {
     font-size: 1.28rem;
@@ -191,12 +200,15 @@ export const StatusDot = styled.span<{ $active?: boolean }>`
   height: 8px;
   flex: 0 0 auto;
   border-radius: 50%;
-  background: ${({ $active }) => $active ? "#29964b" : "var(--app-accent)"};
-  box-shadow: 0 0 0 4px ${({ $active }) => $active ? "rgba(41, 150, 75, 0.1)" : "rgba(var(--app-accent-rgb), 0.09)"};
+  background: ${({ $active }) =>
+    $active ? "var(--color-success)" : "var(--color-accent)"};
+  box-shadow: 0 0 0 4px
+    ${({ $active }) =>
+      $active ? "var(--color-success-soft)" : "var(--color-surface-muted)"};
 `;
 
 export const StatusCardTitle = styled.div`
-  color: var(--app-muted-dark);
+  color: var(--color-text-secondary);
   font-size: 0.7rem;
   font-weight: 800;
   letter-spacing: 0.045em;
@@ -206,7 +218,8 @@ export const StatusCardTitle = styled.div`
 export const StatusCardValue = styled.div<{ $active?: boolean }>`
   overflow: hidden;
   margin-top: 4px;
-  color: ${({ $active }) => $active ? "var(--app-primary-active)" : "var(--app-accent)"};
+  color: ${({ $active }) =>
+    $active ? "var(--color-primary-hover)" : "var(--color-accent)"};
   font-size: clamp(0.95rem, 1.4vw, 1.18rem);
   font-weight: 850;
   text-overflow: ellipsis;
@@ -217,7 +230,7 @@ export const StatusCardDescription = styled.p`
   display: -webkit-box;
   overflow: hidden;
   margin: 5px 0 0;
-  color: var(--app-muted-dark);
+  color: var(--color-text-secondary);
   font-size: 0.72rem;
   line-height: 1.4;
   -webkit-box-orient: vertical;
@@ -245,10 +258,10 @@ export const MainGrid = styled.div`
 export const Section = styled.section`
   min-width: 0;
   padding: clamp(15px, 1.7vw, 20px);
-  border: 1px solid rgba(var(--app-shadow-rgb), 0.12);
+  border: 1px solid var(--color-border);
   border-radius: 16px;
-  background: var(--app-white);
-  box-shadow: 0 4px 15px rgba(var(--app-shadow-rgb), 0.035);
+  background: var(--color-white);
+  box-shadow: var(--shadow-sm);
 `;
 
 export const SectionHeader = styled.div`
@@ -268,7 +281,7 @@ export const SectionTitle = styled.h3`
   align-items: center;
   gap: 9px;
   margin: 0;
-  color: var(--app-primary-active);
+  color: var(--color-primary-hover);
   font-size: 0.98rem;
   font-weight: 850;
   letter-spacing: -0.015em;
@@ -276,7 +289,7 @@ export const SectionTitle = styled.h3`
 
 export const SectionDescription = styled.p`
   margin: 5px 0 0 38px;
-  color: var(--app-muted-dark);
+  color: var(--color-text-secondary);
   font-size: 0.73rem;
   line-height: 1.45;
 
@@ -292,8 +305,8 @@ export const SectionIcon = styled.span`
   display: grid;
   place-items: center;
   border-radius: 9px;
-  background: rgba(var(--app-primary-rgb), 0.08);
-  color: var(--app-primary);
+  background: var(--color-surface-muted);
+  color: var(--color-primary);
 
   svg {
     font-size: 1rem;
@@ -314,7 +327,7 @@ export const SettingField = styled.label`
 `;
 
 export const InfoLabel = styled.span`
-  color: var(--app-primary-active);
+  color: var(--color-primary-hover);
   font-size: 0.76rem;
   font-weight: 750;
 `;
@@ -325,19 +338,19 @@ export const PrinterSelect = styled.select`
   min-height: 44px;
   box-sizing: border-box;
   padding: 0 38px 0 12px;
-  border: 1px solid rgba(var(--app-shadow-rgb), 0.17);
+  border: 1px solid var(--color-border);
   border-radius: 10px;
   outline: none;
-  background: var(--app-white);
-  color: var(--app-primary-active);
+  background: var(--color-white);
+  color: var(--color-primary-hover);
   font: inherit;
   font-size: 0.82rem;
   font-weight: 700;
   cursor: pointer;
 
   &:focus {
-    border-color: var(--app-accent);
-    box-shadow: 0 0 0 3px rgba(var(--app-accent-rgb), 0.12);
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px var(--color-primary-soft);
   }
 
   &:disabled {
@@ -352,22 +365,22 @@ export const TextInput = styled.input`
   min-height: 44px;
   box-sizing: border-box;
   padding: 0 12px;
-  border: 1px solid rgba(var(--app-shadow-rgb), 0.17);
+  border: 1px solid var(--color-border);
   border-radius: 10px;
   outline: none;
-  background: var(--app-white);
-  color: var(--app-primary-active);
+  background: var(--color-white);
+  color: var(--color-primary-hover);
   font: inherit;
   font-size: 0.82rem;
 
   &::placeholder {
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
     opacity: 0.7;
   }
 
   &:focus {
-    border-color: var(--app-accent);
-    box-shadow: 0 0 0 3px rgba(var(--app-accent-rgb), 0.12);
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px var(--color-primary-soft);
   }
 
   &:disabled {
@@ -382,9 +395,9 @@ export const CheckControl = styled.label`
   gap: 12px;
   margin-top: 16px;
   padding: 13px 12px;
-  border: 1px solid rgba(var(--app-shadow-rgb), 0.1);
+  border: 1px solid var(--color-border);
   border-radius: 11px;
-  background: var(--app-surface-soft);
+  background: var(--color-surface-hover);
   cursor: pointer;
 
   input {
@@ -396,7 +409,7 @@ export const CheckControl = styled.label`
     appearance: none;
     border: 0;
     border-radius: 20px;
-    background: rgba(var(--app-shadow-rgb), 0.23);
+    background: var(--color-border);
     cursor: pointer;
     transition: background 0.18s ease;
 
@@ -408,13 +421,13 @@ export const CheckControl = styled.label`
       width: 16px;
       height: 16px;
       border-radius: 50%;
-      background: var(--app-white);
-      box-shadow: 0 1px 4px rgba(var(--app-shadow-rgb), 0.18);
+      background: var(--color-white);
+      box-shadow: var(--shadow-sm);
       transition: transform 0.18s ease;
     }
 
     &:checked {
-      background: var(--app-primary);
+      background: var(--color-primary);
     }
 
     &:checked::before {
@@ -435,13 +448,13 @@ export const CheckControl = styled.label`
   }
 
   strong {
-    color: var(--app-primary-active);
+    color: var(--color-primary-hover);
     font-size: 0.78rem;
     font-weight: 800;
   }
 
   small {
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
     font-size: 0.7rem;
     line-height: 1.4;
   }
@@ -501,14 +514,14 @@ const buttonBase = `
 export const SaveButton = styled.button`
   ${buttonBase}
   width: 100%;
-  border: 1px solid var(--app-primary);
-  background: var(--app-primary);
-  color: var(--app-white);
-  box-shadow: 0 5px 13px rgba(var(--app-shadow-rgb), 0.12);
+  border: 1px solid var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-white);
+  box-shadow: var(--shadow-sm);
 
   &:hover:not(:disabled) {
-    background: var(--app-primary-active);
-    box-shadow: 0 7px 17px rgba(var(--app-shadow-rgb), 0.16);
+    background: var(--color-primary-hover);
+    box-shadow: var(--shadow-md);
   }
 
   ${caramelButtonStyles}
@@ -534,18 +547,18 @@ export const SecondaryButton = styled.button`
   min-height: 72px;
   flex-direction: column;
   padding: 12px 10px;
-  border: 1px solid rgba(var(--app-shadow-rgb), 0.15);
-  background: var(--app-white);
-  color: var(--app-primary-active);
+  border: 1px solid var(--color-border);
+  background: var(--color-white);
+  color: var(--color-primary-hover);
 
   svg {
     font-size: 1.25rem;
-    color: var(--app-primary);
+    color: var(--color-primary);
   }
 
   &:hover:not(:disabled) {
-    border-color: rgba(var(--app-primary-rgb), 0.35);
-    background: var(--app-surface-soft);
+    border-color: var(--color-border-strong);
+    background: var(--color-surface-hover);
   }
 `;
 
@@ -553,13 +566,13 @@ export const RefreshButton = styled.button`
   ${buttonBase}
   flex: 0 0 auto;
   min-height: 42px;
-  border: 1px solid rgba(var(--app-shadow-rgb), 0.16);
-  background: var(--app-white);
-  color: var(--app-primary-active);
+  border: 1px solid var(--color-border);
+  background: var(--color-white);
+  color: var(--color-primary-hover);
 
   &:hover:not(:disabled) {
-    border-color: rgba(var(--app-primary-rgb), 0.3);
-    background: var(--app-surface-soft);
+    border-color: var(--color-border-strong);
+    background: var(--color-surface-hover);
   }
 `;
 
@@ -570,7 +583,7 @@ export const Loading = styled.div`
   justify-content: center;
   flex-direction: column;
   gap: 12px;
-  color: var(--app-primary);
+  color: var(--color-primary);
   font-size: 0.85rem;
   font-weight: 750;
 
@@ -580,7 +593,9 @@ export const Loading = styled.div`
   }
 
   @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+      transform: rotate(360deg);
+    }
   }
 `;
 
@@ -589,10 +604,10 @@ export const ErrorMessage = styled.div`
   align-items: center;
   gap: 9px;
   padding: 12px 14px;
-  border: 1px solid rgba(var(--app-danger-rgb), 0.18);
+  border: 1px solid var(--color-border);
   border-radius: 11px;
-  background: var(--app-danger-soft);
-  color: var(--app-danger);
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
   font-size: 0.77rem;
   font-weight: 700;
 
@@ -609,10 +624,10 @@ export const EmptyMessage = styled.div`
   gap: 8px;
   min-height: 68px;
   padding: 14px;
-  border: 1px dashed rgba(var(--app-shadow-rgb), 0.17);
+  border: 1px dashed var(--color-border);
   border-radius: 11px;
-  background: var(--app-surface-soft);
-  color: var(--app-muted-dark);
+  background: var(--color-surface-hover);
+  color: var(--color-text-secondary);
   font-size: 0.75rem;
   line-height: 1.45;
   text-align: center;
@@ -634,9 +649,9 @@ export const QueueSummaryItem = styled.div`
   align-items: center;
   gap: 11px;
   padding: 12px;
-  border: 1px solid rgba(var(--app-shadow-rgb), 0.11);
+  border: 1px solid var(--color-border);
   border-radius: 11px;
-  background: var(--app-surface-soft);
+  background: var(--color-surface-hover);
 `;
 
 export const QueueSummaryIcon = styled.div`
@@ -646,21 +661,21 @@ export const QueueSummaryIcon = styled.div`
   display: grid;
   place-items: center;
   border-radius: 10px;
-  background: rgba(var(--app-primary-rgb), 0.09);
-  color: var(--app-primary);
+  background: var(--color-surface-muted);
+  color: var(--color-primary);
 
   svg { font-size: 1.15rem; }
 `;
 
 export const QueueBadgeLabel = styled.div`
-  color: var(--app-muted-dark);
+  color: var(--color-text-secondary);
   font-size: 0.68rem;
   font-weight: 750;
 `;
 
 export const QueueBadgeValue = styled.div`
   margin-top: 2px;
-  color: var(--app-primary-active);
+  color: var(--color-primary-hover);
   font-size: 1.12rem;
   font-weight: 850;
 `;
@@ -673,21 +688,25 @@ export const QueueBadge = styled.div<{ $warning?: boolean }>`
   gap: 8px;
   padding: 10px 12px;
   border-radius: 10px;
-  background: ${({ $warning }) => $warning ? "rgba(var(--app-accent-rgb), 0.11)" : "rgba(57, 149, 75, 0.09)"};
-  color: ${({ $warning }) => $warning ? "var(--app-accent)" : "#26763c"};
+  background: ${({ $warning }) =>
+    $warning ? "var(--color-surface-muted)" : "var(--color-success-soft)"};
+  color: ${({ $warning }) =>
+    $warning ? "var(--color-accent)" : "var(--color-success)"};
   font-size: 0.74rem;
   font-weight: 800;
 
-  svg { font-size: 1.05rem; }
+  svg {
+    font-size: 1.05rem;
+  }
 `;
 
 export const WorkPanel = styled.section`
   min-width: 0;
   overflow: hidden;
-  border: 1px solid rgba(var(--app-shadow-rgb), 0.12);
+  border: 1px solid var(--color-border);
   border-radius: 16px;
-  background: var(--app-white);
-  box-shadow: 0 4px 15px rgba(var(--app-shadow-rgb), 0.035);
+  background: var(--color-white);
+  box-shadow: var(--shadow-sm);
 `;
 
 export const WorkTabs = styled.div`
@@ -695,8 +714,8 @@ export const WorkTabs = styled.div`
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 6px;
   padding: 10px;
-  border-bottom: 1px solid rgba(var(--app-shadow-rgb), 0.1);
-  background: var(--app-surface-soft);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface-hover);
 
   @media (max-width: 560px) {
     grid-template-columns: 1fr;
@@ -711,19 +730,28 @@ export const WorkTab = styled.button<{ $active?: boolean }>`
   justify-content: center;
   gap: 7px;
   padding: 9px 10px;
-  border: 1px solid ${({ $active }) => $active ? "var(--app-primary)" : "rgba(var(--app-shadow-rgb), 0.12)"};
+  border: 1px solid
+    ${({ $active }) =>
+      $active ? "var(--color-primary)" : "var(--color-border)"};
   border-radius: 9px;
-  background: ${({ $active }) => $active ? "var(--app-primary)" : "var(--app-white)"};
-  color: ${({ $active }) => $active ? "var(--app-white)" : "var(--app-primary-active)"};
+  background: ${({ $active }) =>
+    $active ? "var(--color-primary)" : "var(--color-white)"};
+  color: ${({ $active }) =>
+    $active ? "var(--color-white)" : "var(--color-primary-hover)"};
   font-size: 0.72rem;
   font-weight: 800;
   cursor: pointer;
-  transition: background 0.16s ease, border-color 0.16s ease;
+  transition:
+    background 0.16s ease,
+    border-color 0.16s ease;
 
-  svg { flex: 0 0 auto; font-size: 1.05rem; }
+  svg {
+    flex: 0 0 auto;
+    font-size: 1.05rem;
+  }
 
   &:hover:not(:disabled) {
-    border-color: var(--app-primary);
+    border-color: var(--color-primary);
   }
 `;
 
@@ -744,7 +772,7 @@ export const SelectWrapper = styled.label`
 `;
 
 export const SelectLabel = styled.span`
-  color: var(--app-primary-active);
+  color: var(--color-primary-hover);
   font-size: 0.76rem;
   font-weight: 750;
 `;
@@ -754,17 +782,17 @@ export const Select = styled.select`
   min-height: 43px;
   box-sizing: border-box;
   padding: 0 12px;
-  border: 1px solid rgba(var(--app-shadow-rgb), 0.16);
+  border: 1px solid var(--color-border);
   border-radius: 10px;
   outline: none;
-  background: var(--app-white);
-  color: var(--app-primary-active);
+  background: var(--color-white);
+  color: var(--color-primary-hover);
   font: inherit;
   font-size: 0.78rem;
 
   &:focus {
-    border-color: var(--app-accent);
-    box-shadow: 0 0 0 3px rgba(var(--app-accent-rgb), 0.11);
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px var(--color-primary-soft);
   }
 `;
 
@@ -781,16 +809,16 @@ export const OrderItem = styled.button<{ $selected?: boolean }>`
   align-items: center;
   gap: 11px;
   padding: 11px 12px;
-  border: 1px solid ${({ $selected }) => $selected ? "rgba(var(--app-primary-rgb), 0.36)" : "rgba(var(--app-shadow-rgb), 0.11)"};
+  border: 1px solid ${({ $selected }) => ($selected ? "var(--color-border-strong)" : "var(--color-border)")};
   border-radius: 11px;
-  background: ${({ $selected }) => $selected ? "var(--app-surface-soft)" : "var(--app-white)"};
+  background: ${({ $selected }) => ($selected ? "var(--color-surface-hover)" : "var(--color-white)")};
   color: inherit;
   text-align: left;
   cursor: pointer;
   transition: border-color 0.16s ease, background 0.16s ease;
 
   &:hover {
-    border-color: rgba(var(--app-primary-rgb), 0.34);
+    border-color: var(--color-border-strong);
   }
 `;
 
@@ -801,8 +829,8 @@ export const OrderIcon = styled.span`
   display: grid;
   place-items: center;
   border-radius: 10px;
-  background: rgba(var(--app-primary-rgb), 0.08);
-  color: var(--app-primary);
+  background: var(--color-surface-muted);
+  color: var(--color-primary);
   svg { font-size: 1.1rem; }
 `;
 
@@ -815,7 +843,7 @@ export const OrderInfo = styled.span`
 
 export const OrderTitle = styled.span`
   overflow: hidden;
-  color: var(--app-primary-active);
+  color: var(--color-primary-hover);
   font-size: 0.78rem;
   font-weight: 850;
   text-overflow: ellipsis;
@@ -825,7 +853,7 @@ export const OrderTitle = styled.span`
 export const OrderCustomer = styled.span`
   overflow: hidden;
   margin-top: 3px;
-  color: var(--app-muted-dark);
+  color: var(--color-text-secondary);
   font-size: 0.7rem;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -833,7 +861,7 @@ export const OrderCustomer = styled.span`
 
 export const OrderTotal = styled.span`
   flex: 0 0 auto;
-  color: var(--app-primary);
+  color: var(--color-primary);
   font-size: 0.78rem;
   font-weight: 850;
 `;
@@ -842,14 +870,14 @@ export const ApiDataCard = styled.div`
   min-width: 0;
   margin-top: 12px;
   padding: 14px;
-  border: 1px solid rgba(var(--app-shadow-rgb), 0.12);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
-  background: var(--app-surface-soft);
+  background: var(--color-surface-hover);
 `;
 
 export const ApiDataTitle = styled.h4`
   margin: 0 0 10px;
-  color: var(--app-primary-active);
+  color: var(--color-primary-hover);
   font-size: 0.8rem;
   font-weight: 850;
 `;
@@ -859,10 +887,10 @@ export const ApiJobCancelButton = styled.button`
   min-height: 34px;
   margin-top: 8px;
   padding: 7px 10px;
-  border: 1px solid rgba(var(--app-danger-rgb), 0.24);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: var(--app-danger-soft);
-  color: var(--app-danger);
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
   font-size: 0.7rem;
   font-weight: 800;
   cursor: pointer;
@@ -882,9 +910,11 @@ export const ApiInfoRow = styled.div`
   gap: 12px;
   align-items: start;
   padding: 9px 0;
-  border-bottom: 1px solid rgba(var(--app-shadow-rgb), 0.09);
+  border-bottom: 1px solid var(--color-border);
 
-  &:last-child { border-bottom: 0; }
+  &:last-child {
+    border-bottom: 0;
+  }
 
   @media (max-width: 560px) {
     grid-template-columns: 1fr;
@@ -893,7 +923,7 @@ export const ApiInfoRow = styled.div`
 `;
 
 export const ApiInfoLabel = styled.span`
-  color: var(--app-muted-dark);
+  color: var(--color-text-secondary);
   font-size: 0.72rem;
   font-weight: 750;
   overflow-wrap: anywhere;
@@ -901,7 +931,7 @@ export const ApiInfoLabel = styled.span`
 
 export const ApiInfoValue = styled.div`
   min-width: 0;
-  color: var(--app-primary-active);
+  color: var(--color-primary-hover);
   font-size: 0.75rem;
   font-weight: 650;
   line-height: 1.45;
@@ -918,16 +948,16 @@ export const ApiRecordList = styled.div`
 export const ApiRecordCard = styled.div`
   min-width: 0;
   padding: 11px 12px;
-  border: 1px solid rgba(var(--app-shadow-rgb), 0.1);
+  border: 1px solid var(--color-border);
   border-radius: 10px;
-  background: var(--app-white);
+  background: var(--color-white);
 `;
 
 export const ApiActionMessage = styled.div`
   padding: 11px 12px;
   border-radius: 9px;
-  background: var(--app-surface-soft);
-  color: var(--app-muted-dark);
+  background: var(--color-surface-hover);
+  color: var(--color-text-secondary);
   font-size: 0.73rem;
   line-height: 1.45;
 `;

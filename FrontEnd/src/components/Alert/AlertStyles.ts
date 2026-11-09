@@ -34,16 +34,16 @@ export const AlertContainer = styled.div<{
 
   border: 1px solid
     ${({ $type }) =>
-      $type === "success" ? "var(--app-success)" : "var(--app-danger)"};
+      $type === "success" ? "var(--color-success)" : "var(--color-danger)"};
 
-  border-radius: 13px;
+  border-radius: var(--radius-lg);
 
   background: ${({ $type }) =>
-    $type === "success" ? "var(--app-success)" : "var(--app-danger)"};
+    $type === "success" ? "var(--color-success)" : "var(--color-danger)"};
 
-  color: white;
+  color: var(--color-white);
 
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  box-shadow: var(--shadow-md);
 
   animation: ${slideIn} 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
 
@@ -83,6 +83,7 @@ export const AlertMessage = styled.p`
   line-height: 1.45;
 
   overflow-wrap: anywhere;
+  color: white;
 `;
 
 export const CloseButton = styled.button`
@@ -96,7 +97,7 @@ export const CloseButton = styled.button`
   padding: 0;
 
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
 
   background: transparent;
   color: inherit;
@@ -104,9 +105,9 @@ export const CloseButton = styled.button`
   cursor: pointer;
   font-size: 1rem;
 
-  transition: background 0.18s ease;
+  transition: background var(--transition-fast);
 
   &:hover {
-    background: rgba(255, 255, 255, 0.18);
+    background: var(--color-sidebar-border);
   }
 `;

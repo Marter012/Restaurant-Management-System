@@ -16,16 +16,16 @@ export const ProtectedLoading = styled.div`
   justify-content: center;
   gap: 18px;
 
-  background: var(--app-canvas);
-  color: var(--app-ink);
+  background: var(--color-background);
+  color: var(--color-text);
 `;
 
 export const ProtectedSpinner = styled.div`
   width: 42px;
   height: 42px;
 
-  border: 4px solid var(--app-border);
-  border-top-color: var(--app-primary);
+  border: 4px solid var(--color-border);
+  border-top-color: var(--color-primary);
   border-radius: 50%;
 
   animation: ${rotate} 0.8s linear infinite;
@@ -34,7 +34,7 @@ export const ProtectedSpinner = styled.div`
 export const ProtectedLoadingText = styled.p`
   margin: 0;
 
-  color: var(--app-muted);
-  font-size: 14px;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
   font-weight: 600;
 `;

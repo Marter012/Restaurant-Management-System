@@ -25,8 +25,8 @@ export const CashStatusContainer = styled.div`
   display: block;
   width: 100%;
   min-width: 0;
-  color: var(--app-primary-active);
-  font-family: inherit;
+  color: var(--color-text);
+  font-family: var(--font-family-base);
 `;
 
 export const CashHeader = styled.div`
@@ -38,10 +38,10 @@ export const CashHeader = styled.div`
   min-width: 0;
   padding: 9px;
   box-sizing: border-box;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 17px;
-  background: var(--app-white);
-  box-shadow: 0 8px 24px rgba(var(--app-shadow-rgb), 0.09);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-md);
   cursor: pointer;
 
   @media (max-width: 1000px) {
@@ -106,11 +106,11 @@ export const DateButton = styled.button<{ $active?: boolean }>`
   min-width: 0;
   padding: 5px 7px;
   border: 1px solid
-    ${({ $active }) => ($active ? "var(--app-accent)" : "transparent")};
+    ${({ $active }) => ($active ? "var(--color-accent)" : "transparent")};
   border-radius: 12px;
   background: ${({ $active }) =>
-    $active ? "var(--app-surface-soft)" : "transparent"};
-  color: var(--app-primary-active);
+    $active ? "var(--color-surface-muted)" : "transparent"};
+  color: var(--color-text);
   text-align: left;
   cursor: pointer;
 
@@ -121,8 +121,8 @@ export const DateButton = styled.button<{ $active?: boolean }>`
     width: 34px;
     height: 34px;
     border-radius: 10px;
-    background: var(--app-canvas);
-    color: var(--app-primary);
+    background: var(--color-background);
+    color: var(--color-primary);
   }
   .calendar-icon {
     font-size: 1.05rem;
@@ -133,14 +133,14 @@ export const DateButton = styled.button<{ $active?: boolean }>`
   .arrow {
     flex: 0 0 auto;
     margin-left: auto;
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 0.75rem;
   }
   .arrow.open {
     transform: rotate(180deg);
   }
   &:focus-visible {
-    outline: 2px solid var(--app-accent);
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
 
@@ -168,7 +168,7 @@ export const DateButton = styled.button<{ $active?: boolean }>`
         display: block;
         inset: 0;
         padding-top: 13px;
-        color: var(--app-primary-active);
+        color: var(--color-text);
         font-size: 0.62rem;
         font-weight: 900;
         line-height: 1;
@@ -206,7 +206,7 @@ export const DateButton = styled.button<{ $active?: boolean }>`
       display: block;
       inset: 0;
       padding-top: 13px;
-      color: var(--app-primary-active);
+      color: var(--color-text);
       font-size: 0.62rem;
       font-weight: 900;
       line-height: 1;
@@ -275,7 +275,7 @@ export const DateInfo = styled.span`
   gap: 2px;
 
   small {
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
     font-size: 0.58rem;
     font-weight: 800;
     letter-spacing: 0.07em;
@@ -287,7 +287,7 @@ export const DateInfo = styled.span`
   }
   .date-medium {
     overflow: hidden;
-    color: var(--app-primary-active);
+    color: var(--color-text);
     font-size: 0.88rem;
     font-weight: 800;
     line-height: 1.2;
@@ -321,7 +321,7 @@ export const DateInfo = styled.span`
 
       .date-short {
         display: inline;
-        color: var(--app-primary-active);
+        color: var(--color-text);
         font-size: 0.72rem;
         font-weight: 850;
         line-height: 1;
@@ -344,7 +344,7 @@ export const DateInfo = styled.span`
 
     .date-short {
       display: inline;
-      color: var(--app-primary-active);
+      color: var(--color-text);
       font-size: 0.72rem;
       font-weight: 850;
       line-height: 1;
@@ -365,9 +365,9 @@ export const ShiftToggle = styled.div`
   width: 100%;
   min-width: 0;
   padding: 3px;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 12px;
-  background: var(--app-canvas);
+  background: var(--color-background);
 
   @media (max-width: 1000px) {
     [data-view-mode="auto"] & {
@@ -418,13 +418,13 @@ export const ShiftChoice = styled.button<ShiftChoiceProps>`
   min-height: 36px;
   padding: 7px 8px;
   border: 1px solid
-    ${({ $selected }) => ($selected ? "var(--app-primary)" : "transparent")};
+    ${({ $selected }) => ($selected ? "var(--color-primary)" : "transparent")};
   border-radius: 9px;
   background: ${({ $selected }) =>
-    $selected ? "var(--app-primary)" : "transparent"};
+    $selected ? "var(--color-primary)" : "transparent"};
   color: ${({ $selected }) =>
-    $selected ? "var(--app-white)" : "var(--app-primary-active)"};
-  font: inherit;
+    $selected ? "var(--color-surface)" : "var(--color-text)"};
+  font-family: var(--font-family-base);
   font-size: 0.82rem;
   font-weight: 800;
   white-space: nowrap;
@@ -435,7 +435,7 @@ export const ShiftChoice = styled.button<ShiftChoiceProps>`
     font-size: 0.95rem;
   }
   &:focus-visible {
-    outline: 2px solid var(--app-accent);
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
 
@@ -518,26 +518,26 @@ export const CashStateBadge = styled.div<{ $status: CashStatusType }>`
   border: 1px solid
     ${({ $status }) =>
       $status === "open"
-        ? "rgba(var(--app-success-rgb), .28)"
+        ? "color-mix(in srgb, var(--color-success) 28%, transparent)"
         : $status === "closed"
-          ? "rgba(var(--app-danger-rgb), .28)"
-          : "var(--app-border)"};
+          ? "color-mix(in srgb, var(--color-danger) 28%, transparent)"
+          : "var(--color-border)"};
   border-radius: 10px;
   background: ${({ $status }) =>
     $status === "open"
-      ? "rgba(var(--app-success-rgb), .09)"
+      ? "var(--color-success-soft)"
       : $status === "closed"
-        ? "rgba(var(--app-danger-rgb), .08)"
-        : "var(--app-surface)"};
+        ? "var(--color-danger-soft)"
+        : "var(--color-surface)"};
 
   .cash-icon {
     flex: 0 0 auto;
     color: ${({ $status }) =>
       $status === "open"
-        ? "var(--app-success)"
+        ? "var(--color-success)"
         : $status === "closed"
-          ? "var(--app-danger)"
-          : "var(--app-muted-dark)"};
+          ? "var(--color-danger)"
+          : "var(--color-text-secondary)"};
     font-size: 0.95rem;
   }
   .cash-copy {
@@ -551,10 +551,10 @@ export const CashStateBadge = styled.div<{ $status: CashStatusType }>`
   strong {
     color: ${({ $status }) =>
       $status === "open"
-        ? "var(--app-success)"
+        ? "var(--color-success)"
         : $status === "closed"
-          ? "var(--app-danger)"
-          : "var(--app-muted-dark)"};
+          ? "var(--color-danger)"
+          : "var(--color-text-secondary)"};
     font-size: 0.78rem;
     font-weight: 850;
     white-space: nowrap;
@@ -613,17 +613,17 @@ export const CashStateBadge = styled.div<{ $status: CashStatusType }>`
       border: 1px solid
         ${({ $status }) =>
           $status === "open"
-            ? "rgba(var(--app-success-rgb), .28)"
+            ? "color-mix(in srgb, var(--color-success) 28%, transparent)"
             : $status === "closed"
-              ? "rgba(var(--app-danger-rgb), .28)"
-              : "var(--app-border)"};
+              ? "color-mix(in srgb, var(--color-danger) 28%, transparent)"
+              : "var(--color-border)"};
       border-radius: 7px;
       background: ${({ $status }) =>
         $status === "open"
-          ? "rgba(var(--app-success-rgb), .09)"
+          ? "var(--color-success-soft)"
           : $status === "closed"
-            ? "rgba(var(--app-danger-rgb), .08)"
-            : "var(--app-surface)"};
+            ? "var(--color-danger-soft)"
+            : "var(--color-surface)"};
 
       .cash-icon {
         display: none;
@@ -662,17 +662,17 @@ export const CashStateBadge = styled.div<{ $status: CashStatusType }>`
     border: 1px solid
       ${({ $status }) =>
         $status === "open"
-          ? "rgba(var(--app-success-rgb), .28)"
+          ? "color-mix(in srgb, var(--color-success) 28%, transparent)"
           : $status === "closed"
-            ? "rgba(var(--app-danger-rgb), .28)"
-            : "var(--app-border)"};
+            ? "color-mix(in srgb, var(--color-danger) 28%, transparent)"
+            : "var(--color-border)"};
     border-radius: 7px;
     background: ${({ $status }) =>
       $status === "open"
-        ? "rgba(var(--app-success-rgb), .09)"
+        ? "var(--color-success-soft)"
         : $status === "closed"
-          ? "rgba(var(--app-danger-rgb), .08)"
-          : "var(--app-surface)"};
+          ? "var(--color-danger-soft)"
+          : "var(--color-surface)"};
 
     .cash-icon {
       display: none;
@@ -703,7 +703,7 @@ export const CashStatusOverlay = styled.div`
   position: fixed;
   inset: 0;
   z-index: 2147483645;
-  background: rgba(var(--app-shadow-rgb), 0.24);
+  background: color-mix(in srgb, var(--color-sidebar-deep) 24%, transparent);
   backdrop-filter: blur(2px);
 `;
 
@@ -712,11 +712,11 @@ export const Dropdown = styled.div<DropdownProps>`
   z-index: 2147483646;
   box-sizing: border-box;
   padding: 18px;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 20px;
-  background: var(--app-white);
-  color: var(--app-primary-active);
-  box-shadow: 0 24px 64px rgba(var(--app-shadow-rgb), 0.2);
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: 0 24px 64px var(--modal-shadow);
   @media (max-width: 620px) {
     &[data-view-mode="auto"] {
       grid-template-columns: 1fr;
@@ -776,7 +776,7 @@ export const CalendarHeader = styled.header`
   gap: 12px;
   margin-bottom: 16px;
   strong {
-    color: var(--app-primary-active);
+    color: var(--color-text);
     font-size: 1rem;
     font-weight: 800;
     text-transform: capitalize;
@@ -789,10 +789,10 @@ export const CalendarNavigation = styled.button`
   flex: 0 0 36px;
   width: 36px;
   height: 36px;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 10px;
-  background: var(--app-surface);
-  color: var(--app-primary);
+  background: var(--color-surface);
+  color: var(--color-primary);
   cursor: pointer;
 `;
 
@@ -807,7 +807,7 @@ export const CalendarWeekDay = styled.span`
   display: grid;
   place-items: center;
   min-height: 30px;
-  color: var(--app-muted-dark);
+  color: var(--color-text-secondary);
   font-size: 0.72rem;
   font-weight: 800;
 `;
@@ -820,20 +820,20 @@ export const CalendarDay = styled.button<CalendarDayProps>`
   border: 1px solid
     ${({ $selected, $today }) =>
       $selected
-        ? "var(--app-primary)"
+        ? "var(--color-primary)"
         : $today
-          ? "var(--app-accent)"
+          ? "var(--color-accent)"
           : "transparent"};
   border-radius: 11px;
   background: ${({ $selected }) =>
-    $selected ? "var(--app-primary)" : "transparent"};
+    $selected ? "var(--color-primary)" : "transparent"};
   color: ${({ $selected, $currentMonth }) =>
     $selected
-      ? "var(--app-white)"
+      ? "var(--color-surface)"
       : $currentMonth
-        ? "var(--app-primary-active)"
-        : "var(--app-muted-dark)"};
-  font: inherit;
+        ? "var(--color-text)"
+        : "var(--color-text-secondary)"};
+  font-family: var(--font-family-base);
   font-size: 0.82rem;
   font-weight: ${({ $selected, $today }) => ($selected || $today ? 800 : 600)};
   cursor: pointer;
@@ -853,11 +853,11 @@ export const CalendarFooter = styled.button`
   width: 100%;
   min-height: 40px;
   margin-top: 14px;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 11px;
-  background: var(--app-surface);
-  color: var(--app-primary);
-  font: inherit;
+  background: var(--color-surface);
+  color: var(--color-primary);
+  font-family: var(--font-family-base);
   font-size: 0.8rem;
   font-weight: 750;
   cursor: pointer;
@@ -870,7 +870,7 @@ export const ShiftSection = styled.section`
   min-width: 0;
   gap: 9px;
   padding: 4px 0 4px 18px;
-  border-left: 1px solid var(--app-border);
+  border-left: 1px solid var(--color-border);
   @media (max-width: 620px) {
     [data-view-mode="auto"] & {
       padding: 0;
@@ -886,7 +886,7 @@ export const ShiftSection = styled.section`
 
 export const ShiftSectionTitle = styled.div`
   margin-bottom: 3px;
-  color: var(--app-muted-dark);
+  color: var(--color-text-secondary);
   font-size: 0.68rem;
   font-weight: 850;
   letter-spacing: 0.09em;
@@ -902,13 +902,13 @@ export const ShiftOption = styled.button<ShiftOptionProps>`
   padding: 12px;
   border: 1px solid
     ${({ $selected }) =>
-      $selected ? "var(--app-accent)" : "var(--app-border)"};
+      $selected ? "var(--color-accent)" : "var(--color-border)"};
   border-radius: 13px;
   background: ${({ $selected }) =>
-    $selected ? "var(--app-canvas)" : "var(--app-white)"};
-  color: var(--app-primary-active);
+    $selected ? "var(--color-background)" : "var(--color-surface)"};
+  color: var(--color-text);
   text-align: left;
-  font: inherit;
+  font-family: var(--font-family-base);
   cursor: pointer;
 
   .option-icon {
@@ -918,14 +918,14 @@ export const ShiftOption = styled.button<ShiftOptionProps>`
     width: 36px;
     height: 36px;
     border-radius: 10px;
-    background: var(--app-canvas);
-    color: var(--app-primary);
+    background: var(--color-background);
+    color: var(--color-primary);
     font-size: 1rem;
   }
   .check {
     flex: 0 0 auto;
     margin-left: 5px;
-    color: var(--app-primary);
+    color: var(--color-primary);
   }
 `;
 
@@ -936,12 +936,12 @@ export const ShiftOptionInfo = styled.span`
   min-width: 0;
   gap: 3px;
   strong {
-    color: var(--app-primary-active);
+    color: var(--color-text);
     font-size: 0.9rem;
     font-weight: 800;
   }
   small {
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
     font-size: 0.74rem;
     line-height: 1.3;
   }
@@ -955,10 +955,10 @@ export const StatusDot = styled.span<StatusDotProps>`
   border-radius: 50%;
   background: ${({ $status }) =>
     $status === "open"
-      ? "var(--app-success)"
+      ? "var(--color-success)"
       : $status === "closed"
-        ? "var(--app-danger)"
-        : "var(--app-muted)"};
+        ? "var(--color-danger)"
+        : "var(--color-text-light)"};
 `;
 
 export const OpenCashLink = styled.a`
@@ -971,8 +971,8 @@ export const OpenCashLink = styled.a`
   margin-top: 5px;
   padding: 10px 14px;
   border-radius: 12px;
-  background: var(--app-primary);
-  color: var(--app-white);
+  background: var(--color-primary);
+  color: var(--color-surface);
   font-size: 0.84rem;
   font-weight: 800;
   text-align: center;

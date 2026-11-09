@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { caramelButtonStyles } from "../Utils/ButtonStyles.ts";
 
 export const ContainerManageProducts = styled.div`
   width: 100%;
@@ -10,7 +9,7 @@ export const ContainerManageProducts = styled.div`
   align-items: stretch;
   gap: 12px;
   box-sizing: border-box;
-  color: var(--app-ink);
+  color: var(--color-text);
 
   .category-strip {
     width: 100%;
@@ -20,10 +19,10 @@ export const ContainerManageProducts = styled.div`
     gap: 4px;
     padding: 5px;
     overflow-x: auto;
-    background: var(--app-surface);
-    border: 1px solid var(--app-border);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
     border-radius: 13px;
-    box-shadow: var(--app-shadow-xs);
+    box-shadow: var(--shadow-sm);
     scrollbar-width: none;
 
     button {
@@ -35,10 +34,10 @@ export const ContainerManageProducts = styled.div`
       gap: 8px;
       padding: 0 14px;
       border: 0;
-      border-right: 1px solid var(--app-border);
+      border-right: 1px solid var(--color-border);
       border-radius: 0px;
       background: transparent;
-      color: var(--app-primary);
+      color: var(--color-primary);
       font: inherit;
       font-size: 0.82rem;
       cursor: pointer;
@@ -54,27 +53,27 @@ export const ContainerManageProducts = styled.div`
         opacity: 0.72;
       }
       &:hover {
-        background: var(--app-surface-soft);
+        background: var(--color-surface-muted);
       }
       &.selected {
-        background: var(--app-primary);
-        color: var(--app-white);
+        background: var(--color-primary);
+        color: var(--color-white);
         border-color: transparent;
       }
     }
   }
 
   .active {
-    background-color: #50934d;
-    color: var(--app-white);
+    background-color: var(--color-success);
+    color: var(--color-white);
   }
   .inactive {
-    background-color: #db7f7f;
-    color: var(--app-white);
+    background-color: var(--color-danger);
+    color: var(--color-white);
   }
   .buttonstock {
-    background-color: #794026;
-    color: var(--app-white);
+    background-color: var(--color-primary);
+    color: var(--color-white);
   }
 
   .product-catalog-grid {
@@ -88,24 +87,24 @@ export const ContainerManageProducts = styled.div`
   .product-visual-card {
     min-width: 0;
     overflow: hidden;
-    border: 1px solid var(--app-border);
+    border: 1px solid var(--color-border);
     border-radius: 14px;
-    background: var(--app-surface);
-    box-shadow: var(--app-shadow-xs);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-sm);
     cursor: pointer;
     transition:
       transform 0.18s ease,
       box-shadow 0.18s ease;
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(75, 43, 25, 0.1);
+      box-shadow: var(--shadow-md);
     }
   }
 
   .product-visual-image {
     height: 112px;
     position: relative;
-    background: var(--app-surface-soft);
+    background: var(--color-surface-muted);
   }
   .product-visual-image img {
     width: 100%;
@@ -126,12 +125,12 @@ export const ContainerManageProducts = styled.div`
     font-weight: 800;
   }
   .stock-badge.available {
-    background: #e1f2e5;
-    color: #247342;
+    background: var(--color-success-soft);
+    color: var(--color-success);
   }
   .stock-badge.unavailable {
-    background: #fde6e3;
-    color: #bd3932;
+    background: var(--color-danger-soft);
+    color: var(--color-danger);
   }
   .product-edit {
     position: absolute;
@@ -143,8 +142,8 @@ export const ContainerManageProducts = styled.div`
     place-items: center;
     border: 0;
     border-radius: 7px;
-    background: #fffaf2;
-    color: var(--app-primary);
+    background: var(--color-surface);
+    color: var(--color-primary);
     cursor: pointer;
   }
   .product-visual-content {
@@ -153,7 +152,7 @@ export const ContainerManageProducts = styled.div`
   .product-visual-content h3 {
     overflow: hidden;
     margin: 0;
-    color: var(--app-ink);
+    color: var(--color-text);
     font-size: 0.84rem;
     line-height: 1.25;
     font-weight: 800;
@@ -164,7 +163,7 @@ export const ContainerManageProducts = styled.div`
     min-height: 16px;
     overflow: hidden;
     margin: 3px 0 8px;
-    color: var(--app-muted);
+    color: var(--color-text-secondary);
     font-size: 0.68rem;
     line-height: 1.3;
     text-overflow: ellipsis;
@@ -176,10 +175,10 @@ export const ContainerManageProducts = styled.div`
     align-items: center;
     gap: 6px;
     padding-top: 7px;
-    border-top: 1px solid var(--app-border);
+    border-top: 1px solid var(--color-border);
   }
   .product-visual-footer strong {
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 0.82rem;
     white-space: nowrap;
   }
@@ -187,7 +186,7 @@ export const ContainerManageProducts = styled.div`
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    color: #247342;
+    color: var(--color-success);
     font-size: 0.66rem;
     font-weight: 700;
     white-space: nowrap;
@@ -197,13 +196,13 @@ export const ContainerManageProducts = styled.div`
     grid-column: 1 / -1;
     padding: 28px;
     text-align: center;
-    color: var(--app-muted);
-    background: var(--app-surface);
-    border: 1px dashed var(--app-border);
+    color: var(--color-text-secondary);
+    background: var(--color-surface);
+    border: 1px dashed var(--color-border);
     border-radius: 14px;
   }
   .products-feedback.error {
-    color: #bd3932;
+    color: var(--color-danger);
   }
 
   @media (max-width: 1100px) {
@@ -251,8 +250,8 @@ export const AddProductButton = styled.button`
   padding: 12px 18px;
   border: none;
   border-radius: 9px;
-  background-color: var(--app-primary);
-  color: var(--app-white);
+  background-color: var(--color-primary);
+  color: var(--color-white);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -260,7 +259,7 @@ export const AddProductButton = styled.button`
     filter 0.2s ease,
     transform 0.2s ease;
   &:hover {
-    filter: brightness(0.96);
+    background-color: var(--color-primary-hover);
   }
   &:active {
     transform: scale(0.98);
@@ -269,7 +268,6 @@ export const AddProductButton = styled.button`
     width: 15px;
     height: 15px;
   }
-  ${caramelButtonStyles}
   @media (max-width: 600px) {
     width: 100%;
     padding: 11px 15px;
@@ -291,14 +289,14 @@ export const Filter = styled.div`
     align-items: center;
     gap: 9px;
     padding: 0 12px;
-    border: 1px solid var(--app-border);
+    border: 1px solid var(--color-border);
     border-radius: 10px;
-    background: var(--app-surface);
-    color: var(--app-accent);
+    background: var(--color-surface);
+    color: var(--color-accent);
     box-sizing: border-box;
     &:focus-within {
-      border-color: var(--app-accent);
-      box-shadow: 0 0 0 3px rgba(var(--app-accent-rgb), 0.14);
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 14%, transparent);
     }
     > svg {
       flex: 0 0 auto;
@@ -310,12 +308,12 @@ export const Filter = styled.div`
       border: 0;
       outline: 0;
       background: transparent;
-      color: var(--app-primary);
+      color: var(--color-primary);
       font: inherit;
       font-size: 0.84rem;
     }
     input::placeholder {
-      color: var(--app-muted);
+      color: var(--color-text-secondary);
     }
     button.clear-search {
       min-width: 28px;
@@ -325,7 +323,7 @@ export const Filter = styled.div`
       padding: 0;
       border: 0;
       background: transparent;
-      color: var(--app-muted);
+      color: var(--color-text-secondary);
     }
   }
   .select-filter {
@@ -333,7 +331,7 @@ export const Filter = styled.div`
     display: flex;
     flex-direction: column;
     gap: 4px;
-    color: var(--app-muted);
+    color: var(--color-text-secondary);
     font-size: 0.7rem;
     font-weight: 700;
   }
@@ -342,10 +340,10 @@ export const Filter = styled.div`
     height: 42px;
     min-width: 0;
     padding: 0 12px;
-    border: 1px solid var(--app-border);
+    border: 1px solid var(--color-border);
     border-radius: 10px;
-    background: var(--app-surface);
-    color: var(--app-primary);
+    background: var(--color-surface);
+    color: var(--color-primary);
     font: inherit;
     font-size: 0.84rem;
     font-weight: 600;
@@ -356,10 +354,10 @@ export const Filter = styled.div`
     min-height: 42px;
     margin-left: auto;
     padding: 0 15px;
-    border: 1px solid var(--app-primary);
+    border: 1px solid var(--color-primary);
     border-radius: 10px;
-    background: var(--app-surface);
-    color: var(--app-primary);
+    background: var(--color-surface);
+    color: var(--color-primary);
     font: inherit;
     font-size: 0.82rem;
     font-weight: 700;
@@ -376,8 +374,8 @@ export const Filter = styled.div`
     padding: 0 14px;
     border: 0;
     border-radius: 10px;
-    background: var(--app-primary);
-    color: var(--app-white);
+    background: var(--color-primary);
+    color: var(--color-white);
     font: inherit;
     font-size: 0.82rem;
     font-weight: 700;
@@ -385,9 +383,9 @@ export const Filter = styled.div`
     cursor: pointer;
   }
   button.print-products {
-    border: 1px solid var(--app-border);
-    background: var(--app-surface);
-    color: var(--app-primary);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-primary);
   }
   @media (max-width: 1200px) {
     flex-wrap: wrap;
@@ -447,7 +445,7 @@ export const ProductInfo = styled.div`
 
   h3 {
     margin: 0 0 3px;
-    color: var(--app-ink);
+    color: var(--color-text);
     font-size: clamp(1.1rem, 2vw, 1.35rem);
     font-weight: 800;
     line-height: 1.3;
@@ -456,7 +454,7 @@ export const ProductInfo = styled.div`
 
   p {
     margin: 0;
-    color: var(--app-muted-dark);
+    color: var(--color-text);
     font-size: 0.9rem;
     line-height: 1.55;
   }
@@ -468,9 +466,9 @@ export const ProductInfo = styled.div`
     min-height: 170px;
     object-fit: cover;
     object-position: center;
-    border: 1px solid var(--app-border);
+    border: 1px solid var(--color-border);
     border-radius: 15px;
-    background: var(--app-surface-soft);
+    background: var(--color-surface-muted);
   }
 
   > div {
@@ -481,18 +479,18 @@ export const ProductInfo = styled.div`
     min-height: 50px;
     padding: 12px 15px;
     box-sizing: border-box;
-    border: 1px solid rgba(var(--app-accent-rgb), 0.45);
+    border: 1px solid color-mix(in srgb, var(--color-accent) 45%, transparent);
     border-radius: 12px;
-    background: var(--app-surface-soft);
+    background: var(--color-surface-muted);
 
     span {
-      color: var(--app-muted-dark);
+      color: var(--color-text);
       font-size: 0.88rem;
       line-height: 1.4;
     }
 
     strong {
-      color: var(--app-primary);
+      color: var(--color-primary);
       font-size: 0.95rem;
       font-weight: 800;
       text-align: right;
@@ -501,7 +499,7 @@ export const ProductInfo = styled.div`
   }
 
   > strong {
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 0.95rem;
     font-weight: 750;
   }
@@ -575,7 +573,7 @@ export const BulkStockContainer = styled.div`
   flex-direction: column;
   gap: 14px;
 
-  color: var(--app-primary);
+  color: var(--color-primary);
 
   overflow: hidden;
 
@@ -592,7 +590,7 @@ export const BulkStockToolbar = styled.div`
   gap: 7px;
   width: 50%;
   label {
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 0.84rem;
     font-weight: 700;
   }
@@ -607,18 +605,18 @@ export const BulkStockSelect = styled.select`
   min-width: 0;
   min-height: 44px;
   padding: 0 12px;
-  border: 1px solid var(--app-accent-soft);
+  border: 1px solid var(--color-primary-soft);
   border-radius: 10px;
-  background: var(--app-white);
-  color: var(--app-primary);
+  background: var(--color-white);
+  color: var(--color-primary);
   font: inherit;
   font-size: 0.9rem;
   outline: none;
   cursor: pointer;
 
   &:focus-visible {
-    border-color: var(--app-accent);
-    box-shadow: 0 0 0 3px rgba(var(--app-accent-rgb), 0.16);
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 16%, transparent);
   }
 
   &:disabled {
@@ -631,8 +629,8 @@ export const BulkStockSummary = styled.p`
   margin: 0;
   padding: 10px 12px;
   border-radius: 9px;
-  background: var(--app-surface-soft);
-  color: var(--app-primary);
+  background: var(--color-surface-muted);
+  color: var(--color-primary);
   font-size: 0.84rem;
   font-weight: 600;
 
@@ -656,9 +654,9 @@ export const BulkStockRow = styled.div`
   align-items: center;
   gap: 12px;
   padding: 11px 12px;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 10px;
-  background: var(--app-white);
+  background: var(--color-white);
 
   .bulk-product-info {
     min-width: 0;
@@ -669,14 +667,14 @@ export const BulkStockRow = styled.div`
 
   .bulk-product-info strong {
     overflow-wrap: anywhere;
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 0.88rem;
     font-weight: 700;
   }
 
   .bulk-product-info span,
   .bulk-quantity span {
-    color: var(--app-muted-dark);
+    color: var(--color-text);
     font-size: 0.74rem;
   }
 
@@ -698,18 +696,18 @@ export const BulkStockInput = styled.input`
   min-height: 40px;
   box-sizing: border-box;
   padding: 6px 8px;
-  border: 1px solid var(--app-accent-soft);
+  border: 1px solid var(--color-primary-soft);
   border-radius: 8px;
-  background: var(--app-white);
-  color: var(--app-primary);
+  background: var(--color-white);
+  color: var(--color-primary);
   font: inherit;
   font-size: 0.95rem;
   font-weight: 700;
   text-align: center;
 
   &:focus-visible {
-    outline: 3px solid rgba(var(--app-accent-rgb), 0.25);
-    border-color: var(--app-accent);
+    outline: 3px solid color-mix(in srgb, var(--color-accent) 25%, transparent);
+    border-color: var(--color-accent);
   }
 
   &:disabled {
@@ -747,7 +745,7 @@ export const ProductModalLayout = styled.div`
 
   box-sizing: border-box;
 
-  color: var(--app-primary);
+  color: var(--color-primary);
 
   @media (max-width: 1050px) {
     grid-template-columns: 290px minmax(0, 1fr);
@@ -786,10 +784,10 @@ export const ProductImage = styled.div`
 
   overflow: hidden;
 
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 18px;
 
-  background: var(--app-surface-soft);
+  background: var(--color-surface-muted);
 
   box-sizing: border-box;
 
@@ -848,7 +846,7 @@ export const ProductMainInfo = styled.div`
   h2 {
     margin: 0;
 
-    color: var(--app-primary);
+    color: var(--color-primary);
 
     font-size: clamp(1.8rem, 3vw, 2.55rem);
     font-weight: 850;
@@ -879,8 +877,8 @@ export const ProductMainInfo = styled.div`
 
     border-radius: 30px;
 
-    background: var(--app-surface-soft);
-    color: var(--app-primary);
+    background: var(--color-surface-muted);
+    color: var(--color-primary);
 
     font-size: 0.98rem;
     font-weight: 750;
@@ -897,7 +895,7 @@ export const ProductMainInfo = styled.div`
 
     margin: 0;
 
-    color: var(--app-primary);
+    color: var(--color-primary);
 
     font-size: 1.05rem;
     font-weight: 450;
@@ -954,9 +952,9 @@ export const ProductStatusBadge = styled.span<{ $active: boolean }>`
   border-radius: 30px;
 
   background: ${({ $active }) =>
-    $active ? "rgba(56, 130, 75, 0.14)" : "rgba(190, 65, 55, 0.13)"};
+    $active ? "var(--color-success-soft)" : "var(--color-danger-soft)"};
 
-  color: ${({ $active }) => ($active ? "#28723c" : "#a52d27")};
+  color: ${({ $active }) => ($active ? "var(--color-success)" : "var(--color-danger)")};
 
   font-size: 0.98rem;
   font-weight: 800;
@@ -1026,15 +1024,15 @@ export const ProductMetric = styled.div`
 
   box-sizing: border-box;
 
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 17px;
 
-  background: var(--app-surface-soft);
+  background: var(--color-surface-muted);
 
   > svg {
     flex-shrink: 0;
 
-    color: var(--app-accent);
+    color: var(--color-accent);
 
     font-size: 2rem;
   }
@@ -1051,7 +1049,7 @@ export const ProductMetric = styled.div`
   }
 
   span {
-    color: var(--app-muted-dark);
+    color: var(--color-text);
 
     font-size: 0.88rem;
     font-weight: 500;
@@ -1060,7 +1058,7 @@ export const ProductMetric = styled.div`
   }
 
   strong {
-    color: var(--app-primary);
+    color: var(--color-primary);
 
     font-size: 1.08rem;
     font-weight: 850;
@@ -1137,10 +1135,10 @@ export const ProductDetailCard = styled.section`
 
   box-sizing: border-box;
 
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 18px;
 
-  background: var(--app-surface);
+  background: var(--color-surface);
 
   h3 {
     display: flex;
@@ -1150,7 +1148,7 @@ export const ProductDetailCard = styled.section`
 
     margin: 0;
 
-    color: var(--app-primary);
+    color: var(--color-primary);
 
     font-size: 1.3rem;
     font-weight: 850;
@@ -1160,7 +1158,7 @@ export const ProductDetailCard = styled.section`
     svg {
       flex-shrink: 0;
 
-      color: var(--app-accent);
+      color: var(--color-accent);
 
       font-size: 1.55rem;
     }
@@ -1179,9 +1177,9 @@ export const ProductDetailCard = styled.section`
 
     border-radius: 13px;
 
-    background: var(--app-surface-soft);
+    background: var(--color-surface-muted);
 
-    color: var(--app-primary);
+    color: var(--color-primary);
 
     font-size: 0.98rem;
     line-height: 1.5;
@@ -1233,12 +1231,12 @@ export const ProductChip = styled.span`
 
   box-sizing: border-box;
 
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 30px;
 
-  background: var(--app-surface-soft);
+  background: var(--color-surface-muted);
 
-  color: var(--app-primary);
+  color: var(--color-primary);
 
   font-size: 0.88rem;
   font-weight: 650;
@@ -1246,7 +1244,7 @@ export const ProductChip = styled.span`
   svg {
     flex-shrink: 0;
 
-    color: var(--app-accent);
+    color: var(--color-accent);
 
     font-size: 0.85rem;
   }
@@ -1272,10 +1270,10 @@ export const ProductDescription = styled.section`
 
   box-sizing: border-box;
 
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 18px;
 
-  background: var(--app-surface);
+  background: var(--color-surface);
 
   h3 {
     display: flex;
@@ -1285,7 +1283,7 @@ export const ProductDescription = styled.section`
 
     margin: 0;
 
-    color: var(--app-primary);
+    color: var(--color-primary);
 
     font-size: 1.3rem;
     font-weight: 850;
@@ -1293,7 +1291,7 @@ export const ProductDescription = styled.section`
     svg {
       flex-shrink: 0;
 
-      color: var(--app-accent);
+      color: var(--color-accent);
 
       font-size: 1.5rem;
     }
@@ -1312,9 +1310,9 @@ export const ProductDescription = styled.section`
 
     border-radius: 13px;
 
-    background: var(--app-surface-soft);
+    background: var(--color-surface-muted);
 
-    color: var(--app-primary);
+    color: var(--color-primary);
 
     font-size: 1rem;
     line-height: 1.55;

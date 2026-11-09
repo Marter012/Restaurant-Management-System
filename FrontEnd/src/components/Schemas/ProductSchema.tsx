@@ -10,6 +10,12 @@ export const ProductSchema = Yup.object({
     .required("El precio es obligatorio")
     .positive("El precio debe ser positivo"),
 
+  discount_percentage: Yup.number()
+    .nullable()
+    .transform((value, originalValue) => originalValue === "" ? null : value)
+    .min(0, "El descuento no puede ser negativo")
+    .max(100, "El descuento no puede superar el 100 %")
+    .optional(),
   category: Yup.string().trim().required("La categoría es obligatoria"),
   ingredients: Yup.string().optional(),
 });
@@ -18,6 +24,7 @@ export const getProductInitialValues = (product?: ProductFormValues) => ({
   name: product?.name ?? "",
   image: product?.image ?? "",
   price: product?.price ?? 0,
+  discount_percentage: product?.discount_percentage ?? null,
   category: product?.category ?? "",
   has_garnish: product?.has_garnish ?? false,
   garnish_options: product?.garnish_options?.join(", ") ?? "",

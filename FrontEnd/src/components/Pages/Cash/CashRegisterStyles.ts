@@ -9,7 +9,7 @@ export const CashBlockedOverlay = styled.div`
   justify-content: center;
   padding: 20px;
   box-sizing: border-box;
-  background: rgba(35, 21, 14, 0.58);
+  background: var(--modal-overlay);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
 
@@ -24,10 +24,10 @@ export const CashBlockedModal = styled.section`
   display: flex;
   flex-direction: column;
   overflow: auto;
-  background: var(--app-white);
-  border: 1px solid var(--app-accent-soft);
-  border-radius: 22px;
-  box-shadow: 0 25px 80px rgba(var(--app-shadow-rgb), 0.3);
+  background: var(--modal-background);
+  border: 1px solid var(--modal-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
   animation: modalAppear 0.22s ease-out;
 
   @keyframes modalAppear {
@@ -42,7 +42,7 @@ export const CashBlockedModal = styled.section`
   }
 
   @media (max-width: 700px) {
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
   }
 `;
 
@@ -52,12 +52,12 @@ export const CashBlockedHeader = styled.header`
   display: flex;
   align-items: center;
   gap: 17px;
-  border-bottom: 1px solid var(--app-border);
+  border-bottom: 1px solid var(--color-border);
 
   h2 {
     flex: 1;
     margin: 0;
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: clamp(1.2rem, 2.5vw, 1.7rem);
     font-weight: 850;
     letter-spacing: -0.5px;
@@ -81,15 +81,15 @@ export const CashBlockedWarningIcon = styled.div`
   flex-shrink: 0;
   display: grid;
   place-items: center;
-  border-radius: 18px;
-  background: var(--app-accent-soft);
-  color: var(--app-accent);
+  border-radius: var(--radius-xl);
+  background: var(--color-primary-soft);
+  color: var(--color-accent);
   font-size: 3rem;
 
   @media (max-width: 700px) {
     width: 54px;
     height: 54px;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     font-size: 2rem;
   }
 `;
@@ -101,13 +101,14 @@ export const CashBlockedCloseButton = styled.button`
   display: grid;
   place-items: center;
   border: none;
-  border-radius: 11px;
-  background: var(--app-surface-soft);
-  color: var(--app-primary);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-muted);
+  color: var(--color-primary);
   font-size: 1.5rem;
   cursor: pointer;
+
   &:hover {
-    background: var(--app-accent-soft);
+    background: var(--color-primary-soft);
   }
 `;
 
@@ -141,12 +142,12 @@ export const CashBlockedIllustration = styled.div`
     display: grid;
     place-items: center;
     border-radius: 50%;
-    background: var(--app-surface-soft);
+    background: var(--color-surface-muted);
   }
 
   .register-icon {
     font-size: 5rem;
-    color: var(--app-primary);
+    color: var(--color-primary);
   }
 
   .lock-icon {
@@ -157,10 +158,10 @@ export const CashBlockedIllustration = styled.div`
     height: 48px;
     display: grid;
     place-items: center;
-    border: 4px solid var(--app-white);
+    border: 4px solid var(--color-white);
     border-radius: 50%;
-    background: var(--app-danger);
-    color: var(--app-white);
+    background: var(--color-danger);
+    color: var(--color-white);
     font-size: 1.5rem;
   }
 
@@ -196,7 +197,7 @@ export const CashBlockedInformation = styled.div`
 
   p {
     margin: 0;
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 0.95rem;
     font-weight: 500;
     line-height: 1.5;
@@ -215,8 +216,8 @@ export const CashBlockedDetails = styled.div`
   padding: 8px 17px;
   display: flex;
   flex-direction: column;
-  border-radius: 13px;
-  background: var(--app-surface-soft);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-muted);
 `;
 
 export const CashBlockedDetailRow = styled.div`
@@ -225,15 +226,15 @@ export const CashBlockedDetailRow = styled.div`
   grid-template-columns: 28px 85px minmax(0, 1fr);
   align-items: center;
   gap: 9px;
-  color: var(--app-primary);
+  color: var(--color-primary);
 
   &:not(:last-child) {
-    border-bottom: 1px solid var(--app-border);
+    border-bottom: 1px solid var(--color-border);
   }
 
   svg {
     font-size: 1.3rem;
-    color: var(--app-accent);
+    color: var(--color-accent);
   }
 
   strong {
@@ -268,12 +269,13 @@ export const CashBlockedActions = styled.footer`
   align-items: center;
   justify-content: flex-end;
   gap: 14px;
-  border-top: 1px solid var(--app-border);
+  border-top: 1px solid var(--color-border);
 
   @media (max-width: 600px) {
     min-height: auto;
     padding: 16px;
     flex-direction: column-reverse;
+
     button {
       width: 100%;
     }
@@ -284,15 +286,16 @@ export const CashBlockedCancelButton = styled.button`
   min-width: 145px;
   min-height: 48px;
   padding: 11px 20px;
-  border: 1px solid var(--app-accent-soft);
-  border-radius: 11px;
-  background: var(--app-white);
-  color: var(--app-primary);
+  border: 1px solid var(--color-primary-soft);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-primary);
   font-size: 0.92rem;
   font-weight: 750;
   cursor: pointer;
+
   &:hover {
-    background: var(--app-surface-soft);
+    background: var(--color-surface-hover);
   }
 `;
 
@@ -305,20 +308,22 @@ export const CashBlockedConfirmButton = styled.button`
   justify-content: center;
   gap: 11px;
   border: none;
-  border-radius: 11px;
-  background: linear-gradient(110deg, var(--app-accent), var(--app-primary));
-  color: var(--app-white);
+  border-radius: var(--radius-md);
+  background: linear-gradient(110deg, var(--color-accent), var(--color-primary));
+  color: var(--color-white);
   font-size: 0.92rem;
   font-weight: 800;
   cursor: pointer;
-  box-shadow: 0 5px 15px rgba(var(--app-shadow-rgb), 0.15);
+  box-shadow: var(--shadow-md);
   transition:
     filter 0.2s ease,
     transform 0.2s ease;
+
   &:hover {
     filter: brightness(1.08);
     transform: translateY(-1px);
   }
+
   @media (max-width: 600px) {
     min-width: 0;
   }

@@ -576,7 +576,6 @@ function CreateOrderContent({
                     <option value="transfer">Transferencia</option>
                     <option value="debit_card">Débito</option>
                     <option value="qr">QR</option>
-                    <option value="mercado_pago">Mercado Pago</option>
                   </Field>
                   <ErrorMessage
                     className="errorMessage"
@@ -627,7 +626,6 @@ function CreateOrderContent({
                       <option value="transfer">Transferencia</option>
                       <option value="qr">QR</option>
                       <option value="debit_card">Débito</option>
-                      <option value="mercado_pago">Mercado Pago</option>
                     </Field>
                     <Field name={`payments.${index}.amount`}>
                       {({ field }: FieldProps<number>) => (
@@ -1463,9 +1461,7 @@ function EditOrderContent({
                                 <option value="transfer">Transferencia</option>
                                 <option value="qr">QR</option>
                                 <option value="debit_card">Débito</option>
-                                <option value="mercado_pago">
-                                  Mercado Pago
-                                </option>
+                               
                               </select>
                             </label>
                             <label>

@@ -3,7 +3,10 @@ import styled from "styled-components";
 export const ContainerPage = styled.main`
   box-sizing: border-box;
 
-  /* DESKTOP: reserva el ancho real del navbar lateral. */
+  /* =====================================================
+     DESKTOP — SIDEBAR 258px
+  ===================================================== */
+
   width: calc(100% - 258px);
   min-width: 0;
   height: 100dvh;
@@ -15,19 +18,30 @@ export const ContainerPage = styled.main`
   align-items: center;
   gap: 24px;
 
-  background: var(--app-canvas);
-  color: var(--app-ink);
+  background: var(--color-background);
+  color: var(--color-text);
+
+  font-family: var(--font-family-base);
 
   overflow-x: hidden;
   overflow-y: auto;
-
   scrollbar-width: none;
 
-  /* TABLET: el navbar lateral pasa a medir 82px.
-     El contenido reserva exactamente ese espacio. */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  & > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  /* =====================================================
+     TABLET — SIDEBAR 82px
+  ===================================================== */
+
   @media (min-width: 621px) and (max-width: 1024px) {
     width: calc(100% - 82px);
-    min-width: 0;
     margin-left: 82px;
 
     height: 100dvh;
@@ -37,12 +51,11 @@ export const ContainerPage = styled.main`
     gap: 22px;
   }
 
-  /* Ajustes tipográficos para tablet y pantallas medianas.
-     No cambia el espacio reservado para el navbar. */
-  @media (max-width: 980px) {
-    font-size: 15px;
-    line-height: 1.6;
+  /* =====================================================
+     MEDIUM SCREENS — TYPOGRAPHIC ADJUSTMENTS
+  ===================================================== */
 
+  @media (min-width: 621px) and (max-width: 980px) {
     h1 {
       font-size: clamp(1.65rem, 3.2vw, 2.1rem);
       line-height: 1.2;
@@ -60,24 +73,22 @@ export const ContainerPage = styled.main`
 
     p,
     label {
-      font-size: 0.95rem;
+      font-size: var(--font-size-sm);
     }
 
     input,
     select,
     textarea,
     button {
-      font-size: 0.95rem;
+      font-family: var(--font-family-base);
+      font-size: var(--font-size-sm);
     }
   }
 
   /* =====================================================
-     MÓVILES
-     El navbar pasa a la parte superior y ocupa dos filas:
-     marca/menú arriba y CashStatus debajo.
-     Se reserva espacio para que el contenido no quede
-     oculto detrás del navbar fijo.
-     ===================================================== */
+     MOBILE — TOP NAVIGATION
+     Reserve vertical space for the fixed navbar.
+  ===================================================== */
 
   @media (max-width: 620px) {
     width: 100%;
@@ -90,30 +101,25 @@ export const ContainerPage = styled.main`
     padding: 150px 14px 30px;
     gap: 20px;
 
-    font-size: 14px;
-    line-height: 1.65;
-
     overflow-x: hidden;
     overflow-y: auto;
 
-    & > * {
-      min-width: 0;
-      max-width: 100%;
-    }
-
     h1 {
+      font-family: var(--font-family-heading);
       font-size: clamp(1.55rem, 6vw, 1.9rem);
       line-height: 1.2;
       letter-spacing: -0.025em;
     }
 
     h2 {
+      font-family: var(--font-family-heading);
       font-size: clamp(1.25rem, 5vw, 1.5rem);
       line-height: 1.3;
       letter-spacing: -0.02em;
     }
 
     h3 {
+      font-family: var(--font-family-heading);
       font-size: 1.08rem;
       line-height: 1.35;
     }
@@ -121,22 +127,26 @@ export const ContainerPage = styled.main`
     h4,
     h5,
     h6 {
-      font-size: 0.98rem;
+      font-family: var(--font-family-heading);
+      font-size: var(--font-size-sm);
       line-height: 1.4;
     }
 
     p {
-      font-size: 0.9rem;
+      font-family: var(--font-family-description);
+      font-size: var(--font-size-sm);
       line-height: 1.6;
     }
 
     label {
-      font-size: 0.9rem;
+      font-family: var(--font-family-base);
+      font-size: var(--font-size-sm);
       line-height: 1.5;
     }
 
     small {
-      font-size: 0.8rem;
+      font-family: var(--font-family-description);
+      font-size: var(--font-size-xs);
       line-height: 1.5;
     }
 
@@ -145,6 +155,7 @@ export const ContainerPage = styled.main`
     textarea {
       min-height: 42px;
       max-width: 100%;
+      font-family: var(--font-family-base);
       font-size: 16px;
     }
 
@@ -154,7 +165,8 @@ export const ContainerPage = styled.main`
 
     button {
       min-height: 40px;
-      font-size: 0.9rem;
+      font-family: var(--font-family-base);
+      font-size: var(--font-size-sm);
       line-height: 1.4;
     }
 
@@ -169,13 +181,12 @@ export const ContainerPage = styled.main`
   }
 
   /* =====================================================
-     MÓVILES ESTRECHOS
-     ===================================================== */
+     NARROW MOBILE
+  ===================================================== */
 
   @media (max-width: 380px) {
     padding-right: 11px;
     padding-left: 11px;
-
     gap: 17px;
 
     h1 {
@@ -187,7 +198,7 @@ export const ContainerPage = styled.main`
     }
 
     button {
-      font-size: 0.86rem;
+      font-size: var(--font-size-xs);
     }
   }
 `;

@@ -31,7 +31,7 @@ export const CashDayContent = styled.div`
       display: block;
       position: fixed;
       inset: 0;
-      background: rgba(var(--app-shadow-rgb), 0.4);
+      background: var(--modal-overlay);
       backdrop-filter: blur(1px);
       -webkit-backdrop-filter: blur(1px);
     }
@@ -46,7 +46,7 @@ export const SummaryBackdrop = styled.div`
     position: fixed;
     inset: 0;
 
-    background: rgba(var(--app-shadow-rgb), 0.28);
+    background: var(--modal-overlay);
 
     backdrop-filter: blur(1px);
     -webkit-backdrop-filter: blur(1px);
@@ -63,15 +63,15 @@ export const SummaryBar = styled.div`
 
   position: relative;
 
-  background: var(--app-white);
+  background: var(--color-white);
 
-  border: 1px solid var(--app-accent-soft);
+  border: 1px solid var(--color-primary-soft);
 
   overflow: hidden;
 
   margin-bottom: 0;
 
-  box-shadow: 0 4px 14px rgba(var(--app-shadow-rgb), 0.07);
+  box-shadow: var(--shadow-sm);
 
   box-sizing: border-box;
   .summary-content {
@@ -116,8 +116,8 @@ export const SummaryBar = styled.div`
 
       border: none;
 
-      background: var(--app-white);
-      color: var(--app-primary-active);
+      background: var(--color-white);
+      color: var(--color-primary-hover);
 
       cursor: pointer;
 
@@ -127,7 +127,7 @@ export const SummaryBar = styled.div`
     }
 
     .summary-toggle:hover {
-      background: var(--app-white);
+      background: var(--color-white);
     }
 
     .summary-toggle-icon {
@@ -142,7 +142,7 @@ export const SummaryBar = styled.div`
 
       border-radius: 9px;
 
-      background: rgba(var(--app-shadow-rgb), 0.08);
+      background: var(--color-surface-muted);
 
       font-size: 18px;
       line-height: 1;
@@ -160,7 +160,7 @@ export const SummaryBar = styled.div`
     .summary-toggle-info strong {
       display: block;
 
-      color: var(--app-primary);
+      color: var(--color-primary);
 
       font-size: 13px;
       font-weight: 800;
@@ -172,7 +172,7 @@ export const SummaryBar = styled.div`
 
       min-width: 0;
 
-      color: var(--app-muted-dark);
+      color: var(--color-text-secondary);
 
       font-size: 10px;
       font-weight: 500;
@@ -195,9 +195,9 @@ export const SummaryBar = styled.div`
 
       border-radius: 8px;
 
-      background: rgba(var(--app-shadow-rgb), 0.07);
+      background: var(--color-surface-muted);
 
-      color: var(--app-primary);
+      color: var(--color-primary);
 
       font-size: 11px;
     }
@@ -241,19 +241,17 @@ export const SummaryBar = styled.div`
         overflow-y: auto;
         overflow-x: hidden;
 
-        background: var(--app-white);
+        background: var(--color-white);
 
-        border: 1px solid var(--app-accent-soft);
+        border: 1px solid var(--color-primary-soft);
 
         border-radius: 14px;
 
-        box-shadow:
-          0 16px 40px rgba(var(--app-shadow-rgb), 0.22),
-          0 4px 12px rgba(var(--app-shadow-rgb), 0.08);
+        box-shadow: var(--shadow-lg);
 
         scrollbar-width: thin;
 
-        scrollbar-color: rgba(var(--app-shadow-rgb), 0.22) transparent;
+        scrollbar-color: var(--color-border-strong) transparent;
 
         -webkit-overflow-scrolling: touch;
 
@@ -312,12 +310,12 @@ export const SummaryIcon = styled.span`
 
   border-radius: 10px;
 
-  background: rgba(var(--app-shadow-rgb), 0.08);
+  background: var(--color-surface-muted);
 
   font-size: 19px;
   line-height: 1;
 
-  color: var(--app-primary);
+  color: var(--color-primary);
 `;
 
 export const SummaryInfo = styled.div`
@@ -347,7 +345,7 @@ export const SummaryLabel = styled.span`
 
   text-transform: uppercase;
 
-  color: var(--app-muted-dark);
+  color: var(--color-text-secondary);
 
   white-space: nowrap;
 
@@ -363,7 +361,7 @@ export const SummaryValue = styled.strong`
   font-size: 15px;
   line-height: 1;
 
-  color: var(--app-primary-active);
+  color: var(--color-primary-hover);
 
   white-space: nowrap;
 
@@ -390,7 +388,7 @@ export const SummaryItem = styled.div`
 
   white-space: nowrap;
 
-  border-right: 1px solid rgba(var(--app-shadow-rgb), 0.08);
+  border-right: 1px solid var(--color-surface-muted);
 
   transition:
     background 0.2s ease,
@@ -405,13 +403,13 @@ export const SummaryItem = styled.div`
   }
 
   strong {
-    color: var(--app-primary-active);
+    color: var(--color-primary-hover);
   }
 
-  background: #6eac6b;
+  background: var(--color-success);
 
   &.outflow {
-    background-color: #f45252;
+    background-color: var(--color-danger);
   }
 
   @media (max-width: 700px) {
@@ -477,7 +475,7 @@ export const SummaryGrup = styled.div`
 
   overflow: hidden;
 
-  border-right: 1px solid rgba(var(--app-shadow-rgb), 0.09);
+  border-right: 1px solid var(--color-border);
   @media (max-width: 700px) {
     width: 100%;
 
@@ -495,7 +493,7 @@ export const SummaryGrup = styled.div`
 
     border-radius: 9px;
 
-    background: var(--app-white);
+    background: var(--color-white);
   }
 `;
 
@@ -526,18 +524,18 @@ export const SummaryGroupTitle = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
 
-  color: var(--app-white);
+  color: var(--color-white);
 
-  background: rgba(var(--app-white-rgb), 0.55);
+  background: var(--color-surface);
 
-  border-bottom: 1px solid rgba(var(--app-shadow-rgb), 0.07);
+  border-bottom: 1px solid var(--color-surface-muted);
 
   &.loss {
-    background-color: var(--app-danger);
+    background-color: var(--color-danger);
   }
 
   &.gain {
-    background-color: var(--app-primary);
+    background-color: var(--color-primary);
   }
 
   @media (max-width: 700px) {
@@ -583,7 +581,7 @@ export const SummaryGroupItems = styled.div`
 
     padding: 8px;
 
-    border-right: 1px solid rgba(var(--app-shadow-rgb), 0.07);
+    border-right: 1px solid var(--color-surface-muted);
 
     &:last-child {
       border-right: none;
@@ -611,7 +609,7 @@ export const SummaryGroupItems = styled.div`
 
     overflow: visible;
 
-    background: var(--app-white);
+    background: var(--color-white);
 
     border-radius: 0 0 8px 8px;
 
@@ -652,7 +650,7 @@ export const SummaryDivider = styled.div`
 
   align-self: center;
 
-  background: var(--app-border);
+  background: var(--color-border);
 
   @media (max-width: 700px) {
     display: none;
@@ -681,9 +679,9 @@ export const CashMobileTabs = styled.div`
 
     box-sizing: border-box;
 
-    background: var(--app-surface-soft);
+    background: var(--color-surface-hover);
 
-    border: 1px solid var(--app-accent-soft);
+    border: 1px solid var(--color-primary-soft);
 
     border-radius: 12px;
   }
@@ -723,13 +721,13 @@ export const CashMobileTab = styled.button<{
   font-weight: 800;
 
   color: ${({ $active }) =>
-    $active ? "var(--app-white)" : "var(--app-primary)"};
+    $active ? "var(--color-white)" : "var(--color-primary)"};
 
   background: ${({ $active }) =>
-    $active ? "var(--app-primary)" : "transparent"};
+    $active ? "var(--color-primary)" : "transparent"};
 
   box-shadow: ${({ $active }) =>
-    $active ? "0 3px 8px rgba(var(--app-shadow-rgb), 0.18)" : "none"};
+    $active ? "0 3px 8px var(--shadow-md)" : "none"};
 
   transition:
     background 0.2s ease,
@@ -739,7 +737,7 @@ export const CashMobileTab = styled.button<{
 
   &:hover {
     background: ${({ $active }) =>
-      $active ? "var(--app-primary)" : "var(--app-surface-soft)"};
+      $active ? "var(--color-primary)" : "var(--color-surface-hover)"};
   }
 
   &:active {
@@ -922,7 +920,6 @@ export const SalesContainer = styled.div`
    OPEN CASH
 ============================================================ */
 
-
 export const OpenCashContainer = styled.section`
   position: relative;
   width: 100%;
@@ -936,12 +933,12 @@ export const OpenCashContainer = styled.section`
   column-gap: 32px;
   row-gap: 12px;
 
-  background: var(--app-white);
-  border: 1px solid var(--app-accent);
-  border-left: 6px solid var(--app-accent);
+  background: var(--color-white);
+  border: 1px solid var(--color-accent);
+  border-left: 6px solid var(--color-accent);
   border-radius: 18px;
 
-  box-shadow: 0 10px 25px rgba(74, 40, 24, 0.08);
+  box-shadow: 0 10px 25px var(--shadow-sm);
 
   /* Icono de advertencia */
   &::before {
@@ -958,8 +955,8 @@ export const OpenCashContainer = styled.section`
     align-items: center;
     justify-content: center;
 
-    background: rgba(183, 131, 78, 0.2);
-    color: var(--app-primary);
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
 
     border-radius: 18px;
     font-size: 42px;
@@ -974,7 +971,7 @@ export const OpenCashContainer = styled.section`
     top: 18%;
     bottom: 18%;
     width: 2px;
-    background: rgba(183, 131, 78, 0.35);
+    background: var(--color-border-strong);
   }
 
   h2 {
@@ -982,7 +979,7 @@ export const OpenCashContainer = styled.section`
     grid-row: 1;
 
     margin: 0;
-    color: var(--app-primary);
+    color: var(--color-primary);
 
     font-size: clamp(17px, 1.5vw, 23px);
     font-weight: 750;
@@ -994,7 +991,7 @@ export const OpenCashContainer = styled.section`
     grid-row: 2;
 
     margin: 0;
-    color: var(--app-ink);
+    color: var(--color-text);
 
     font-size: clamp(14px, 1.15vw, 18px);
     line-height: 1.6;
@@ -1073,18 +1070,18 @@ export const OpenCashButton = styled.button`
 
   background: linear-gradient(
     110deg,
-    var(--app-accent),
-    var(--app-primary)
+    var(--color-accent),
+    var(--color-primary)
   );
 
-  color: white;
+  color: var(--color-white);
 
   font-size: 16px;
   font-weight: 700;
 
   cursor: pointer;
 
-  box-shadow: 0 6px 15px rgba(74, 40, 24, 0.15);
+  box-shadow: 0 6px 15px var(--shadow-md);
 
   transition:
     transform 0.2s ease,
@@ -1094,7 +1091,7 @@ export const OpenCashButton = styled.button`
   &:hover {
     transform: translateY(-2px);
     filter: brightness(1.08);
-    box-shadow: 0 9px 20px rgba(74, 40, 24, 0.2);
+    box-shadow: 0 9px 20px var(--shadow-md);
   }
 
   &:active {
@@ -1102,7 +1099,7 @@ export const OpenCashButton = styled.button`
   }
 
   &:focus-visible {
-    outline: 3px solid var(--app-accent);
+    outline: 3px solid var(--color-accent);
     outline-offset: 3px;
   }
 
@@ -1124,7 +1121,7 @@ export const OpenCashButton = styled.button`
 ============================================================ */
 
 export const CloseCashButton = styled.button`
-  border: 1px solid var(--app-surface-soft);
+  border: 1px solid var(--color-surface-hover);
 
   border-radius: 9px;
 
@@ -1132,13 +1129,13 @@ export const CloseCashButton = styled.button`
 
   font-weight: 800;
 
-  color: var(--app-white);
+  color: var(--color-white);
 
   cursor: pointer;
 
   font-size: 13px;
 
-  background: var(--app-danger);
+  background: var(--color-danger);
 
   white-space: nowrap;
 
@@ -1148,11 +1145,11 @@ export const CloseCashButton = styled.button`
     color 0.2s ease;
 
   &:hover {
-    background: var(--app-danger);
+    background: var(--color-danger);
 
-    border-color: var(--app-border);
+    border-color: var(--color-border);
 
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
   }
 
   @media (max-width: 1050px) {
@@ -1178,7 +1175,7 @@ export const SaleDetails = styled.div`
   gap: 20px;
   min-width: 0;
   height: 100%;
-  color: var(--app-primary);
+  color: var(--color-primary);
 
   .containerInfo {
     width: 100%;
@@ -1200,8 +1197,8 @@ export const SaleCustomer = styled.div`
   align-items: center;
   gap: 12px;
   padding: 16px;
-  background: var(--app-surface-soft);
-  border: 1px solid var(--app-accent-soft);
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-primary-soft);
   border-radius: 12px;
 `;
 
@@ -1213,8 +1210,8 @@ export const SaleCustomerAvatar = styled.div`
   justify-content: center;
   flex-shrink: 0;
   border-radius: 50%;
-  background: var(--app-primary);
-  color: var(--app-white);
+  background: var(--color-primary);
+  color: var(--color-white);
   font-size: 20px;
   font-weight: 700;
 `;
@@ -1232,7 +1229,7 @@ export const SaleCustomerInfo = styled.div`
 export const SaleEyebrow = styled.small`
   display: block;
   margin-bottom: 7px;
-  color: var(--app-muted-dark);
+  color: var(--color-text-secondary);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.45px;
@@ -1241,7 +1238,7 @@ export const SaleEyebrow = styled.small`
 
 export const SaleSectionTitle = styled.h3`
   margin: 0 0 12px;
-  color: var(--app-primary);
+  color: var(--color-primary);
   font-size: 15px;
   font-weight: 800;
 `;
@@ -1258,8 +1255,8 @@ export const SaleItem = styled.div`
   align-items: center;
   gap: 12px;
   padding: 13px 14px;
-  background: var(--app-white);
-  border: 1px solid var(--app-surface-soft);
+  background: var(--color-white);
+  border: 1px solid var(--color-surface-hover);
   border-radius: 10px;
 
   @media (max-width: 420px) {
@@ -1279,13 +1276,13 @@ export const SaleItemInfo = styled.div`
   small {
     display: block;
     margin-top: 4px;
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
     font-size: 12px;
   }
 `;
 
 export const SaleItemPrice = styled.strong`
-  color: var(--app-primary);
+  color: var(--color-primary);
   white-space: nowrap;
   font-size: 14px;
 `;
@@ -1297,8 +1294,8 @@ export const SaleTotal = styled.div`
   gap: 12px;
   padding: 18px;
   border-radius: 12px;
-  background: var(--app-primary);
-  color: var(--app-white);
+  background: var(--color-primary);
+  color: var(--color-white);
 
   span {
     font-size: 15px;
@@ -1325,8 +1322,7 @@ export const SaleTotal = styled.div`
 
 export const SalePaymentInfo = styled.div`
   padding: 14px 16px;
-  background: var(--app-surface-soft);
-  border: 1px solid var(--app-accent-soft);
+  border: 1px solid var(--color-primary-soft);
   border-radius: 12px;
 `;
 
@@ -1336,7 +1332,6 @@ export const SalePaymentRow = styled.div`
   align-items: center;
   flex-wrap: wrap;
   gap: 10px;
-
   span {
     font-size: 14px;
   }
@@ -1345,17 +1340,25 @@ export const SalePaymentRow = styled.div`
 export const SalePaymentStatus = styled.span<{ $status: string }>`
   padding: 6px 12px;
   border-radius: 20px;
+
   background: ${({ $status }) =>
     $status === "paid"
-      ? "var(--app-surface-soft)"
+      ? "var(--color-success-soft)"
       : $status === "pending"
-        ? "var(--app-warning)"
+        ? "var(--color-pending)"
         : $status === "partially_paid"
-          ? "var(--app-warning)"
+          ? "var(--color-pending)"
           : $status === "cancelled"
-            ? "var(--app-danger-soft)"
-            : "blue"};
-  color: black;
+            ? "var(--color-danger-soft)"
+            : "var(--color-pending)"};
+
+  color: ${({ $status }) =>
+    $status === "paid"
+      ? "var(--color-success)"
+      : $status === "cancelled"
+        ? "var(--color-danger)"
+        : "var(--color-text)"};
+
   font-size: 12px;
   font-weight: 700;
 `;
@@ -1368,20 +1371,20 @@ export const EditOrderButton = styled.button`
   width: 100%;
   min-height: 46px;
   padding: 12px 18px;
-  border: 1px solid var(--app-primary);
+  border: 1px solid var(--color-primary);
   border-radius: 10px;
-  background: var(--app-primary);
-  color: var(--app-white);
+  background: var(--color-primary);
+  color: var(--color-white);
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(var(--app-shadow-rgb), 0.16);
+  box-shadow: var(--shadow-sm);
   transition:
     background 0.2s ease,
     transform 0.2s ease;
 
   &:hover {
-    background: var(--app-primary-active);
+    background: var(--color-primary-hover);
     transform: translateY(-1px);
   }
 
@@ -1390,7 +1393,7 @@ export const EditOrderButton = styled.button`
   }
 
   &:focus-visible {
-    outline: 3px solid rgba(var(--app-accent-rgb), 0.4);
+    outline: 3px solid var(--color-primary-soft);
     outline-offset: 2px;
   }
 
@@ -1407,7 +1410,7 @@ export const EditMovementForm = styled.form`
   gap: 18px;
   width: 100%;
   min-width: 0;
-  color: var(--app-primary);
+  color: var(--color-primary);
 `;
 
 export const EditMovementField = styled.div`
@@ -1416,7 +1419,7 @@ export const EditMovementField = styled.div`
   gap: 7px;
 
   label {
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 13px;
     font-weight: 700;
   }
@@ -1427,10 +1430,10 @@ export const EditMovementInput = styled.input`
   min-height: 44px;
   box-sizing: border-box;
   padding: 11px 13px;
-  border: 1px solid var(--app-accent-soft);
+  border: 1px solid var(--color-primary-soft);
   border-radius: 10px;
-  background: var(--app-white);
-  color: var(--app-primary);
+  background: var(--color-white);
+  color: var(--color-primary);
   font: inherit;
   font-size: 14px;
   outline: none;
@@ -1439,12 +1442,12 @@ export const EditMovementInput = styled.input`
     box-shadow 0.2s ease;
 
   &:focus {
-    border-color: var(--app-accent);
-    box-shadow: 0 0 0 3px rgba(var(--app-accent-rgb), 0.2);
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px var(--color-primary-soft);
   }
 
   &::placeholder {
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
   }
 `;
 
@@ -1467,22 +1470,22 @@ export const EditMovementActions = styled.div`
 export const EditMovementSaveButton = styled.button`
   min-height: 42px;
   padding: 10px 18px;
-  border: 1px solid var(--app-primary);
+  border: 1px solid var(--color-primary);
   border-radius: 10px;
-  background: var(--app-primary);
-  color: var(--app-white);
+  background: var(--color-primary);
+  color: var(--color-white);
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(var(--app-shadow-rgb), 0.15);
+  box-shadow: var(--shadow-sm);
   transition:
     background 0.2s ease,
     box-shadow 0.2s ease,
     transform 0.2s ease;
 
   &:hover:not(:disabled) {
-    background: var(--app-primary-active);
-    box-shadow: 0 6px 14px rgba(var(--app-shadow-rgb), 0.2);
+    background: var(--color-primary-hover);
+    box-shadow: var(--shadow-md);
     transform: translateY(-1px);
   }
 
@@ -1502,7 +1505,7 @@ export const CashDashboard = styled.div`
   display: flex;
   flex-direction: column;
   gap: 18px;
-  color: var(--app-primary);
+  color: var(--color-primary);
 `;
 
 export const CashDashboardHeader = styled.header`
@@ -1513,20 +1516,20 @@ export const CashDashboardHeader = styled.header`
   flex-wrap: wrap;
   .eyebrow {
     display: block;
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
     font-size: 10px;
     font-weight: 800;
     letter-spacing: 1px;
   }
   h2 {
     margin: 3px 0 4px;
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 28px;
     font-weight: 800;
   }
   p {
     margin: 0;
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
     font-size: 13px;
   }
 `;
@@ -1540,16 +1543,16 @@ export const CashDashboardActions = styled.div`
   button {
     min-height: 42px;
     padding: 9px 14px;
-    border: 1px solid var(--app-accent-soft);
+    border: 1px solid var(--color-primary-soft);
     border-radius: 10px;
-    background: var(--app-white);
-    color: var(--app-primary);
+    background: var(--color-white);
+    color: var(--color-primary);
     font-weight: 700;
     font-size: 12px;
     cursor: pointer;
   }
   button:hover {
-    background: var(--app-surface-soft);
+    background: var(--color-surface-hover);
   }
   @media (max-width: 1300px) {
     display: flex;
@@ -1564,15 +1567,15 @@ export const CashDashboardActions = styled.div`
 export const CashDashboardCloseButton = styled.button`
   min-height: 42px;
   padding: 9px 17px;
-  border: 1px solid var(--app-primary);
+  border: 1px solid var(--color-primary);
   border-radius: 10px;
-  background: var(--app-primary);
-  color: var(--app-white);
+  background: var(--color-primary);
+  color: var(--color-white);
   font-size: 12px;
   font-weight: 800;
   cursor: pointer;
   &:hover {
-    background: var(--app-primary-active);
+    background: var(--color-primary-hover);
   }
 `;
 
@@ -1583,9 +1586,9 @@ export const CashStatusBanner = styled.div`
   gap: 16px;
   flex-wrap: wrap;
   padding: 17px 20px;
-  border: 1px solid var(--app-accent-soft);
+  border: 1px solid var(--color-primary-soft);
   border-radius: 14px;
-  background: var(--app-white);
+  background: var(--color-white);
   .status-main,
   .status-meta {
     display: flex;
@@ -1595,13 +1598,13 @@ export const CashStatusBanner = styled.div`
   .status-main strong {
     display: block;
     font-size: 17px;
-    color: var(--app-primary);
+    color: var(--color-primary);
   }
   .status-main span:not(.status-dot) {
     display: block;
     margin-top: 4px;
     font-size: 12px;
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
   }
   .status-dot {
     width: 11px;
@@ -1610,24 +1613,24 @@ export const CashStatusBanner = styled.div`
     flex-shrink: 0;
   }
   .status-dot.open {
-    background: #279765;
-    box-shadow: 0 0 0 4px rgba(39, 151, 101, 0.12);
+    background: var(--color-success);
+    box-shadow: 0 0 0 4px var(--color-success-soft);
   }
   .status-dot.closed {
-    background: var(--app-danger);
+    background: var(--color-danger);
   }
   .status-meta {
     font-size: 12px;
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
   }
   .status-meta strong {
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 13px;
   }
   .status-meta i {
     height: 28px;
     width: 1px;
-    background: var(--app-accent-soft);
+    background: var(--color-primary-soft);
     margin: 0 5px;
   }
 `;
@@ -1652,9 +1655,9 @@ export const CashMetricCard = styled.article<{
   gap: 13px;
   min-width: 0;
   padding: 17px 15px;
-  border: 1px solid var(--app-accent-soft);
+  border: 1px solid var(--color-primary-soft);
   border-radius: 13px;
-  background: var(--app-white);
+  background: var(--color-white);
   .metric-icon {
     width: 46px;
     height: 46px;
@@ -1666,12 +1669,12 @@ export const CashMetricCard = styled.article<{
     font-weight: 800;
     background: ${({ $tone }) =>
       $tone === "income"
-        ? "var(--app-surface-soft)"
+        ? "var(--color-surface-hover)"
         : $tone === "expense"
-          ? "var(--app-danger-soft)"
-          : "var(--app-accent-soft)"};
+          ? "var(--color-danger-soft)"
+          : "var(--color-primary-soft)"};
     color: ${({ $tone }) =>
-      $tone === "expense" ? "var(--app-danger)" : "var(--app-primary)"};
+      $tone === "expense" ? "var(--color-danger)" : "var(--color-primary)"};
   }
   div {
     min-width: 0;
@@ -1680,18 +1683,18 @@ export const CashMetricCard = styled.article<{
     gap: 5px;
   }
   small {
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
     font-size: 11px;
     font-weight: 700;
   }
   strong {
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: clamp(17px, 1.7vw, 23px);
     line-height: 1.1;
     white-space: nowrap;
   }
   div > span {
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
     font-size: 10px;
   }
 `;
@@ -1709,9 +1712,9 @@ export const CashDashboardGrid = styled.section`
 export const CashDashboardPanel = styled.section`
   min-width: 0;
   padding: 17px;
-  border: 1px solid var(--app-accent-soft);
+  border: 1px solid var(--color-primary-soft);
   border-radius: 14px;
-  background: var(--app-white);
+  background: var(--color-white);
   .panel-heading {
     display: flex;
     align-items: center;
@@ -1721,20 +1724,20 @@ export const CashDashboardPanel = styled.section`
   }
   h3 {
     margin: 0;
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 17px;
     font-weight: 800;
   }
   p {
     margin: 4px 0 0;
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
     font-size: 11px;
   }
   .count {
     padding: 6px 9px;
     border-radius: 20px;
-    background: var(--app-surface-soft);
-    color: var(--app-primary);
+    background: var(--color-surface-hover);
+    color: var(--color-primary);
     font-size: 10px;
     font-weight: 700;
     white-space: nowrap;
@@ -1748,21 +1751,21 @@ export const CashDashboardTable = styled.table`
   th {
     padding: 10px 8px;
     text-align: left;
-    color: var(--app-muted-dark);
-    background: var(--app-surface-soft);
+    color: var(--color-text-secondary);
+    background: var(--color-surface-hover);
     font-size: 10px;
     white-space: nowrap;
   }
   td {
     padding: 12px 8px;
-    border-bottom: 1px solid var(--app-accent-soft);
-    color: var(--app-primary);
+    border-bottom: 1px solid var(--color-primary-soft);
+    color: var(--color-primary);
   }
   tbody tr {
     cursor: pointer;
   }
   tbody tr:hover {
-    background: var(--app-surface-soft);
+    background: var(--color-surface-hover);
   }
   td:last-child {
     text-align: right;
@@ -1770,10 +1773,10 @@ export const CashDashboardTable = styled.table`
     white-space: nowrap;
   }
   .positive {
-    color: var(--app-primary);
+    color: var(--color-primary);
   }
   .negative {
-    color: var(--app-danger);
+    color: var(--color-danger);
   }
   .movement-badge {
     display: inline-block;
@@ -1784,17 +1787,17 @@ export const CashDashboardTable = styled.table`
     white-space: nowrap;
   }
   .movement-badge.income {
-    background: var(--app-surface-soft);
-    color: var(--app-primary);
+    background: var(--color-surface-hover);
+    color: var(--color-primary);
   }
   .movement-badge.expense {
-    background: var(--app-danger-soft);
-    color: var(--app-danger);
+    background: var(--color-danger-soft);
+    color: var(--color-danger);
   }
   .empty {
     padding: 25px;
     text-align: center;
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
   }
   @media (max-width: 650px) {
     display: block;
@@ -1818,7 +1821,7 @@ export const CashPaymentBreakdown = styled.div`
     justify-content: space-between;
     gap: 8px;
     font-size: 12px;
-    color: var(--app-primary);
+    color: var(--color-primary);
   }
   .payment-label strong {
     font-weight: 750;
@@ -1828,7 +1831,7 @@ export const CashPaymentBreakdown = styled.div`
     font-weight: 800;
   }
   .payment-label small {
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
     font-weight: 500;
   }
 `;
@@ -1838,21 +1841,21 @@ export const CashPaymentBar = styled.div<{ $percent: number }>`
   height: 9px;
   border-radius: 20px;
   overflow: hidden;
-  background: var(--app-surface-soft);
+  background: var(--color-surface-hover);
   span {
     display: block;
     width: ${({ $percent }) => `${$percent}%`};
     height: 100%;
     border-radius: inherit;
-    background: var(--app-accent);
+    background: var(--color-accent);
   }
 `;
 
 export const CashPreviousClose = styled.section`
   padding: 17px 20px;
-  border: 1px solid var(--app-accent-soft);
+  border: 1px solid var(--color-primary-soft);
   border-radius: 14px;
-  background: var(--app-white);
+  background: var(--color-white);
   .previous-heading,
   .previous-heading > div {
     display: flex;
@@ -1868,26 +1871,26 @@ export const CashPreviousClose = styled.section`
     height: 38px;
     display: grid;
     place-items: center;
-    border: 2px solid var(--app-primary);
+    border: 2px solid var(--color-primary);
     border-radius: 50%;
     font-size: 21px;
     font-weight: 800;
   }
   h3 {
     margin: 0;
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 17px;
   }
   p {
     margin: 4px 0 0;
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
     font-size: 11px;
   }
   .closed-pill {
     padding: 8px 12px;
     border-radius: 20px;
-    background: var(--app-surface-soft);
-    color: var(--app-primary);
+    background: var(--color-surface-hover);
+    color: var(--color-primary);
     font-size: 11px;
     font-weight: 800;
   }
@@ -1897,7 +1900,7 @@ export const CashPreviousClose = styled.section`
     gap: 14px;
     margin-top: 18px;
     padding-top: 15px;
-    border-top: 1px solid var(--app-accent-soft);
+    border-top: 1px solid var(--color-primary-soft);
   }
   .previous-grid div {
     display: flex;
@@ -1906,11 +1909,11 @@ export const CashPreviousClose = styled.section`
   }
   .previous-grid small,
   .no-previous {
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
     font-size: 11px;
   }
   .previous-grid strong {
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 15px;
   }
   .no-previous {
@@ -1932,13 +1935,13 @@ export const CashPreviousClose = styled.section`
 
 export const SaleObservations = styled.div`
   padding: 14px 16px;
-  background: var(--app-surface-soft);
-  border: 1px solid var(--app-accent-soft);
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-primary-soft);
   border-radius: 12px;
 
   p {
     margin: 0;
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 0.88rem;
     line-height: 1.6;
     white-space: pre-wrap;

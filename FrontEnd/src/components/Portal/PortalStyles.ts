@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const ModalOverlay = styled.div`
   position: fixed;
   inset: 0;
-z-index: 10000;
+  z-index: 10000;
 
   width: 100%;
   height: 100%;
@@ -20,7 +20,7 @@ z-index: 10000;
   overflow-y: auto;
   overscroll-behavior: contain;
 
-  background: rgba(var(--app-shadow-rgb), 0.58);
+  background: var(--modal-overlay);
 
   backdrop-filter: blur(7px);
   -webkit-backdrop-filter: blur(7px);
@@ -28,13 +28,8 @@ z-index: 10000;
   animation: overlayIn 0.18s ease;
 
   @keyframes overlayIn {
-    from {
-      opacity: 0;
-    }
-
-    to {
-      opacity: 1;
-    }
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
 
   @media (max-width: 600px) {
@@ -49,7 +44,6 @@ z-index: 10000;
 
 export const ModalSurface = styled.div`
   position: relative;
-
   margin: auto;
   padding: 0;
 
@@ -74,5 +68,9 @@ export const ModalSurface = styled.div`
       opacity: 1;
       transform: translateY(0) scale(1);
     }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
   }
 `;

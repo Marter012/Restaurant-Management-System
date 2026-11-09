@@ -1,6 +1,6 @@
 export type CashMovementType = "inflow" | "outflow";
 
-export type CashPaymentMethod = "transfer" | "cash" | "debit" | "debit_card" | "mercado_pago" | "qr";
+export type CashPaymentMethod = "transfer" | "cash" | "debit" | "debit_card" | "qr";
 
 export interface CashMovementFormProps {
   isOpen: boolean;

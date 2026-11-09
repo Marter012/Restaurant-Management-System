@@ -8,18 +8,23 @@ export const BrandContainer = styled.div`
   flex-shrink: 0;
 
   .brand-logo {
-    width: 46px;
-    height: 46px;
     display: grid;
     place-items: center;
-    flex: 0 0 46px;
-    border-radius: 15px;
-    background: var(--app-accent);
-    color: var(--app-primary-active);
-    font-size: 1rem;
-    font-weight: 950;
-    letter-spacing: -0.06em;
-    box-shadow: 0 7px 18px rgba(var(--app-primary-rgb), 0.188);
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+
+    border: 1px solid color-mix(in srgb, var(--color-white) 14%, transparent);
+    border-radius: var(--radius-md);
+    background: var(--color-accent);
+    color: var(--color-white);
+
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-md);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+
+    box-shadow: var(--shadow-sm);
   }
 
   .brand-info {
@@ -31,33 +36,34 @@ export const BrandContainer = styled.div`
 
   .brand-info h2 {
     margin: 0;
-    color: var(--app-white);
-    font-family: inherit;
-    font-size: 1rem;
-    line-height: 1.15;
-    font-weight: 850;
-    letter-spacing: -0.04em;
+    color: var(--color-sidebar-text);
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-md);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
     white-space: normal;
   }
 
   .brand-info span {
-    color: var(--app-border);
-    font-size: 0.67rem;
-    letter-spacing: 0.08em;
+    color: var(--color-sidebar-muted);
+    font-family: var(--font-family-description);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    letter-spacing: 0.075em;
+    line-height: 1.2;
     text-transform: uppercase;
-    font-weight: 700;
   }
 
   /* TABLET */
-
   @media (min-width: 621px) and (max-width: 1024px) {
     width: 100%;
     justify-content: center;
 
     .brand-logo {
-      width: 48px;
-      height: 48px;
-      flex-basis: 48px;
+      flex-basis: 46px;
+      width: 46px;
+      height: 46px;
     }
 
     .brand-info {
@@ -66,47 +72,47 @@ export const BrandContainer = styled.div`
   }
 
   /* MOBILE */
-
   @media (max-width: 620px) {
-    gap: 8px;
+    gap: 9px;
 
     .brand-logo {
+      flex-basis: 38px;
       width: 38px;
       height: 38px;
-      flex-basis: 38px;
-      border-radius: 12px;
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-sm);
     }
 
     .brand-info {
       display: flex;
       min-width: 0;
-      max-width: 145px;
+      max-width: 190px;
     }
 
     .brand-info h2 {
-      font-size: 0.78rem;
-      line-height: 1.1;
+      font-size: var(--font-size-sm);
+      line-height: 1.15;
     }
 
     .brand-info span {
-      font-size: 0.48rem;
-      letter-spacing: 0.04em;
+      font-size: 0.65rem;
+      letter-spacing: 0.045em;
     }
   }
 
   @media (max-width: 380px) {
-    gap: 6px;
+    gap: 7px;
 
     .brand-info {
-      max-width: 112px;
+      max-width: 145px;
     }
 
     .brand-info h2 {
-      font-size: 0.70rem;
+      font-size: var(--font-size-xs);
     }
 
     .brand-info span {
-      font-size: 0.43rem;
+      font-size: 0.58rem;
     }
   }
 `;

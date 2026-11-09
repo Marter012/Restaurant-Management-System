@@ -6,7 +6,7 @@ export const GeneralContent = styled.div`
   gap: 20px;
   width: 100%;
   min-width: 0;
-  color: var(--app-ink);
+  color: var(--color-text);
   container-type: inline-size;
 
   &,
@@ -41,7 +41,7 @@ export const GeneralHeading = styled.header`
 export const GeneralEyebrow = styled.span`
   display: block;
   margin-bottom: 7px;
-  color: var(--app-accent);
+  color: var(--color-accent);
   font-size: 0.76rem;
   font-weight: 850;
   letter-spacing: 0.1em;
@@ -49,8 +49,7 @@ export const GeneralEyebrow = styled.span`
 
 export const GeneralTitle = styled.h2`
   margin: 0;
-  color: var(--app-ink);
-  font-family: var(--app-font-heading);
+  color: var(--color-text);
   font-size: clamp(1.55rem, 2.7vw, 2.1rem);
   font-weight: 850;
   letter-spacing: -0.04em;
@@ -60,7 +59,7 @@ export const GeneralTitle = styled.h2`
 export const GeneralDescription = styled.p`
   max-width: 720px;
   margin: 7px 0 0;
-  color: var(--app-muted);
+  color: var(--color-text-secondary);
   font-size: 0.91rem;
   line-height: 1.55;
 `;
@@ -89,10 +88,10 @@ export const DashboardGrid = styled.section`
 export const Panel = styled.section`
   min-width: 0;
   padding: 17px;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 17px;
-  background: var(--app-surface);
-  box-shadow: var(--app-shadow-xs);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
   container-type: inline-size;
   overflow: hidden;
 
@@ -124,7 +123,7 @@ export const PanelHeading = styled.div`
 
 export const PanelTitle = styled.h3`
   margin: 0;
-  color: var(--app-ink);
+  color: var(--color-text);
   font-size: 0.98rem;
   font-weight: 850;
   letter-spacing: -0.02em;
@@ -132,7 +131,7 @@ export const PanelTitle = styled.h3`
 
 export const PanelDescription = styled.p`
   margin: 0;
-  color: var(--app-muted);
+  color: var(--color-text-secondary);
   font-size: 0.77rem;
   line-height: 1.45;
 `;
@@ -145,8 +144,8 @@ export const PanelIcon = styled.div<{ $soft?: boolean }>`
   height: 43px;
   border-radius: 13px;
   background: ${({ $soft }) =>
-    $soft ? "var(--app-accent-soft)" : "var(--app-primary-soft)"};
-  color: var(--app-primary);
+    $soft ? "var(--color-primary-soft)" : "var(--color-primary-soft)"};
+  color: var(--color-primary);
   font-size: 1.12rem;
 `;
 
@@ -156,9 +155,9 @@ export const PreferenceRow = styled.div`
   align-items: center;
   gap: 11px;
   padding: 15px 12px;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 14px;
-  background: var(--app-paper);
+  background: var(--color-surface);
 
   @container (max-width: 600px) {
     grid-template-columns: 40px minmax(0, 1fr) 48px;
@@ -214,7 +213,7 @@ export const PreferenceCopy = styled.div`
 `;
 
 export const PreferenceLabel = styled.strong`
-  color: var(--app-ink);
+  color: var(--color-text);
   font-size: 0.9rem;
   font-weight: 850;
   line-height: 1.3;
@@ -222,7 +221,7 @@ export const PreferenceLabel = styled.strong`
 `;
 
 export const PreferenceDescription = styled.span`
-  color: var(--app-muted);
+  color: var(--color-text-secondary);
   font-size: 0.78rem;
   line-height: 1.5;
   overflow-wrap: break-word;
@@ -240,9 +239,9 @@ export const StatusBadge = styled.div<{ $active: boolean }>`
   padding: 6px 10px;
   border-radius: 30px;
   background: ${({ $active }) =>
-    $active ? "var(--app-success-soft)" : "var(--app-warning-soft)"};
+    $active ? "var(--color-success-soft)" : "var(--color-pending-soft)"};
   color: ${({ $active }) =>
-    $active ? "var(--app-success)" : "var(--app-warning)"};
+    $active ? "var(--color-success)" : "var(--color-pending)"};
   font-size: 0.69rem;
   font-weight: 800;
   white-space: nowrap;
@@ -274,7 +273,7 @@ export const Toggle = styled.button<{ $enabled: boolean }>`
   border-radius: 30px;
 
   background: ${({ $enabled }) =>
-    $enabled ? "var(--app-accent)" : "var(--app-border-strong)"};
+    $enabled ? "var(--color-accent)" : "var(--color-border-strong)"};
 
   cursor: pointer;
   transition: background 250ms ease;
@@ -290,8 +289,8 @@ export const Toggle = styled.button<{ $enabled: boolean }>`
     min-height: 21px;
 
     border-radius: 50%;
-    background: var(--app-white);
-    box-shadow: var(--app-shadow-xs);
+    background: var(--color-white);
+    box-shadow: var(--shadow-sm);
 
     transition: left 250ms ease;
   }
@@ -302,7 +301,7 @@ export const Toggle = styled.button<{ $enabled: boolean }>`
   }
 
   &:focus-visible {
-    outline: 3px solid var(--app-accent-soft);
+    outline: 3px solid var(--color-primary-soft);
     outline-offset: 3px;
   }
 `;
@@ -315,22 +314,22 @@ export const IngredientTrigger = styled.button`
   width: 100%;
   margin-top: 9px;
   padding: 14px 12px;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 14px;
-  background: var(--app-paper);
+  background: var(--color-surface);
   text-align: left;
   cursor: pointer;
   transition:
-    border-color var(--app-transition),
-    background var(--app-transition);
+    border-color var(--transition-normal),
+    background var(--transition-normal);
 
   &:hover {
-    border-color: var(--app-accent);
-    background: var(--app-surface-soft);
+    border-color: var(--color-accent);
+    background: var(--color-surface-hover);
   }
   .chevron {
-    color: var(--app-primary);
-    transition: transform var(--app-transition);
+    color: var(--color-primary);
+    transition: transform var(--transition-normal);
   }
   &[aria-expanded="true"] .chevron {
     transform: rotate(90deg);
@@ -370,8 +369,8 @@ export const IngredientTrigger = styled.button`
 export const IngredientCount = styled.span`
   padding: 6px 9px;
   border-radius: 30px;
-  background: var(--app-accent-soft);
-  color: var(--app-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
   font-size: 0.68rem;
   font-weight: 850;
   white-space: nowrap;
@@ -398,9 +397,9 @@ export const IngredientItem = styled.div`
   gap: 10px;
   min-width: 0;
   padding: 10px 11px;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 11px;
-  background: var(--app-surface-soft);
+  background: var(--color-surface-hover);
   overflow-wrap: anywhere;
 
   @container (max-width: 430px) {
@@ -417,7 +416,7 @@ export const IngredientInfo = styled.div`
 
   strong {
     overflow: hidden;
-    color: var(--app-ink);
+    color: var(--color-text);
     font-size: 0.78rem;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -429,7 +428,7 @@ export const IngredientStatus = styled.span<{ $available: boolean }>`
   align-items: center;
   gap: 6px;
   color: ${({ $available }) =>
-    $available ? "var(--app-success)" : "var(--app-warning)"};
+    $available ? "var(--color-success)" : "var(--color-pending)"};
   font-size: 0.67rem;
   font-weight: 750;
 
@@ -466,17 +465,17 @@ export const PeriodSelect = styled.select`
   min-width: 145px;
   height: 39px;
   padding: 0 11px;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 10px;
-  background: var(--app-surface);
-  color: var(--app-ink);
-  font: inherit;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: inherit;
   font-size: 0.75rem;
   font-weight: 750;
   cursor: pointer;
   &:focus {
-    outline: 2px solid var(--app-accent-soft);
-    border-color: var(--app-accent);
+    outline: 2px solid var(--color-primary-soft);
+    border-color: var(--color-accent);
   }
   @media (max-width: 580px) {
     width: 100%;
@@ -526,9 +525,9 @@ export const MetricCard = styled.article`
   min-width: 0;
   min-height: 154px;
   padding: 15px 10px;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 14px;
-  background: var(--app-paper);
+  background: var(--color-surface);
   text-align: center;
 
   > * {
@@ -550,13 +549,13 @@ export const MetricIcon = styled.div`
   width: 36px;
   height: 36px;
   border-radius: 11px;
-  background: var(--app-accent-soft);
-  color: var(--app-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
   font-size: 1rem;
 `;
 
 export const MetricLabel = styled.span`
-  color: var(--app-muted-dark);
+  color: var(--color-text-secondary);
   font-size: 0.78rem;
   font-weight: 800;
   line-height: 1.3;
@@ -567,7 +566,7 @@ export const MetricLabel = styled.span`
 export const MetricValue = styled.strong`
   display: block;
   max-width: 100%;
-  color: var(--app-ink);
+  color: var(--color-text);
   font-size: clamp(1.15rem, 2vw, 1.5rem);
   font-weight: 900;
   letter-spacing: -0.04em;
@@ -584,7 +583,7 @@ export const MetricFootnote = styled.span`
   gap: 5px;
   width: 100%;
   min-height: 20px;
-  color: var(--app-muted);
+  color: var(--color-text-secondary);
   font-size: 0.67rem;
   font-weight: 700;
   line-height: 1.35;
@@ -621,14 +620,14 @@ export const ActivityHeaderAction = styled.button`
   padding: 7px 11px;
   border: 0;
   border-radius: 30px;
-  background: var(--app-accent-soft);
-  color: var(--app-primary);
-  font: inherit;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-size: inherit;
   font-size: 0.7rem;
   font-weight: 850;
   cursor: pointer;
   &:hover {
-    background: var(--app-primary-soft);
+    background: var(--color-primary-soft);
   }
 `;
 
@@ -644,7 +643,7 @@ export const ActivityEntry = styled.div`
   align-items: center;
   gap: 10px;
   padding: 10px 0;
-  border-top: 1px solid var(--app-border);
+  border-top: 1px solid var(--color-border);
 
   &:first-child {
     border-top: 0;
@@ -669,16 +668,16 @@ export const ActivityAvatar = styled.div<{ $variant?: number }>`
   border-radius: 50%;
   background: ${({ $variant }) =>
     $variant === 1
-      ? "var(--app-danger-soft)"
+      ? "var(--color-danger-soft)"
       : $variant === 2
-        ? "var(--app-info-soft)"
-        : "var(--app-accent-soft)"};
+        ? "var(--color-primary-soft)"
+        : "var(--color-primary-soft)"};
   color: ${({ $variant }) =>
     $variant === 1
-      ? "var(--app-danger)"
+      ? "var(--color-danger)"
       : $variant === 2
-        ? "var(--app-info)"
-        : "var(--app-primary)"};
+        ? "var(--color-primary)"
+        : "var(--color-primary)"};
   font-size: 0.9rem;
   font-weight: 850;
 `;
@@ -689,13 +688,13 @@ export const ActivityInformation = styled.div`
   gap: 3px;
   min-width: 0;
   strong {
-    color: var(--app-ink);
+    color: var(--color-text);
     font-size: 0.76rem;
     font-weight: 850;
   }
   span {
     overflow: hidden;
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
     font-size: 0.73rem;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -703,7 +702,7 @@ export const ActivityInformation = styled.div`
 `;
 
 export const ActivityDate = styled.time`
-  color: var(--app-muted-dark);
+  color: var(--color-text-secondary);
   font-size: 0.7rem;
   white-space: nowrap;
   @media (max-width: 550px) {
@@ -721,7 +720,7 @@ export const ChartPanel = styled(Panel)`
 
 export const ChartLegend = styled.div`
   margin: -5px 0 8px 2px;
-  color: var(--app-muted);
+  color: var(--color-text-secondary);
   font-size: 0.68rem;
   font-weight: 700;
 `;
@@ -734,12 +733,12 @@ export const Chart = styled.div`
   height: 215px;
   min-width: 0;
   padding: 12px 3px 0;
-  border-bottom: 1px solid var(--app-border);
+  border-bottom: 1px solid var(--color-border);
   background: repeating-linear-gradient(
     to bottom,
     transparent 0,
     transparent 27px,
-    var(--app-border) 28px,
+    var(--color-border) 28px,
     transparent 29px
   );
 
@@ -768,7 +767,7 @@ export const ChartValue = styled.span`
   min-height: 14px;
   max-width: 100%;
   overflow: hidden;
-  color: var(--app-muted-dark);
+  color: var(--color-text-secondary);
   font-size: 0.58rem;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -781,14 +780,12 @@ export const ChartBar = styled.i<{ $height: number; $highlight: boolean }>`
   min-height: ${({ $height }) => ($height > 0 ? "3px" : "0")};
   border-radius: 6px 6px 2px 2px;
   background: ${({ $highlight }) =>
-    $highlight
-      ? "linear-gradient(180deg, var(--app-accent), var(--app-primary))"
-      : "var(--app-primary-soft)"};
-  transition: height var(--app-transition);
+    $highlight ? "var(--color-primary)" : "var(--color-primary-soft)"};
+  transition: height var(--transition-normal);
 `;
 
 export const ChartLabel = styled.span`
-  color: var(--app-muted-dark);
+  color: var(--color-text-secondary);
   font-size: 0.68rem;
   font-weight: 750;
   display: block;
@@ -804,9 +801,9 @@ export const SummaryStrip = styled.section`
   align-items: stretch;
   gap: 12px;
   padding: 16px;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 14px;
-  background: var(--app-surface-soft);
+  background: var(--color-surface-hover);
 
   @media (max-width: 800px) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -838,7 +835,7 @@ export const SummaryItem = styled.div`
   text-align: center;
 
   span {
-    color: var(--app-muted);
+    color: var(--color-text-secondary);
     font-size: 0.7rem;
     font-weight: 750;
     line-height: 1.35;
@@ -851,7 +848,7 @@ export const SummaryItem = styled.div`
     flex-wrap: wrap;
     gap: 5px;
     max-width: 100%;
-    color: var(--app-ink);
+    color: var(--color-text);
     font-size: 0.84rem;
     font-weight: 850;
     line-height: 1.35;
@@ -861,7 +858,7 @@ export const SummaryItem = styled.div`
 
   svg {
     flex: 0 0 auto;
-    color: var(--app-accent);
+    color: var(--color-accent);
     font-size: 0.75rem;
   }
 `;
@@ -891,7 +888,7 @@ export const RankingItem = styled.div`
   gap: 10px;
   min-width: 0;
   padding: 10px 0;
-  border-top: 1px solid var(--app-border);
+  border-top: 1px solid var(--color-border);
   &:first-child {
     border-top: 0;
   }
@@ -913,8 +910,8 @@ export const RankingPosition = styled.b`
   width: 27px;
   height: 27px;
   border-radius: 9px;
-  background: var(--app-accent-soft);
-  color: var(--app-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
   font-size: 0.73rem;
 `;
 
@@ -925,20 +922,20 @@ export const RankingInfo = styled.div`
   min-width: 0;
   strong {
     overflow: hidden;
-    color: var(--app-ink);
+    color: var(--color-text);
     font-size: 0.77rem;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
   span {
-    color: var(--app-muted);
+    color: var(--color-text-secondary);
     font-size: 0.68rem;
     overflow-wrap: anywhere;
   }
 `;
 
 export const RankingValue = styled.strong`
-  color: var(--app-primary);
+  color: var(--color-primary);
   font-size: 0.74rem;
   white-space: nowrap;
 
@@ -961,20 +958,20 @@ export const EmptyState = styled.div`
   min-height: 125px;
   padding: 18px;
   text-align: center;
-  border: 1px dashed var(--app-border);
+  border: 1px dashed var(--color-border);
   border-radius: 12px;
-  background: var(--app-surface-soft);
+  background: var(--color-surface-hover);
   svg {
-    color: var(--app-muted);
+    color: var(--color-text-secondary);
     font-size: 21px;
   }
   strong {
-    color: var(--app-ink);
+    color: var(--color-text);
     font-size: 0.8rem;
   }
   span {
     max-width: 290px;
-    color: var(--app-muted);
+    color: var(--color-text-secondary);
     font-size: 0.71rem;
     line-height: 1.45;
   }
@@ -982,17 +979,17 @@ export const EmptyState = styled.div`
 
 export const LoadingState = styled.p`
   margin: 9px 0 0;
-  color: var(--app-muted);
+  color: var(--color-text-secondary);
   font-size: 0.73rem;
   line-height: 1.45;
 `;
 
 export const ErrorMessage = styled.div`
   padding: 11px 13px;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 10px;
-  background: var(--app-warning-soft);
-  color: var(--app-ink);
+  background: var(--color-pending-soft);
+  color: var(--color-text);
   font-size: 0.78rem;
   line-height: 1.45;
 `;
@@ -1018,21 +1015,21 @@ export const AcceptIngredientsButton = styled.button`
   gap: 8px;
   min-height: 44px;
   padding: 9px 18px;
-  border: 1px solid var(--app-primary);
+  border: 1px solid var(--color-primary);
   border-radius: 10px;
-  background: var(--app-primary);
-  color: var(--app-white);
-  font: inherit;
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-size: inherit;
   font-size: 0.84rem;
   font-weight: 800;
   cursor: pointer;
   transition:
-    background var(--app-transition),
-    transform var(--app-transition),
-    opacity var(--app-transition);
+    background var(--transition-normal),
+    transform var(--transition-normal),
+    opacity var(--transition-normal);
 
   &:hover:not(:disabled) {
-    background: var(--app-primary-hover);
+    background: var(--color-primary-hover);
     transform: translateY(-1px);
   }
 
@@ -1046,7 +1043,7 @@ export const AcceptIngredientsButton = styled.button`
   }
 
   &:focus-visible {
-    outline: 3px solid var(--app-accent-soft);
+    outline: 3px solid var(--color-primary-soft);
     outline-offset: 3px;
   }
 

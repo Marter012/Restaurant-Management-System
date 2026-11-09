@@ -16,16 +16,16 @@ export const OrderOptions = styled.div`
   overflow-x: hidden;
   overflow-y: auto;
 
-  color: var(--app-order-text);
+  color: var(--color-text-secondary);
   scrollbar-width: thin;
-  scrollbar-color: var(--app-order-scrollbar) transparent;
+  scrollbar-color: var(--color-border-strong) transparent;
 
   &::-webkit-scrollbar {
     width: 6px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: var(--app-order-scrollbar);
+    background: var(--color-border-strong);
     border-radius: 10px;
   }
 
@@ -75,58 +75,58 @@ export const OverviewCard = styled.div<{
 
   background: ${({ $status, $tone }) =>
     $status === "paid"
-      ? "var(--app-order-paid-background)"
+      ? "var(--color-success-soft)"
       : $status === "partially_paid"
-        ? "var(--app-order-partial-background)"
+        ? "var(--color-partial-soft)"
         : $status === "pending"
-          ? "var(--app-order-pending-background)"
+          ? "var(--color-pending-soft)"
           : $status === "cancelled"
-            ? "var(--app-order-cancelled-background)"
+            ? "var(--color-danger-soft)"
             : $tone === "active"
-              ? "var(--app-order-status-active-background)"
+              ? "var(--color-primary-soft)"
               : $tone === "complete"
-                ? "var(--app-order-paid-background)"
+                ? "var(--color-success-soft)"
                 : $tone === "missing"
-                  ? "var(--app-order-cancelled-background)"
-                  : "var(--app-order-card)"};
+                  ? "var(--color-danger-soft)"
+                  : "var(--color-surface)"};
 
   color: ${({ $status, $tone }) =>
     $status === "paid"
-      ? "var(--app-order-paid-text)"
+      ? "var(--color-success)"
       : $status === "partially_paid"
-        ? "var(--app-order-partial-text)"
+        ? "var(--color-partial)"
         : $status === "pending"
-          ? "var(--app-order-pending-text)"
+          ? "var(--color-pending)"
           : $status === "cancelled"
-            ? "var(--app-order-cancelled-text)"
+            ? "var(--color-danger)"
             : $tone === "active"
-              ? "var(--app-order-status-active-text)"
+              ? "var(--color-primary)"
               : $tone === "complete"
-                ? "var(--app-order-paid-text)"
+                ? "var(--color-success)"
                 : $tone === "missing"
-                  ? "var(--app-order-cancelled-text)"
-                  : "var(--app-order-text)"};
+                  ? "var(--color-danger)"
+                  : "var(--color-text-secondary)"};
 
   border: 1px solid
     ${({ $status, $tone }) =>
       $status === "paid" || $tone === "complete" || $tone === "active"
-        ? "var(--app-order-paid-text)"
+        ? "var(--color-success)"
         : $status === "cancelled" || $tone === "missing"
-          ? "var(--app-order-cancelled-text)"
-          : "var(--app-order-border)"};
+          ? "var(--color-danger)"
+          : "var(--color-border)"};
 
-  border-radius: var(--app-radius);
-  box-shadow: var(--app-order-shadow);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
 
   transition:
-    background var(--app-transition),
-    border-color var(--app-transition),
-    box-shadow var(--app-transition),
-    transform var(--app-transition);
+    background var(--transition-normal),
+    border-color var(--transition-normal),
+    box-shadow var(--transition-normal),
+    transform var(--transition-normal);
 
   &:hover {
-    border-color: var(--app-order-border-strong);
-    box-shadow: var(--app-order-shadow-hover);
+    border-color: var(--color-border-strong);
+    box-shadow: var(--shadow-md);
     transform: translateY(-2px);
   }
 
@@ -145,22 +145,22 @@ export const OverviewIcon = styled.div<{ $type: string }>`
   width: 34px;
   height: 34px;
 
-  border-radius: var(--app-radius-sm);
-  color: var(--app-order-icon);
+  border-radius: var(--radius-sm);
+  color: var(--color-primary);
   font-size: 1rem;
 
   background: ${({ $type }) => {
     switch ($type) {
       case "status":
-        return "var(--app-order-status-active-background)";
+        return "var(--color-primary-soft)";
       case "payment":
-        return "var(--app-order-payment-default)";
+        return "var(--color-primary-soft)";
       case "total":
-        return "var(--app-order-discount-background)";
+        return "var(--color-primary-soft)";
       case "date":
-        return "var(--app-order-section-header-secondary)";
+        return "var(--color-surface-muted)";
       default:
-        return "var(--app-order-icon-background)";
+        return "var(--color-surface-muted)";
     }
   }};
 `;
@@ -173,13 +173,13 @@ export const OverviewContent = styled.div`
   min-width: 0;
 
   > span {
-    color: var(--app-order-muted);
+    color: var(--color-text-secondary);
     font-size: 0.7rem;
     font-weight: 650;
   }
 
   > strong {
-    color: var(--app-order-title);
+    color: var(--color-text);
     font-size: 0.83rem;
     font-weight: 800;
     overflow-wrap: anywhere;
@@ -212,17 +212,17 @@ export const OrderStatus = styled.span<{ $active: boolean }>`
   width: fit-content;
   padding: 4px 10px;
 
-  border-radius: var(--app-radius-sm);
+  border-radius: var(--radius-sm);
 
   background: ${({ $active }) =>
     $active
-      ? "var(--app-order-status-active-background)"
-      : "var(--app-order-status-inactive-background)"};
+      ? "var(--color-primary-soft)"
+      : "var(--color-surface-muted)"};
 
   color: ${({ $active }) =>
     $active
-      ? "var(--app-order-status-active-text)"
-      : "var(--app-order-status-inactive-text)"};
+      ? "var(--color-primary)"
+      : "var(--color-text-secondary)"};
 
   font-size: 0.73rem;
   font-weight: 800;
@@ -236,31 +236,31 @@ export const PaymentStatusBadge = styled.span<{ $status: string }>`
   width: fit-content;
   padding: 5px 10px;
 
-  border-radius: var(--app-radius-sm);
+  border-radius: var(--radius-sm);
 
   background: ${({ $status }) => {
     switch ($status) {
       case "paid":
-        return "var(--app-order-paid-background)";
+        return "var(--color-success-soft)";
       case "partial":
-        return "var(--app-order-partial-background)";
+        return "var(--color-partial-soft)";
       case "cancelled":
-        return "var(--app-order-cancelled-background)";
+        return "var(--color-danger-soft)";
       default:
-        return "var(--app-order-pending-background)";
+        return "var(--color-pending-soft)";
     }
   }};
 
   color: ${({ $status }) => {
     switch ($status) {
       case "paid":
-        return "var(--app-order-paid-text)";
+        return "var(--color-success)";
       case "partial":
-        return "var(--app-order-partial-text)";
+        return "var(--color-partial)";
       case "cancelled":
-        return "var(--app-order-cancelled-text)";
+        return "var(--color-danger)";
       default:
-        return "var(--app-order-pending-text)";
+        return "var(--color-pending)";
     }
   }};
 
@@ -278,10 +278,10 @@ export const DetailSection = styled.section`
   min-width: 0;
   padding: 0 11px 12px;
 
-  background: var(--app-order-background);
-  border: 1px solid var(--app-order-border);
-  border-radius: var(--app-radius);
-  box-shadow: var(--app-order-shadow);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
 
   @media (max-width: 600px) {
     gap: 9px;
@@ -299,24 +299,24 @@ export const SectionHeader = styled.div<{ $secondary?: boolean }>`
 
   background: ${({ $secondary }) =>
     $secondary
-      ? "var(--app-order-section-header-secondary)"
-      : "var(--app-order-section-header)"};
+      ? "var(--color-surface-muted)"
+      : "var(--color-primary-soft)"};
 
-  border-bottom: 1px solid var(--app-order-section-border);
+  border-bottom: 1px solid var(--color-border);
   border-radius: ${({ $secondary }) =>
-    $secondary ? "0" : "var(--app-radius) var(--app-radius) 0 0"};
+    $secondary ? "0" : "var(--radius-md) var(--radius-md) 0 0"};
 
-  color: var(--app-order-section-text);
+  color: var(--color-primary);
 
   svg {
     flex-shrink: 0;
-    color: var(--app-order-icon);
+    color: var(--color-primary);
     font-size: 1.1rem;
   }
 
   h3 {
     margin: 0;
-    color: var(--app-order-section-text);
+    color: var(--color-primary);
     font-size: 0.98rem;
     font-weight: 800;
   }
@@ -350,20 +350,20 @@ export const OrderItemCard = styled.article`
   min-width: 0;
   padding: 11px;
 
-  background: var(--app-order-product-background);
-  border: 1px solid var(--app-order-product-border);
-  border-radius: var(--app-radius);
-  box-shadow: var(--app-order-shadow);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
 
   transition:
-    background var(--app-transition),
-    border-color var(--app-transition),
-    box-shadow var(--app-transition);
+    background var(--transition-normal),
+    border-color var(--transition-normal),
+    box-shadow var(--transition-normal);
 
   &:hover {
-    border-color: var(--app-order-border-strong);
-    background: var(--app-order-product-hover);
-    box-shadow: var(--app-order-shadow-hover);
+    border-color: var(--color-border-strong);
+    background: var(--color-surface-hover);
+    box-shadow: var(--shadow-md);
   }
 
   @media (max-width: 600px) {
@@ -382,11 +382,11 @@ export const OrderItemImage = styled.div`
   height: 72px;
   overflow: hidden;
 
-  background: var(--app-order-product-image-background);
-  border: 1px solid var(--app-order-border);
-  border-radius: var(--app-radius-sm);
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
 
-  color: var(--app-order-icon-accent);
+  color: var(--color-accent);
   font-size: 1.8rem;
 
   img {
@@ -421,7 +421,7 @@ export const OrderItemHeading = styled.div`
 
   strong,
   span {
-    color: var(--app-order-title);
+    color: var(--color-text);
     font-size: 0.88rem;
     font-weight: 800;
   }
@@ -452,7 +452,7 @@ export const ItemMetadata = styled.div`
   flex-wrap: wrap;
   gap: 7px 12px;
 
-  color: var(--app-order-text);
+  color: var(--color-text-secondary);
   font-size: 0.76rem;
 
   > span {
@@ -465,13 +465,13 @@ export const ItemMetadata = styled.div`
 
     svg {
       flex-shrink: 0;
-      color: var(--app-order-icon-accent);
+      color: var(--color-accent);
       font-size: 0.85rem;
     }
   }
 
   > strong {
-    color: var(--app-order-title);
+    color: var(--color-text);
     font-size: 0.77rem;
   }
 
@@ -505,13 +505,13 @@ export const ItemChip = styled.span<{ $removed?: boolean }>`
 
   background: ${({ $removed }) =>
     $removed
-      ? "var(--app-order-ingredient-removed-background)"
-      : "var(--app-order-ingredient-background)"};
+      ? "var(--color-danger-soft)"
+      : "var(--color-surface-muted)"};
 
   color: ${({ $removed }) =>
     $removed
-      ? "var(--app-order-ingredient-removed-text)"
-      : "var(--app-order-ingredient-text)"};
+      ? "var(--color-danger)"
+      : "var(--color-text-secondary)"};
 
   font-size: 0.69rem;
   font-weight: 750;
@@ -532,9 +532,9 @@ export const DetailList = styled.div`
   min-width: 0;
   padding: 2px 9px;
 
-  background: var(--app-order-payment-background);
-  border: 1px solid var(--app-order-payment-border);
-  border-radius: var(--app-radius-sm);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
 `;
 
 export const DetailRow = styled.div`
@@ -546,7 +546,7 @@ export const DetailRow = styled.div`
   min-width: 0;
   padding: 11px 4px;
 
-  border-bottom: 1px solid var(--app-order-payment-border);
+  border-bottom: 1px solid var(--color-border);
 
   &:last-child {
     border-bottom: none;
@@ -554,14 +554,14 @@ export const DetailRow = styled.div`
 
   > span {
     min-width: 0;
-    color: var(--app-order-text);
+    color: var(--color-text-secondary);
     font-size: 0.81rem;
     overflow-wrap: anywhere;
   }
 
   > strong {
     min-width: 0;
-    color: var(--app-order-title);
+    color: var(--color-text);
     font-size: 0.83rem;
     font-weight: 800;
     text-align: right;
@@ -593,24 +593,24 @@ export const PaymentIcon = styled.span<{ $type: string }>`
   width: 30px;
   height: 30px;
 
-  border-radius: var(--app-radius-sm);
-  color: var(--app-order-icon);
+  border-radius: var(--radius-sm);
+  color: var(--color-primary);
   font-size: 0.9rem;
 
   background: ${({ $type }) => {
     switch ($type) {
       case "cash":
-        return "var(--app-order-payment-cash)";
+        return "var(--color-success-soft)";
       case "transfer":
-        return "var(--app-order-payment-transfer)";
+        return "var(--color-primary-soft)";
       case "qr":
-        return "var(--app-order-payment-qr)";
+        return "var(--color-primary-soft)";
       case "mercado_pago":
-        return "var(--app-order-payment-mercadopago)";
+        return "var(--color-primary-soft)";
       case "discount":
-        return "var(--app-order-discount-background)";
+        return "var(--color-primary-soft)";
       default:
-        return "var(--app-order-payment-default)";
+        return "var(--color-primary-soft)";
     }
   }};
 `;
@@ -620,9 +620,9 @@ export const PaymentIcon = styled.span<{ $type: string }>`
 export const DiscountBadge = styled.strong`
   padding: 5px 10px;
 
-  border-radius: var(--app-radius-sm);
-  background: var(--app-order-discount-background);
-  color: var(--app-order-discount-text);
+  border-radius: var(--radius-sm);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
 
   font-size: 0.8rem;
   font-weight: 800;
@@ -632,11 +632,11 @@ export const ObservationContent = styled.p`
   margin: 0;
   padding: 13px;
 
-  background: var(--app-order-observation-background);
-  border: 1px solid var(--app-order-observation-border);
-  border-radius: var(--app-radius-sm);
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
 
-  color: var(--app-order-text);
+  color: var(--color-text-secondary);
   font-size: 0.84rem;
   line-height: 1.55;
   overflow-wrap: anywhere;
@@ -652,11 +652,11 @@ export const EmptyOrderDetail = styled.div`
   min-height: 90px;
   padding: 17px;
 
-  background: var(--app-order-card-hover);
-  border: 1px dashed var(--app-order-border-strong);
-  border-radius: var(--app-radius-sm);
+  background: var(--color-surface-hover);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-sm);
 
-  color: var(--app-order-title);
+  color: var(--color-text);
   font-size: 0.83rem;
   text-align: center;
 `;

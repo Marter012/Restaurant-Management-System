@@ -9,24 +9,26 @@ export const TimePickerContainer = styled.div`
   height: 46px;
   box-sizing: border-box;
   overflow: hidden;
-  border: 1px solid var(--app-border);
-  border-radius: var(--app-radius-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
   transition:
-    border-color 0.2s ease,
-    background 0.2s ease,
-    box-shadow 0.2s ease,
-    transform 0.15s ease;
+    border-color var(--transition-normal),
+    background var(--transition-normal),
+    box-shadow var(--transition-normal),
+    transform var(--transition-fast);
 
-  background: var(--app-canvas);
+  background: var(--color-background);
+
   &:hover {
-    border-color: var(--app-accent);
+    border-color: var(--color-accent);
   }
-    cursor: pointer;
+
+  cursor: pointer;
 
   &:focus-within {
-    border-color: var(--app-primary);
-    background: var(--app-canvas);
-    box-shadow: 0 0 0 3px var(--app-accent);
+    border-color: var(--color-primary);
+    background: var(--color-background);
+    box-shadow: 0 0 0 3px var(--color-primary-soft);
   }
 
   &:has(input:disabled) {
@@ -45,21 +47,21 @@ export const TimePickerIcon = styled.button`
   padding: 0;
   border: none;
   background: transparent;
-  color: var(--app-primary);
+  color: var(--color-primary);
   font-size: 1.3rem;
   cursor: pointer;
 
   transition:
-    color 0.2s ease,
-    transform 0.2s ease;
+    color var(--transition-normal),
+    transform var(--transition-normal);
 
   &:hover {
-    color: var(--app-accent);
+    color: var(--color-accent);
     transform: scale(1.1);
   }
 
   &:focus-visible {
-    outline: 2px solid var(--app-primary);
+    outline: 2px solid var(--color-primary);
     outline-offset: -3px;
   }
 
@@ -76,16 +78,16 @@ export const TimePickerTextInput = styled.input`
   padding: 0 8px 0 0;
   border: none;
   outline: none;
-    cursor: pointer;
+  cursor: pointer;
 
-  color: var(--app-primary);
+  color: var(--color-primary);
   font-size: 0.9rem;
   font-weight: 750;
   letter-spacing: 0.05em;
   box-sizing: border-box;
 
   &::placeholder {
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
     opacity: 0.8;
   }
 
@@ -106,5 +108,5 @@ export const TimePickerNativeInput = styled.input`
   border: 0;
   opacity: 0;
   pointer-events: none;
-    cursor: pointer;
+  cursor: pointer;
 `;

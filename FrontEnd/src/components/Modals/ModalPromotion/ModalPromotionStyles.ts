@@ -11,7 +11,7 @@ export const PromotionOptions = styled.div`
   width: 100%;
   min-width: 0;
   box-sizing: border-box;
-  color: var(--app-ink);
+  color: var(--color-text);
 
   .promotion-overview {
     display: grid;
@@ -21,7 +21,7 @@ export const PromotionOptions = styled.div`
     width: 100%;
     min-width: 0;
     padding: 2px 0 20px;
-    border-bottom: 1px solid var(--app-border);
+    border-bottom: 1px solid var(--color-border);
   }
 
   .promotion-overview-image {
@@ -29,7 +29,7 @@ export const PromotionOptions = styled.div`
     min-width: 0;
     overflow: hidden;
     border-radius: 13px;
-    background: var(--app-surface-soft);
+    background: var(--color-surface-muted);
   }
 
   .promotion-overview-image img {
@@ -48,8 +48,8 @@ export const PromotionOptions = styled.div`
     gap: 7px;
     padding: 7px 11px;
     border-radius: 8px;
-    background: var(--app-primary);
-    color: var(--app-white);
+    background: var(--color-primary);
+    color: var(--color-white);
     font-size: 0.78rem;
     font-weight: 800;
   }
@@ -64,7 +64,7 @@ export const PromotionOptions = styled.div`
 
   .promotion-overview-main h2 {
     margin: 0;
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: clamp(1.35rem, 2.2vw, 2rem);
     font-weight: 850;
     line-height: 1.15;
@@ -77,8 +77,8 @@ export const PromotionOptions = styled.div`
     max-width: 100%;
     padding: 10px 15px;
     border-radius: 12px;
-    background: var(--app-surface-soft);
-    color: var(--app-primary);
+    background: var(--color-surface-muted);
+    color: var(--color-primary);
     font-size: 1.55rem;
     font-weight: 850;
     white-space: nowrap;
@@ -93,7 +93,7 @@ export const PromotionOptions = styled.div`
     min-height: 110px;
     min-width: 0;
     padding-left: 24px;
-    border-left: 1px solid var(--app-border);
+    border-left: 1px solid var(--color-border);
   }
 
   .promotion-detail-status {
@@ -109,20 +109,20 @@ export const PromotionOptions = styled.div`
   }
 
   .promotion-detail-status.is-active {
-    background: #e1efdf;
-    color: #286b38;
+    background: var(--color-success-soft);
+    color: var(--color-success);
   }
 
   .promotion-detail-status.is-inactive {
-    background: var(--app-danger-soft);
-    color: var(--app-danger);
+    background: var(--color-danger-soft);
+    color: var(--color-danger);
   }
 
   .promotion-availability {
     display: inline-flex;
     align-items: center;
     gap: 9px;
-    color: var(--app-muted-dark);
+    color: var(--color-text-secondary);
     font-size: 0.82rem;
     line-height: 1.35;
     overflow-wrap: anywhere;
@@ -130,7 +130,7 @@ export const PromotionOptions = styled.div`
 
   .promotion-availability svg {
     flex: 0 0 auto;
-    color: var(--app-accent);
+    color: var(--color-accent);
     font-size: 1rem;
   }
 
@@ -141,9 +141,9 @@ export const PromotionOptions = styled.div`
     gap: 12px;
     min-width: 0;
     padding: 14px 17px;
-    border: 1px solid var(--app-border);
+    border: 1px solid var(--color-border);
     border-radius: 11px;
-    background: var(--app-surface-soft);
+    background: var(--color-surface-muted);
   }
 
   .promotion-description-icon {
@@ -152,22 +152,22 @@ export const PromotionOptions = styled.div`
     width: 32px;
     height: 32px;
     border-radius: 8px;
-    background: var(--app-canvas);
-    color: var(--app-primary);
+    background: var(--color-background);
+    color: var(--color-primary);
     font-size: 1.25rem;
     font-weight: 800;
   }
 
   .promotion-description-row > strong {
     padding-right: 13px;
-    border-right: 1px solid var(--app-accent);
-    color: var(--app-primary);
+    border-right: 1px solid var(--color-accent);
+    color: var(--color-primary);
     font-size: 0.88rem;
   }
 
   .promotion-description-value {
     min-width: 0;
-    color: var(--app-ink);
+    color: var(--color-text);
     font-size: 0.9rem;
     line-height: 1.45;
     overflow-wrap: anywhere;
@@ -196,7 +196,7 @@ export const PromotionOptions = styled.div`
       min-height: 0;
       padding: 14px 0 0;
       border-left: 0;
-      border-top: 1px solid var(--app-border);
+      border-top: 1px solid var(--color-border);
     }
   }
 
@@ -260,14 +260,14 @@ export const PromotionInfo = styled.div`
 
   h3 {
     margin: 0 0 5px;
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 20px;
     font-weight: 700;
   }
 
   p {
     margin: 0;
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 14px;
     line-height: 1.5;
   }
@@ -278,23 +278,23 @@ export const PromotionInfo = styled.div`
     justify-content: space-between;
     gap: 15px;
     padding: 10px 12px;
-    background: var(--app-surface-soft);
+    background: var(--color-surface-muted);
     border-radius: 7px;
 
     span {
-      color: var(--app-primary);
+      color: var(--color-primary);
       font-size: 13px;
     }
 
     strong {
-      color: var(--app-primary);
+      color: var(--color-primary);
       font-size: 14px;
       text-align: right;
     }
   }
 
   > strong {
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 15px;
   }
 
@@ -344,15 +344,15 @@ export const PromotionItems = styled.div`
     width: 34px;
     height: 34px;
     border-radius: 9px;
-    background: var(--app-surface-soft);
-    color: var(--app-accent);
+    background: var(--color-surface-muted);
+    color: var(--color-accent);
     font-size: 1.3rem;
     font-weight: 800;
   }
 
   h3 {
     margin: 0;
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 1.12rem;
     font-weight: 850;
   }
@@ -387,10 +387,10 @@ export const PromotionItem = styled.div`
   min-width: 0;
   box-sizing: border-box;
   padding: 15px;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--color-border);
   border-radius: 14px;
-  background: var(--app-surface);
-  box-shadow: var(--app-shadow-xs);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
 
   .promotion-group-meta {
     display: flex;
@@ -398,7 +398,7 @@ export const PromotionItem = styled.div`
     gap: 13px;
     min-width: 0;
     padding-right: 15px;
-    border-right: 1px solid var(--app-border);
+    border-right: 1px solid var(--color-border);
   }
 
   .promotion-group-icon {
@@ -408,7 +408,7 @@ export const PromotionItem = styled.div`
     width: 52px;
     height: 52px;
     border-radius: 13px;
-    background: var(--app-surface-soft);
+    background: var(--color-surface-muted);
     font-size: 1.55rem;
   }
 
@@ -421,7 +421,7 @@ export const PromotionItem = styled.div`
   }
 
   .promotion-group-label strong {
-    color: var(--app-primary);
+    color: var(--color-primary);
     font-size: 0.92rem;
     font-weight: 850;
     line-height: 1.3;
@@ -436,10 +436,10 @@ export const PromotionItem = styled.div`
     max-width: 100%;
     box-sizing: border-box;
     padding: 6px 10px;
-    border: 1px solid var(--app-border);
+    border: 1px solid var(--color-border);
     border-radius: 999px;
-    background: var(--app-surface-soft);
-    color: var(--app-primary);
+    background: var(--color-surface-muted);
+    color: var(--color-primary);
     font-size: 0.76rem;
     font-weight: 750;
     line-height: 1.25;
@@ -470,17 +470,17 @@ export const PromotionItem = styled.div`
     box-sizing: border-box;
     margin: 0;
     padding: 8px 12px;
-    border: 1px solid var(--app-border);
+    border: 1px solid var(--color-border);
     border-radius: 999px;
-    background: var(--app-white);
-    color: var(--app-ink);
+    background: var(--color-white);
+    color: var(--color-text);
     font-size: 0.8rem;
     font-weight: 650;
     line-height: 1.3;
     text-align: center;
     overflow-wrap: anywhere;
     word-break: normal;
-    box-shadow: 0 2px 5px rgba(var(--app-shadow-rgb), 0.05);
+    box-shadow: 0 2px 5px color-mix(in srgb, var(--color-text) 5%, transparent);
   }
 
   @media (max-width: 700px) {
@@ -491,7 +491,7 @@ export const PromotionItem = styled.div`
     .promotion-group-meta {
       padding: 0 0 12px;
       border-right: 0;
-      border-bottom: 1px solid var(--app-border);
+      border-bottom: 1px solid var(--color-border);
     }
 
     .promotion-group-icon {

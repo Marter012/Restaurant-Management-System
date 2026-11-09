@@ -3,4 +3,3 @@ export type PaymentMethod =
   | "transfer"
   | "qr"
   | "debit_card"
-  | "mercado_pago";

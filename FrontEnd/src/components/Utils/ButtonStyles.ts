@@ -1,39 +1,25 @@
 import styled, { css } from "styled-components";
 
 // =========================================================
-// BOTÓN CHOCOLATE Y CARAMELO
+// BOTÓN PRINCIPAL Y ESTADOS
 // Se aplica únicamente cuando se importa y se utiliza.
 // =========================================================
 
 export const caramelButtonStyles = css`
-  background-image: linear-gradient(
-    135deg,
-    #B78350 0%,
-    #94633D 50%,
-    #60351F 100%
-  ) !important;
+  background: var(--color-primary);
+  color: var(--color-white);
+  border-color: var(--color-primary);
 
-  color: #FFF8EC;
-  border-color: #94633D;
-
-  &:hover {
-    background-image: linear-gradient(
-      135deg,
-      #C4925F 0%,
-      #A67549 50%,
-      #70452C 100%
-    );
+  &:hover:not(:disabled) {
+    background: var(--color-primary-hover);
+    border-color: var(--color-primary-hover);
   }
 
-  &:active {
-    background-image: linear-gradient(
-      135deg,
-      #94633D 0%,
-      #60351F 100%
-    );
+  &:active:not(:disabled) {
+    background: var(--color-sidebar-deep);
+    border-color: var(--color-sidebar-deep);
   }
 `;
-
 
 export const ActionButton = styled.button`
   display: inline-flex;
@@ -42,38 +28,45 @@ export const ActionButton = styled.button`
   gap: 8px;
   min-height: 46px;
   padding: 0 19px;
-  border: 1px solid var(--app-primary);
-  border-radius: 11px;
-  background: var(--app-primary);
-  color: var(--app-white);
-  font-family: inherit;
-  font-size: 0.86rem;
-  font-weight: 750;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
   cursor: pointer;
   transition:
-    transform 180ms ease,
-    filter 180ms ease,
-    box-shadow 180ms ease;
+    transform var(--transition-fast),
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 
   &:hover:not(:disabled) {
-    filter: brightness(1.08);
-    box-shadow: 0 8px 18px rgba(var(--app-shadow-rgb), 0.16);
+    background: var(--color-primary-hover);
+    border-color: var(--color-primary-hover);
+    box-shadow: var(--shadow-md);
     transform: translateY(-1px);
   }
 
   &:active:not(:disabled) {
     transform: scale(0.98);
   }
+
   &:disabled {
     opacity: 0.58;
     cursor: not-allowed;
   }
 
   &.ligth {
-    background: var(--app-accent);
-    border-color: var(--app-accent);
-    color: var(--app-white);
-    box-shadow: 0 4px 12px rgba(var(--app-shadow-rgb), 0.15);
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-white);
+    box-shadow: var(--shadow-sm);
+
+    &:hover:not(:disabled) {
+      background: var(--color-primary-hover);
+      border-color: var(--color-primary-hover);
+    }
   }
 `;
 
@@ -83,21 +76,21 @@ export const CancelButton = styled.button`
   justify-content: center;
   min-height: 46px;
   padding: 0 19px;
-  border: 1px solid var(--app-border);
-  border-radius: 11px;
-  background: var(--app-white);
-  color: var(--app-primary);
-  font-family: inherit;
-  font-size: 0.86rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
   font-weight: 700;
   cursor: pointer;
   transition:
-    background 180ms ease,
-    border-color 180ms ease;
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
 
   &:hover:not(:disabled) {
-    background: var(--app-surface-soft);
-    border-color: var(--app-accent);
+    background: var(--color-surface-hover);
+    border-color: var(--color-border-strong);
   }
 
   &:disabled {
@@ -113,39 +106,47 @@ export const StatusButton = styled.button`
   min-height: 46px;
   padding: 0 19px;
   border: 1px solid transparent;
-  border-radius: 11px;
-  color: var(--app-white);
-  font-family: inherit;
-  font-size: 0.86rem;
-  font-weight: 750;
+  border-radius: var(--radius-md);
+  color: var(--color-white);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
   cursor: pointer;
-    background: #4f8b50 ;
-  
+  background: var(--color-success);
+
   transition:
-    filter 180ms ease,
-    transform 180ms ease;
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast),
+    filter var(--transition-fast);
 
   &.active {
-    background: #4f8b50 !important;
-    color: var(--app-white) !important;
+    background: var(--color-success) !important;
+    border-color: var(--color-success) !important;
+    color: var(--color-white) !important;
   }
 
   &.inactive {
-    background: var(--app-primary) !important;
-    color: var(--app-white) !important;
+    background: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+    color: var(--color-white) !important;
   }
 
   &:hover:not(:disabled) {
     filter: brightness(1.07);
   }
+
   &:active:not(:disabled) {
     transform: scale(0.98);
   }
+
   &:disabled {
     cursor: not-allowed;
     opacity: 0.6;
   }
+
   &.danger {
-    background: #c3212c;
-}
+    background: var(--color-danger) !important;
+    border-color: var(--color-danger) !important;
+    color: var(--color-white) !important;
+  }
 `;
