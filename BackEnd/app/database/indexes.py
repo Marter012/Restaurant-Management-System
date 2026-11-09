@@ -39,3 +39,6 @@ async def create_indexes():
     await cash_movement_collection.create_index(
         "updated_by_user_id"
     )
+
+    from app.database.connection import database
+    await database["audit_logs"].create_index("created_at")

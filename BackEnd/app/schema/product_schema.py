@@ -13,6 +13,8 @@ class ProductCreate(BaseModel):
 
     price: float
 
+    discount_percentage: float | None = Field(default=None, ge=0, le=100)
+
     quantity: int
 
     status: bool = True
@@ -31,6 +33,8 @@ class ProductUpdate(BaseModel):
 
     price: float | None = None
 
+    discount_percentage: float | None = Field(default=None, ge=0, le=100)
+
     quantity: int | None = Field(default=None, ge=0)
 
     status: bool | None = None
@@ -44,4 +48,7 @@ class ProductResponse(
     MongoModel
 ):
 
-    pass
+    discount_amount: float = 0
+    final_price: float | None = None
+    discount_source: str | None = None
+    effective_discount_percentage: float = 0

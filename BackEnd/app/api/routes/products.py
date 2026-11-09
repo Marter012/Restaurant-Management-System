@@ -23,6 +23,31 @@ router = APIRouter(
 service = ProductService()
 
 
+async def _with_effective_discount(product):
+    """Agrega precio efectivo sin modificar el precio base almacenado."""
+    if not product:
+        return product
+    settings = await database["app_settings"].find_one({"_id": "commercial"}) or {}
+    individual = product.get("discount_percentage")
+    if individual is not None and float(individual) > 0:
+        percentage = float(individual)
+        discount_source = "individual"
+    elif settings.get("general_discount_enabled"):
+        percentage = float(settings.get("general_discount_percentage", 0) or 0)
+        discount_source = "general" if percentage > 0 else None
+    else:
+        percentage = 0.0
+        discount_source = None
+    price = float(product.get("price", 0) or 0)
+    amount = round(price * percentage / 100, 2)
+    enriched = dict(product)
+    enriched["effective_discount_percentage"] = percentage
+    enriched["discount_amount"] = amount
+    enriched["final_price"] = round(price - amount, 2)
+    enriched["discount_source"] = discount_source
+    return enriched
+
+
 # =========================================================
 # SCHEMAS
 # =========================================================
@@ -53,7 +78,8 @@ class IngredientAvailabilityUpdate(BaseModel):
 async def get_products(
     current_user=Depends(get_current_user),
 ):
-    return await service.get_all()
+    products = await service.get_all()
+    return [await _with_effective_discount(product) for product in products]
 
 
 # =========================================================
@@ -233,6 +259,7 @@ async def create_product(
     current_user=Depends(get_current_user),
 ):
     result = await service.create(product)
+    result = await _with_effective_discount(result)
 
     await AuditService.record(
         current_user,
@@ -265,7 +292,7 @@ async def get_product(
     product_id: str,
     current_user=Depends(get_current_user),
 ):
-    return await service.get_by_id(product_id)
+    return await _with_effective_discount(await service.get_by_id(product_id))
 
 
 # =========================================================
@@ -286,6 +313,7 @@ async def update_product(
         product_id,
         product,
     )
+    result = await _with_effective_discount(result)
 
     await AuditService.record(
         current_user,

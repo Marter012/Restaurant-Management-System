@@ -29,6 +29,7 @@ import {
 } from "../../../services/settingsService.ts";
 import type { AuditEntry } from "../../../services/settingsService.ts";
 import { getAxiosErrorMessage } from "../../Utils/ErrorAxios.tsx";
+import SettingsStoreContact from "./SettingsStoreContact.tsx";
 
 import {
   GeneralContent,
@@ -450,6 +451,8 @@ const SettingsGeneral = () => {
       </GeneralHeading>
 
       {error && <ErrorMessage>{error}</ErrorMessage>}
+
+      <SettingsStoreContact />
 
       <DashboardGrid>
         <Panel>

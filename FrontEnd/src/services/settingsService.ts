@@ -28,6 +28,40 @@ export interface IngredientAvailabilityResponse {
 }
 
 // ==============================
+// CONFIGURACIÓN DEL ESTABLECIMIENTO
+// ==============================
+
+export interface EstablishmentSettings {
+  name: string;
+  phone_number: string;
+}
+
+export interface CommercialSettings {
+  public_sales_enabled: boolean;
+  general_discount_enabled: boolean;
+  general_discount_percentage: number;
+}
+
+export interface AuditRetentionSettings {
+  retention_days: number;
+}
+
+export interface AuditRetentionPreview {
+  retention_days: number;
+  cutoff_date: string;
+  records_to_delete: number;
+  oldest_record_date: string | null;
+}
+
+export interface AuditRetentionUpdateResponse {
+  confirmation_required: boolean;
+  retention_days: number;
+  records_to_delete?: number;
+  deleted_records?: number;
+  message: string;
+}
+
+// ==============================
 // OBTENER CONFIGURACIÓN GENERAL
 // ==============================
 
@@ -85,56 +119,48 @@ export const updateIngredientAvailabilityAPI = async (
   return response.data;
 };
 
+// ==============================
+// OBTENER CONFIGURACIÓN DEL ESTABLECIMIENTO
+// ==============================
 
-/* ==============================
-   CONFIGURACIÓN DEL ESTABLECIMIENTO
-============================== */
+export const getEstablishmentAPI =
+  async (): Promise<EstablishmentSettings> => {
+    const response = await api.get("/settings/establishment");
 
-export interface EstablishmentSettings {
-  name: string;
-}
+    return {
+      name: String(response.data?.name ?? "Boutique de Sabores"),
+      phone_number: String(response.data?.phone_number ?? ""),
+    };
+  };
 
-export interface CommercialSettings {
-  public_sales_enabled: boolean;
-  general_discount_enabled: boolean;
-  general_discount_percentage: number;
-}
-
-export interface AuditRetentionSettings {
-  retention_days: number;
-}
-
-export interface AuditRetentionPreview {
-  retention_days: number;
-  cutoff_date: string;
-  records_to_delete: number;
-  oldest_record_date: string | null;
-}
-
-export interface AuditRetentionUpdateResponse {
-  confirmation_required: boolean;
-  retention_days: number;
-  records_to_delete?: number;
-  deleted_records?: number;
-  message: string;
-}
-
-export const getEstablishmentAPI = async (): Promise<EstablishmentSettings> => {
-  const response = await api.get("/settings/establishment");
-  return response.data;
-};
+// ==============================
+// ACTUALIZAR CONFIGURACIÓN DEL ESTABLECIMIENTO
+// ==============================
 
 export const updateEstablishmentAPI = async (
   data: EstablishmentSettings,
 ): Promise<EstablishmentSettings> => {
   const response = await api.put("/settings/establishment", data);
-  return response.data;
+
+  return {
+    name: String(response.data?.name ?? data.name),
+    phone_number: String(response.data?.phone_number ?? data.phone_number),
+  };
 };
 
-export const getCommercialSettingsAPI = async (): Promise<CommercialSettings> => {
-  const response = await api.get("/settings/commercial");
-  return response.data;
-};
+// ==============================
+// OBTENER CONFIGURACIÓN COMERCIAL
+// ==============================
+
+export const getCommercialSettingsAPI =
+  async (): Promise<CommercialSettings> => {
+    const response = await api.get("/settings/commercial");
+    return response.data;
+  };
+
+// ==============================
+// ACTUALIZAR CONFIGURACIÓN COMERCIAL
+// ==============================
 
 export const updateCommercialSettingsAPI = async (
   data: CommercialSettings,
@@ -143,10 +169,19 @@ export const updateCommercialSettingsAPI = async (
   return response.data;
 };
 
-export const getAuditRetentionAPI = async (): Promise<AuditRetentionSettings> => {
-  const response = await api.get("/settings/audit-retention");
-  return response.data;
-};
+// ==============================
+// OBTENER CONFIGURACIÓN DE RETENCIÓN DE AUDITORÍA
+// ==============================
+
+export const getAuditRetentionAPI =
+  async (): Promise<AuditRetentionSettings> => {
+    const response = await api.get("/settings/audit-retention");
+    return response.data;
+  };
+
+// ==============================
+// PREVISUALIZAR ELIMINACIÓN DE AUDITORÍA
+// ==============================
 
 export const previewAuditRetentionAPI = async (
   retention_days: number,
@@ -154,8 +189,13 @@ export const previewAuditRetentionAPI = async (
   const response = await api.post("/settings/audit-retention/preview", {
     retention_days,
   });
+
   return response.data;
 };
+
+// ==============================
+// ACTUALIZAR RETENCIÓN DE AUDITORÍA
+// ==============================
 
 export const updateAuditRetentionAPI = async (
   retention_days: number,
@@ -165,5 +205,12 @@ export const updateAuditRetentionAPI = async (
     retention_days,
     confirm_deletion,
   });
+
   return response.data;
 };
+
+export const getEstablishmentSettingsAPI =
+  getEstablishmentAPI;
+
+export const updateEstablishmentSettingsAPI =
+  updateEstablishmentAPI;

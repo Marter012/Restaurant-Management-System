@@ -19,5 +19,8 @@ class AuditService:
 
     @classmethod
     async def recent(cls, limit=100):
+        # Limpieza defensiva además de la tarea programada.
+        from app.services.settings_service import SettingsService
+        await SettingsService.cleanup_expired_audit_logs()
         cursor = cls.collection.find().sort("created_at", -1).limit(limit)
         return [serialize_mongo(item) async for item in cursor]
