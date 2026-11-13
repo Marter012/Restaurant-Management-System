@@ -454,6 +454,7 @@ const ManageOrder = ({
               <OrdersTableRow
                 key={order.id}
                 $columns={headers.length}
+                $online={order.source === "online"}
                 onClick={() => handleOpenOrder(order)}
                 role="button"
                 tabIndex={0}
@@ -473,6 +474,7 @@ const ManageOrder = ({
 
                 <span className="customer">
                   {order.customer_name || "Sin nombre"}
+                  {order.source === "online" && <small className="online-origin">● ONLINE</small>}
                 </span>
 
                 <div className="product-lines">

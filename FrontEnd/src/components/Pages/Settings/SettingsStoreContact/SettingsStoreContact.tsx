@@ -3,8 +3,8 @@ import { FaWhatsapp } from "react-icons/fa";
 import {
   getEstablishmentSettingsAPI,
   updateEstablishmentSettingsAPI,
-} from "../../../services/settingsService.ts";
-import { getAxiosErrorMessage } from "../../Utils/ErrorAxios.tsx";
+} from "../../../../services/settingsService.ts";
+import { getAxiosErrorMessage } from "../../../Utils/ErrorAxios.tsx";
 import {
   StoreContactPanel,
   StoreContactCopy,

@@ -8,7 +8,7 @@ router = APIRouter(prefix="/public", tags=["Public Store"])
 products_service = ProductService()
 
 
-async def _effective_product(product: dict, commercial: dict) -> dict:
+async def _effective_product(product: dict, commercial: dict, allow_out_of_stock: bool = False) -> dict:
     base_price = float(product.get("price", 0) or 0)
     individual = product.get("discount_percentage")
     if individual is not None and float(individual) > 0:
@@ -36,7 +36,7 @@ async def _effective_product(product: dict, commercial: dict) -> dict:
         "has_garnish": bool(product.get("has_garnish", False)),
         "garnish_options": product.get("garnish_options", []) or [],
         "ingredients": product.get("ingredients", []) or [],
-        "available": int(product.get("quantity", 0) or 0) > 0,
+        "available": int(product.get("quantity", 0) or 0) > 0 or allow_out_of_stock,
     }
 
 
@@ -44,27 +44,49 @@ async def _effective_product(product: dict, commercial: dict) -> dict:
 async def get_public_store():
     establishment = await SettingsService.get_establishment()
     commercial = await SettingsService.get_commercial()
+    store_config = await SettingsService.get_store_configuration()
+    operational = await database["app_settings"].find_one({"_id": "operational"}) or {}
+    operational_updated_at = operational.get("updated_at")
     return {
-        "name": establishment.get("name", "Boutique de Sabores"),
+        "name": store_config.get("store_title") or establishment.get("name", "Boutique de Sabores"),
         "phone_number": establishment.get("phone_number", ""),
         "public_sales_enabled": bool(commercial.get("public_sales_enabled", False)),
         "general_discount_enabled": bool(commercial.get("general_discount_enabled", False)),
         "general_discount_percentage": float(commercial.get("general_discount_percentage", 0) or 0),
+        "configuration": store_config,
+        "cash_register_open": bool(await database["cash_registers"].find_one({"status_cash_register": "open", "status": True}, {"_id": 1})),
+        "allow_out_of_stock": bool(operational.get("allow_out_of_stock", False)),
+        "operational_updated_at": operational_updated_at.isoformat() if hasattr(operational_updated_at, "isoformat") else str(operational_updated_at or ""),
     }
 
 
 @router.get("/products")
 async def get_public_products():
     commercial = await SettingsService.get_commercial()
+    store_config = await SettingsService.get_store_configuration()
+    featured_ids = set(store_config.get("featured_product_ids", []))
+    enabled_ids = set(store_config.get("enabled_product_ids", []))
     operational = await database["app_settings"].find_one({"_id": "operational"}) or {}
     allow_out_of_stock = bool(operational.get("allow_out_of_stock", False))
     products = await products_service.get_all()
     visible = [
         product for product in products
         if product.get("status", True) is True
+        and (not store_config.get("catalog_restricted") or product.get("id") in enabled_ids)
         and (allow_out_of_stock or int(product.get("quantity", 0) or 0) > 0)
     ]
-    return [await _effective_product(product, commercial) for product in visible]
+    result = [await _effective_product(product, commercial, allow_out_of_stock) for product in visible]
+    discounts = store_config.get("product_discounts", {}) or {}
+    general_store_discount = float(store_config.get("general_store_discount", 0) or 0)
+    for product in result:
+        product["featured"] = product.get("id") in featured_ids
+        store_discount = float(discounts.get(product["id"], general_store_discount) or 0)
+        if store_discount > 0:
+            product["effective_discount_percentage"] = min(store_discount, 100)
+            product["discount_amount"] = round(product["price"] * store_discount / 100, 2)
+            product["final_price"] = round(product["price"] - product["discount_amount"], 2)
+            product["discount_source"] = "store"
+    return result
 
 
 @router.get("/unavailable-ingredients")

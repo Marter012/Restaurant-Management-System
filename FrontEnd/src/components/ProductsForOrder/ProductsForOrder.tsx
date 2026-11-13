@@ -18,6 +18,10 @@ import {
 
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store.ts";
+import {
+  getProductFallbackImage,
+  getProductImage,
+} from "../Utils/productImage.ts";
 
 const ProductsForOrder = ({
   products,
@@ -171,11 +175,14 @@ const ProductsForOrder = ({
                   <div className="product-header">
                     <img
                       className="product-image"
-                      src={product.image || "/images/Products.png"}
-                      alt={product.name}
+                      src={getProductImage(product.image, product.category)}
                       onError={(event) => {
-                        event.currentTarget.src = "/images/Products.png";
+                        event.currentTarget.onerror = null;
+                        event.currentTarget.src = getProductFallbackImage(
+                          product.category,
+                        );
                       }}
+                      alt={product.name}
                     />
                     <h4 className="product-title">{product.name}</h4>
                   </div>

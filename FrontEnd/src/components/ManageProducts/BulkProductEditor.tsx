@@ -22,6 +22,7 @@ import {
   updateProductsBulkApi,
 } from "../../services/productService.ts";
 import { useAlert } from "../context/AlertContext.tsx";
+import { getProductFallbackImage, getProductImage } from "../Utils/productImage.ts";
 
 type ProductDraft = { quantity: string; price: string };
 
@@ -339,11 +340,14 @@ const BulkProductEditor = ({
                       disabled={saving}
                     />
                     <img
-                      src={product.image || "/images/Products.png"}
-                      alt=""
+                      src={getProductImage(product.image, product.category)}
                       onError={(event) => {
-                        event.currentTarget.src = "/images/Products.png";
+                        event.currentTarget.onerror = null;
+                        event.currentTarget.src = getProductFallbackImage(
+                          product.category,
+                        );
                       }}
+                      alt={product.name}
                     />
                     <div className="product-copy">
                       <strong title={product.name}>{product.name}</strong>

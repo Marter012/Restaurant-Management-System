@@ -34,6 +34,7 @@ class OrderItemLoad(BaseModel):
     promotion_selections: list[PromotionSelectionLoad] = Field(default_factory=list)
     garnish: str | None = None
     removed_ingredients: list[str] = Field(default_factory=list)
+    store_discount_percentage: float = Field(default=0, ge=0, le=100)
 
 
 class OrderItemCreate(BaseModel):
@@ -49,6 +50,7 @@ class OrderItemCreate(BaseModel):
     garnish: str | None = None
     ingredients: list[str] = Field(default_factory=list)
     removed_ingredients: list[str] = Field(default_factory=list)
+    store_discount_percentage: float = Field(default=0, ge=0, le=100)
 
     @model_validator(mode="before")
     @classmethod
@@ -76,6 +78,7 @@ class OrderItemUpdate(BaseModel):
     garnish: str | None = None
     ingredients: list[str] | None = None
     removed_ingredients: list[str] | None = None
+    store_discount_percentage: float | None = Field(default=None, ge=0, le=100)
 
 
 class OrderItemResponse(OrderItemCreate, MongoModel):

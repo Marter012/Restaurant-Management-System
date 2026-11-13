@@ -51,6 +51,10 @@ import ModalProductStock from "../Modals/ModalProduct/ModalProductStock.tsx";
 import ModalProductOptions from "../Modals/ModalProduct/ModalProductOptions.tsx";
 import { ActionButton, StatusButton } from "../Utils/ButtonStyles.ts";
 import { useAlert } from "../context/AlertContext.tsx";
+import {
+  getProductFallbackImage,
+  getProductImage,
+} from "../Utils/productImage.ts";
 
 type ModalMode = "options" | "edit" | "delete" | "create" | "updateQuantity";
 
@@ -557,11 +561,14 @@ const ManageProducts = forwardRef<ManageProductsRef, ManageProductsProps>(
                   >
                     <div className="product-visual-image">
                       <img
-                        src={product.image || "/images/Products.png"}
-                        alt={product.name}
+                        src={getProductImage(product.image, product.category)}
                         onError={(event) => {
-                          event.currentTarget.src = "/images/Products.png";
+                          event.currentTarget.onerror = null;
+                          event.currentTarget.src = getProductFallbackImage(
+                            product.category,
+                          );
                         }}
+                        alt={product.name}
                       />
 
                       <span

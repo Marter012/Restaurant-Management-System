@@ -43,6 +43,8 @@ export interface PaymentSplit {
 
 export interface IOrder {
   id: string;
+  source?: "admin" | "online";
+  online_order_id?: string | null;
   order_number: number;
   customer_name: string;
   observations?: string;

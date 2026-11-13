@@ -7,6 +7,7 @@ import cashMovementRouter from "./slices/cashMovementSlice.ts";
 import promotionRouter from "./slices/promotionSlice.ts";
 import printAgentRouter from "./slices/printAgentSlice.ts";
 import userRouter from "./slices/userSlice.ts";
+import establishmentRouter from "./slices/establishmentSlice.ts";
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ export const store = configureStore({
     cashMovement: cashMovementRouter,
     printAgent: printAgentRouter,
     user: userRouter,
+    establishment: establishmentRouter,
   },
 });
 

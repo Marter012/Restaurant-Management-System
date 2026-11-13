@@ -9,6 +9,10 @@ import ProtectedRoute from "../ProtectedRoute/ProtectedRoute.tsx";
 import PrivateLayout from "../PrivateLayout/PrivateLayout.tsx";
 import Promotions from "../Pages/Promotions/Promotions.tsx";
 import Settings from "../Pages/Settings/Settings.tsx";
+import OnlineOrders from "../Pages/OnlineOrders/OnlineOrders.tsx";
+import { ContainerPage } from "../Pages/PageStyles.ts";
+import SettingsStore from "../Pages/Settings/SettingsStore/SettingsStore.tsx";
+const SettingsStorePage = () => <ContainerPage><SettingsStore /></ContainerPage>;
 
 const Router = () => {
   return (
@@ -29,6 +33,8 @@ const Router = () => {
           <Route path="/products" element={<Products />} />
           <Route path="/promotions" element={<Promotions />} />
           <Route path="/orders" element={<Orders />} />
+          <Route path="/online-orders" element={<OnlineOrders />} />
+          <Route path="/store" element={<SettingsStorePage />} />
           <Route path="/cashRegister" element={<CashRegister />} />
           <Route path="/settings" element={<Settings />} />
         </Route>

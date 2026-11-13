@@ -7,6 +7,7 @@ import {
   FaCashRegister,
   FaTags,
   FaCog,
+  FaGlobe,
   FaBars,
   FaTimes,
 } from "react-icons/fa";
@@ -63,6 +64,11 @@ const Navigation = () => {
           <span>Comandas</span>
         </NavLink>
 
+        <NavLink to="/online-orders" onClick={() => setShowMenu(false)}>
+          <FaGlobe />
+          <span>Pedidos online</span>
+        </NavLink>
+
         <NavLink to="/cashRegister" onClick={() => setShowMenu(false)}>
           <FaCashRegister />
           <span>Caja</span>
@@ -71,6 +77,11 @@ const Navigation = () => {
         <NavLink to="/settings" onClick={() => setShowMenu(false)}>
           <FaCog />
           <span>Configuración</span>
+        </NavLink>
+
+        <NavLink to="/store" onClick={() => setShowMenu(false)}>
+          <FaGlobe />
+          <span>Store</span>
         </NavLink>
       </div>
     </NavigationContainer>

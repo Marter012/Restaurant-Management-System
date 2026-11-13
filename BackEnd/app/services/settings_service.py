@@ -13,6 +13,37 @@ class SettingsService:
     }
     DEFAULT_RETENTION = {"_id": "audit_retention", "retention_days": 30}
 
+    DEFAULT_STORE = {
+        "_id": "store",
+        "store_title": "",
+        "tagline": "Hecho para disfrutar",
+        "hero_title": "Tu próximo favorito está acá.",
+        "hero_description": "Elegí lo que más te gusta y armá tu pedido.",
+        "hero_image": None,
+        "logo_url": None,
+        "featured_product_ids": [],
+        "enabled_product_ids": [],
+        "catalog_restricted": False,
+        "enabled_promotion_ids": [],
+        "promotion_selection_restricted": False,
+        "product_discounts": {},
+        "general_store_discount": 0,
+        "theme": {
+            "primary": "#173F35",
+            "accent": "#E9A23B",
+            "canvas": "#F7F6F0",
+            "surface": "#FFFFFF",
+            "surface_strong": "#FFFFFF",
+            "ink": "#1D2B26",
+            "muted": "#69766F",
+            "border": "#E3E8E1",
+        },
+        "show_promotions": True,
+        "show_featured": True,
+        "delivery_enabled": False,
+        "pickup_enabled": True,
+    }
+
     @classmethod
     async def get_document(cls, key, default):
         doc = await cls.collection.find_one({"_id": key})
@@ -25,6 +56,21 @@ class SettingsService:
     @classmethod
     async def get_commercial(cls):
         return await cls.get_document("commercial", cls.DEFAULT_COMMERCIAL)
+
+    @classmethod
+    async def get_store_configuration(cls):
+        saved = await cls.get_document("store", cls.DEFAULT_STORE)
+
+        theme = {
+            **cls.DEFAULT_STORE["theme"],
+            **(saved.get("theme") or {}),
+        }
+
+        return {
+            **cls.DEFAULT_STORE,
+            **saved,
+            "theme": theme,
+        }
 
     @classmethod
     async def get_retention(cls):

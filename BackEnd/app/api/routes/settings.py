@@ -9,6 +9,7 @@ from app.schema.settings_schema import (
 from app.services.settings_service import SettingsService
 from app.services.audit_service import AuditService
 from app.websocket.events import broadcast_change
+from app.utils.dateZone import DateUtils
 
 router = APIRouter(prefix="/settings", tags=["Settings"])
 
@@ -21,11 +22,21 @@ async def get_settings(current_user=Depends(get_current_user)):
     return {"allow_out_of_stock": bool(data and data.get("allow_out_of_stock", False))}
 
 @router.put("/", dependencies=[Depends(require_admin)])
-async def update_settings(data: OperationalSettings):
+async def update_settings(data: OperationalSettings, request: Request):
+    updated_at = DateUtils.now_argentina()
     await database["app_settings"].update_one(
-        {"_id": "operational"}, {"$set": {"allow_out_of_stock": data.allow_out_of_stock}}, upsert=True
+        {"_id": "operational"},
+        {"$set": {"allow_out_of_stock": data.allow_out_of_stock, "updated_at": updated_at}},
+        upsert=True,
     )
-    return data.model_dump()
+    result = {**data.model_dump(), "updated_at": updated_at.isoformat()}
+    await broadcast_change(
+        "settings",
+        "operational_settings_updated",
+        result,
+        request.headers.get("X-Client-ID"),
+    )
+    return result
 
 @router.get("/establishment")
 async def get_establishment():

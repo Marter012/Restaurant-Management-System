@@ -25,6 +25,8 @@ class OrderCreate(BaseModel):
     confirmed_out_of_stock: bool = False
     observation: str | None = None
     parent_order_id: str | None = None
+    source: Literal["admin", "online"] = "admin"
+    online_order_id: str | None = None
 
 
 class OrderUpdate(BaseModel):
@@ -66,3 +68,5 @@ class OrderResponse(MongoModel):
     observation: str | None = None
     parent_order_id: str | None = None
     additional_number: int | None = None
+    source: Literal["admin", "online"] = "admin"
+    online_order_id: str | None = None

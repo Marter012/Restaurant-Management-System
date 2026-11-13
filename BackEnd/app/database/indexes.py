@@ -42,3 +42,13 @@ async def create_indexes():
 
     from app.database.connection import database
     await database["audit_logs"].create_index("created_at")
+
+    # Consultas y prevención de colisiones en pedidos online.
+    await database["online_orders"].create_index("external_reference", unique=True, sparse=True)
+    await database["online_orders"].create_index("created_at")
+    await database["online_orders"].create_index("status")
+
+    from app.database.connection import database
+    await database["store_customers"].create_index("phone", unique=True)
+    await database["store_customers"].create_index("token_hash", unique=True)
+    await database["online_orders"].create_index("customer_id")

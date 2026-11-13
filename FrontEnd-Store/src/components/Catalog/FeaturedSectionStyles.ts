@@ -1,0 +1,2 @@
+import styled from "styled-components";
+export const FeaturedWrap = styled.section`max-width:1320px;margin:0 auto 44px;padding:0 clamp(16px,4vw,48px);scroll-margin-top:90px;header{margin-bottom:19px}header>span{display:inline-flex;align-items:center;gap:8px;color:var(--app-accent);font-size:.7rem;font-weight:950;letter-spacing:.15em}h2{margin:8px 0 6px;color:var(--app-primary);font-size:clamp(1.55rem,3.4vw,2.25rem);font-weight:950;letter-spacing:-.05em}header p{margin:0;color:var(--app-muted);font-size:.9rem;line-height:1.5}`;

@@ -174,19 +174,26 @@ export const Toggle = styled.button<{ $enabled: boolean }>`
   padding: 0;
   border: 0;
   border-radius: 30px;
-  background: ${({ $enabled }) => $enabled ? "var(--color-success)" : "var(--color-border-strong)"};
+  background: ${({ $enabled }) =>
+    $enabled ? "var(--color-success)" : "var(--color-border-strong)"};
+  cursor: pointer;
   transition: background var(--transition-normal);
 
   i {
     position: absolute;
     top: 3px;
-    left: ${({ $enabled }) => $enabled ? "23px" : "3px"};
+    left: ${({ $enabled }) => ($enabled ? "23px" : "3px")};
     width: 20px;
     height: 20px;
     border-radius: 50%;
     background: var(--color-white);
     box-shadow: var(--shadow-sm);
     transition: left var(--transition-normal);
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--color-primary-soft);
+    outline-offset: 3px;
   }
 `;
 
@@ -202,10 +209,23 @@ export const SaveButton = styled.button`
   background: var(--color-primary);
   color: var(--color-white);
   font-weight: 700;
+  cursor: pointer;
+  transition:
+    background var(--transition-normal),
+    border-color var(--transition-normal),
+    opacity var(--transition-normal),
+    transform var(--transition-normal);
 
   &:hover:not(:disabled) {
     border-color: var(--color-primary-hover);
     background: var(--color-primary-hover);
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.48;
+    cursor: not-allowed;
+    transform: none;
   }
 `;
 
@@ -217,25 +237,43 @@ export const SecondaryButton = styled.button`
   background: var(--color-surface);
   color: var(--color-text);
   font-weight: 700;
+  cursor: pointer;
 
   &:hover:not(:disabled) {
     background: var(--color-surface-hover);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
   }
 `;
 
 export const ActionRow = styled.div`
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   flex-wrap: wrap;
   gap: 9px;
+  width: 100%;
+
+  @media (max-width: 480px) {
+    > button {
+      width: 100%;
+    }
+  }
 `;
 
 export const Message = styled.div<{ $error?: boolean }>`
   padding: 11px 13px;
-  border: 1px solid ${({ $error }) => $error ? "var(--color-danger)" : "var(--color-success)"};
+  border: 1px solid
+    ${({ $error }) =>
+      $error ? "var(--color-danger)" : "var(--color-success)"};
   border-radius: var(--radius-md);
-  background: ${({ $error }) => $error ? "var(--color-danger-soft)" : "var(--color-success-soft)"};
-  color: ${({ $error }) => $error ? "var(--color-danger)" : "var(--color-success)"};
+  background: ${({ $error }) =>
+    $error ? "var(--color-danger-soft)" : "var(--color-success-soft)"};
+  color: ${({ $error }) =>
+    $error ? "var(--color-danger)" : "var(--color-success)"};
   font-size: var(--font-size-sm);
   font-weight: 650;
 `;

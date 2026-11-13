@@ -463,7 +463,10 @@ export const EmptyMessage = styled.div`
 // FILA DE COMANDAS
 // =========================================================
 
-export const OrdersTableRow = styled(TableRow)`
+export const OrdersTableRow = styled(TableRow)<{$online?: boolean}>`
+  background: ${({$online}) => $online ? "#EAF4EF" : "var(--color-surface)"};
+  border-left: ${({$online}) => $online ? "4px solid #16835D" : "0"};
+  .online-origin { display:inline-flex; margin-left:8px; padding:3px 6px; border-radius:5px; background:#D5EDE1; color:#126344; font-size:9px; font-weight:900; letter-spacing:.05em; vertical-align:middle; }
   min-height: 62px;
 
   margin: 0;

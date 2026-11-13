@@ -918,12 +918,12 @@ class OrderService(BaseService):
                     "debe ser mayor a 0"
                 )
 
-            unit_price = product["price"]
-
-            subtotal = (
-                unit_price
-                * quantity
-            )
+            base_unit_price = float(product["price"])
+            store_discount = float(self._value(item, "store_discount_percentage", 0) or 0)
+            if not 0 <= store_discount <= 100:
+                raise NotFoundException("El descuento del Store debe estar entre 0 y 100")
+            unit_price = round(base_unit_price * (1 - store_discount / 100), 2)
+            subtotal = round(unit_price * quantity, 2)
 
             unavailable_keys = await self._get_unavailable_ingredient_keys()
             remaining_ingredients, removed_ingredients = self._ingredient_snapshot(
@@ -941,6 +941,7 @@ class OrderService(BaseService):
                 "quantity": quantity,
                 "unit_price": unit_price,
                 "subtotal": subtotal,
+                "store_discount_percentage": store_discount,
                 "status": True,
                 "garnish": self._value(item, "garnish"),
                 "ingredients": remaining_ingredients,
@@ -1055,6 +1056,9 @@ class OrderService(BaseService):
         # PROCESAR ITEMS
         # -----------------------------------------------------
 
+        # El canal Store respeta la misma política operativa de stock configurada
+        # por administración: si se habilita vender sin stock, no se descuenta
+        # inventario; si se deshabilita, se valida y registra la salida habitual.
         allow_out_of_stock = await self._out_of_stock_enabled()
         items, total_price = (
             await self._process_items(
@@ -1139,6 +1143,8 @@ class OrderService(BaseService):
             "order_number": order_number,
 
             "customer_name": data.customer_name,
+            "source": getattr(data, "source", "admin"),
+            "online_order_id": getattr(data, "online_order_id", None),
 
             "items": items,
 
