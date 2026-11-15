@@ -27,6 +27,8 @@ import {
   SessionDescription,
   SpinnerContainer,
   Spinner,
+  PrivateLayoutContainer,
+  MainContent,
 } from "./PrivateLayoutStyles.ts";
 
 const AUTH_INITIALIZED_KEY = "auth-initialized";
@@ -39,6 +41,7 @@ const PrivateLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch<AppDispatch>();
+
   const mustChangeCredentials = useSelector(
     (state: RootState) => state.user.mustChangeCredentials,
   );
@@ -71,24 +74,33 @@ const PrivateLayout = () => {
         }
 
         const currentUser = (await getMe()) as CurrentUserResponse;
+
         if (!mounted) return;
 
         const pending = Boolean(currentUser.must_change_credentials);
+
         dispatch(loginUser());
         dispatch(setMustChangeCredentials(pending));
+
         setShowCredentialNotice(pending);
 
         startTokenRefresh();
+
         sessionStorage.setItem(AUTH_INITIALIZED_KEY, "true");
+
         setAuthReady(true);
       } catch (error) {
         console.error("Error inicializando la sesión privada:", error);
+
         if (!mounted) return;
 
         dispatch(logoutUser());
+
         sessionStorage.removeItem(AUTH_INITIALIZED_KEY);
         sessionStorage.removeItem("app-initialized");
+
         stopTokenRefresh();
+
         navigate("/login", { replace: true });
       }
     };
@@ -119,15 +131,22 @@ const PrivateLayout = () => {
       <SessionContainer>
         <SessionCard>
           <SessionLogo>BS</SessionLogo>
+
           <SessionTitle>Boutique de Sabores</SessionTitle>
+
           <SessionDescription>
             Estamos preparando todo para vos
           </SessionDescription>
+
           <SpinnerContainer>
             <Spinner />
           </SpinnerContainer>
+
           <span>Verificando tu sesión...</span>
-          <SessionDescription>Un momento, por favor.</SessionDescription>
+
+          <SessionDescription>
+            Un momento, por favor.
+          </SessionDescription>
         </SessionCard>
       </SessionContainer>
     );
@@ -145,8 +164,14 @@ const PrivateLayout = () => {
 
   return (
     <AppInitializer>
-      {!mustChangeCredentials && <NavBar />}
-      <Outlet />
+      <PrivateLayoutContainer>
+        {!mustChangeCredentials && <NavBar />}
+
+        <MainContent>
+          <Outlet />
+        </MainContent>
+      </PrivateLayoutContainer>
+
       <ModalForm
         isOpen={showCredentialNotice}
         title="Actualización de seguridad obligatoria"

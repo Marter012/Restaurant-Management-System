@@ -109,6 +109,11 @@ export const GlobalStyles = createGlobalStyle`
   --transition-fast: 150ms ease;
   --transition-normal: 200ms ease;
   --transition-slow: 300ms ease;
+
+    /* LAYOUT */
+  --sidebar-width: 258px;
+  --sidebar-width-tablet: 82px;
+  --sidebar-width-mobile: 100%;
 }
   /* =====================================================
      RESET
@@ -403,18 +408,15 @@ export const GlobalStyles = createGlobalStyle`
 
 `;
 
-
 /* =====================================================
    INPUT STYLES
 ===================================================== */
 
 export const InputStyles = css`
-
   input,
   select,
   textarea {
     background-color: var(--color-surface);
     color: var(--color-text);
   }
-
 `;

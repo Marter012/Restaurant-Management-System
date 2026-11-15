@@ -18,6 +18,7 @@ import {
 
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store.ts";
+
 import {
   getProductFallbackImage,
   getProductImage,
@@ -35,12 +36,15 @@ const ProductsForOrder = ({
 }: ProductsForOrderProps) => {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("Todos");
+
   const [showPromotionInfo, setShowPromotionInfo] = useState(false);
-  const [selectedPromotion, setSelectedPromotion] = useState<Promotion | null>(
-    null,
-  );
+
+  const [selectedPromotion, setSelectedPromotion] =
+    useState<Promotion | null>(null);
+
   const [selectedGarnishProduct, setSelectedGarnishProduct] =
     useState<Product | null>(null);
+
   const [garnishChoice, setGarnishChoice] = useState("");
 
   const promotions = useSelector(
@@ -49,9 +53,9 @@ const ProductsForOrder = ({
 
   const categories = [
     "Todos",
-    ...Array.from(new Set(products.map((product) => product.category))).sort(
-      (a, b) => a.localeCompare(b, "es"),
-    ),
+    ...Array.from(
+      new Set(products.map((product) => product.category)),
+    ).sort((a, b) => a.localeCompare(b, "es")),
     "Promociones",
   ];
 
@@ -83,7 +87,9 @@ const ProductsForOrder = ({
 
   const confirmPromotion = () => {
     if (!selectedPromotion) return;
+
     addPromotion(selectedPromotion);
+
     setShowPromotionInfo(false);
     setSelectedPromotion(null);
   };
@@ -100,11 +106,15 @@ const ProductsForOrder = ({
 
   const confirmGarnish = () => {
     if (!selectedGarnishProduct || !garnishChoice) return;
+
     addProduct(selectedGarnishProduct, garnishChoice);
+
     closeGarnishModal();
   };
 
-  const showPromotions = category === "Todos" || category === "Promociones";
+  const showPromotions =
+    category === "Todos" || category === "Promociones";
+
   const showProducts = category !== "Promociones";
 
   return (
@@ -143,21 +153,26 @@ const ProductsForOrder = ({
               );
 
               const hasGarnishChoices = Boolean(
-                product.has_garnish && product.garnish_options?.length,
+                product.has_garnish &&
+                  product.garnish_options?.length,
               );
 
-              const unavailableForProduct = (product.ingredients ?? []).filter(
-                (ingredient) =>
-                  unavailableIngredients.some(
-                    (unavailable) =>
-                      unavailable.trim().toLocaleLowerCase("es") ===
-                      ingredient.trim().toLocaleLowerCase("es"),
-                  ),
+              const unavailableForProduct = (
+                product.ingredients ?? []
+              ).filter((ingredient) =>
+                unavailableIngredients.some(
+                  (unavailable) =>
+                    unavailable.trim().toLocaleLowerCase("es") ===
+                    ingredient.trim().toLocaleLowerCase("es"),
+                ),
               );
 
               const openGarnishPicker = () => {
                 setSelectedGarnishProduct(product);
-                setGarnishChoice(product.garnish_options?.[0] ?? "");
+
+                setGarnishChoice(
+                  product.garnish_options?.[0] ?? "",
+                );
               };
 
               return (
@@ -175,23 +190,34 @@ const ProductsForOrder = ({
                   <div className="product-header">
                     <img
                       className="product-image"
-                      src={getProductImage(product.image, product.category)}
+                      src={getProductImage(
+                        product.image,
+                        product.category,
+                      )}
                       onError={(event) => {
                         event.currentTarget.onerror = null;
-                        event.currentTarget.src = getProductFallbackImage(
-                          product.category,
-                        );
+
+                        event.currentTarget.src =
+                          getProductFallbackImage(product.category);
                       }}
                       alt={product.name}
                     />
-                    <h4 className="product-title">{product.name}</h4>
+
+                    <h4 className="product-title">
+                      {product.name}
+                    </h4>
                   </div>
 
                   <div className="product-info">
                     <small className="product-stock">
-                      <span className="stock-indicator" aria-hidden="true" />
+                      <span
+                        className="stock-indicator"
+                        aria-hidden="true"
+                      />
+
                       Stock: {product.quantity}
                     </small>
+
                     <span className="product-price">
                       ${product.price.toLocaleString("es-AR")}
                     </span>
@@ -203,7 +229,8 @@ const ProductsForOrder = ({
                         type="button"
                         className="product-action"
                         disabled={
-                          !allowOutOfStock && totalQuantity >= product.quantity
+                          !allowOutOfStock &&
+                          totalQuantity >= product.quantity
                         }
                         onClick={openGarnishPicker}
                       >
@@ -215,7 +242,9 @@ const ProductsForOrder = ({
                           className="garnish-order-line"
                           key={`${product.id}-${line.garnish ?? "sin-guarnicion"}`}
                         >
-                          <span>{line.garnish || "Sin guarnición"}</span>
+                          <span>
+                            {line.garnish || "Sin guarnición"}
+                          </span>
 
                           <ProductQuantityControls>
                             <button
@@ -259,7 +288,10 @@ const ProductsForOrder = ({
                     <button
                       type="button"
                       className="product-action"
-                      disabled={!allowOutOfStock && product.quantity <= 0}
+                      disabled={
+                        !allowOutOfStock &&
+                        product.quantity <= 0
+                      }
                       onClick={() => addProduct(product)}
                     >
                       + Agregar
@@ -286,7 +318,8 @@ const ProductsForOrder = ({
                         type="button"
                         aria-label="Aumentar cantidad"
                         disabled={
-                          !allowOutOfStock && totalQuantity >= product.quantity
+                          !allowOutOfStock &&
+                          totalQuantity >= product.quantity
                         }
                         onClick={() =>
                           increaseQuantity(
@@ -313,16 +346,21 @@ const ProductsForOrder = ({
                     src={promotion.image || "/images/Products.png"}
                     alt={promotion.name}
                     onError={(event) => {
-                      event.currentTarget.src = "/images/Products.png";
+                      event.currentTarget.src =
+                        "/images/Products.png";
                     }}
                   />
-                  <h4 className="product-title">🎁 {promotion.name}</h4>
+
+                  <h4 className="product-title">
+                    🎁 {promotion.name}
+                  </h4>
                 </div>
 
                 <div className="product-info">
                   <div className="product-name">
                     <small>{promotion.description}</small>
                   </div>
+
                   <span className="product-price">
                     ${promotion.price.toLocaleString("es-AR")}
                   </span>
@@ -344,13 +382,19 @@ const ProductsForOrder = ({
         <ModalOverlay>
           <PromotionModal>
             <h3>🎁 {selectedPromotion.name}</h3>
+
             <p>
-              Esta promoción se aplica automáticamente al seleccionar los
-              productos necesarios para completarla.
+              Esta promoción se aplica automáticamente al seleccionar
+              los productos necesarios para completarla.
             </p>
-            <button type="button" onClick={confirmPromotion}>
+
+            <button
+              type="button"
+              onClick={confirmPromotion}
+            >
               Continuar
             </button>
+
             <button
               type="button"
               className="cancel-button"
@@ -365,7 +409,9 @@ const ProductsForOrder = ({
       {selectedGarnishProduct && (
         <ModalOverlay
           onMouseDown={(event) => {
-            if (event.target === event.currentTarget) closeGarnishModal();
+            if (event.target === event.currentTarget) {
+              closeGarnishModal();
+            }
           }}
         >
           <GarnishModal
@@ -374,13 +420,21 @@ const ProductsForOrder = ({
             aria-labelledby="garnish-modal-title"
           >
             <div className="garnish-modal-top">
-              <div className="garnish-modal-icon" aria-hidden="true">
+              <div
+                className="garnish-modal-icon"
+                aria-hidden="true"
+              >
                 🍽
               </div>
+
               <div className="garnish-modal-heading">
-                <h3 id="garnish-modal-title">Elegí la guarnición</h3>
+                <h3 id="garnish-modal-title">
+                  Elegí la guarnición
+                </h3>
+
                 <p className="garnish-modal-subtitle">
                   Seleccioná la opción que acompaña tu pedido.
+
                   <span className="garnish-product-name">
                     {selectedGarnishProduct.name}
                   </span>
@@ -388,21 +442,29 @@ const ProductsForOrder = ({
               </div>
             </div>
 
-            <label className="garnish-field-label" htmlFor="garnish-choice">
+            <label
+              className="garnish-field-label"
+              htmlFor="garnish-choice"
+            >
               Guarnición incluida
             </label>
+
             <div className="garnish-select-wrap">
               <select
                 id="garnish-choice"
                 className="garnish-select"
                 value={garnishChoice}
-                onChange={(event) => setGarnishChoice(event.target.value)}
+                onChange={(event) =>
+                  setGarnishChoice(event.target.value)
+                }
               >
-                {selectedGarnishProduct.garnish_options?.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
+                {selectedGarnishProduct.garnish_options?.map(
+                  (option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ),
+                )}
               </select>
             </div>
 
@@ -414,6 +476,7 @@ const ProductsForOrder = ({
               >
                 Cancelar
               </button>
+
               <button
                 type="button"
                 className="garnish-confirm-button"

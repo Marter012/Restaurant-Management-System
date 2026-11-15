@@ -155,3 +155,42 @@ export const Spinner = styled.div`
     animation-duration: 2s;
   }
 `;
+
+export const PrivateLayoutContainer = styled.div`
+  display: grid;
+
+  grid-template-columns:
+    var(--sidebar-width)
+    minmax(0, 1fr);
+
+  width: 100%;
+  min-height: 100dvh;
+
+  @media (min-width: 621px) and (max-width: 1024px) {
+    grid-template-columns:
+      var(--sidebar-width-tablet)
+      minmax(0, 1fr);
+  }
+
+  @media (max-width: 620px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+`;
+
+export const MainContent = styled.main`
+  grid-column: 2;
+
+  width: 100%;
+  min-width: 0;
+  min-height: 100dvh;
+
+  box-sizing: border-box;
+
+  overflow-x: hidden;
+
+  @media (max-width: 620px) {
+    grid-column: 1;
+    width: 100%;
+    min-width: 0;
+  }
+`;

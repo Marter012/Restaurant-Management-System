@@ -25,37 +25,59 @@ const softCard = css`
 
 export const OrderSection = styled.section`
   display: grid;
-  height: 100%;
   grid-template-columns: minmax(0, 1fr);
-  grid-template-areas: "customer" "options" "delivery" "items" "totals" "payment" "submit";
+  grid-template-areas:
+    "customer"
+    "items"
+    "options"
+    "delivery"
+    "payment"
+    "totals";
   align-content: start;
-  gap: 12px;
+  gap: clamp(14px, 1.5vw, 20px);
+  width: 100%;
   min-width: 0;
-  padding: clamp(16px, 1.45vw, 20px);
+  min-height: 0;
+  box-sizing: border-box;
+  padding: clamp(14px, 1.6vw, 24px);
   border: 1px solid var(--color-border);
-  border-radius: 22px;
+  border-radius: 20px;
   background: var(--color-background);
   box-shadow: var(--shadow-sm);
+
   > * {
     min-width: 0;
   }
-  overflow-x: hidden;
-  overflow-y: auto;
+
+  /* El formulario crece con su contenido: no se crea un scroll interno. */
+  overflow: visible;
 `;
 
 export const OrderHeader = styled.header`
   grid-area: customer;
   display: grid;
-  gap: 8px;
-  padding-bottom: 13px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: auto auto auto;
+  grid-template-areas:
+    "heading heading"
+    "customer-label observations"
+    "customer-input observations";
+  align-items: stretch;
+  column-gap: clamp(12px, 1.5vw, 20px);
+  row-gap: 7px;
+  min-width: 0;
+  padding-bottom: 16px;
   border-bottom: 1px solid var(--color-border);
+
   .order-heading {
+    grid-area: heading;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 2px;
+    gap: 12px;
+    margin-bottom: 3px;
   }
+
   h3 {
     margin: 0;
     color: var(--color-primary);
@@ -63,9 +85,10 @@ export const OrderHeader = styled.header`
     font-weight: 900;
     letter-spacing: -0.03em;
   }
+
   .order-heading > span {
     flex: 0 0 auto;
-    padding: 8px 12px;
+    padding: 7px 12px;
     border-radius: 999px;
     background: var(--color-primary-soft);
     color: var(--color-primary);
@@ -73,15 +96,36 @@ export const OrderHeader = styled.header`
     font-weight: 900;
     white-space: nowrap;
   }
+
   > label {
+    grid-area: customer-label;
+    align-self: end;
     color: var(--color-text);
     font-size: 0.84rem;
     font-weight: 800;
   }
-  @media (max-width: 500px) {
-    .order-heading {
-      align-items: flex-start;
-      flex-direction: column;
+
+  > input {
+    grid-area: customer-input;
+    height: 100%;
+    min-height: 78px;
+  }
+
+  > ${"div"} {
+    grid-area: observations;
+    min-width: 0;
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "heading"
+      "customer-label"
+      "customer-input"
+      "observations";
+
+    > input {
+      min-height: 46px;
     }
   }
 `;
@@ -103,18 +147,22 @@ export const OrderOptionsColumn = styled.div`
 export const OrderItems = styled.div`
   display: grid;
   gap: 0;
-  max-height: 260px;
+  width: 100%;
+  min-width: 0;
   min-height: 72px;
-  overflow-y: auto;
-  padding: 4px 10px;
+  max-height: none;
+  overflow: visible;
+  padding: 5px 14px;
   border: 1px solid var(--color-border);
   border-radius: 14px;
   background: var(--color-surface);
+
   > p {
     margin: 0;
-    padding: 17px 2px;
+    padding: 20px 4px;
     color: var(--color-text-secondary);
-    font-size: 0.88rem;
+    font-size: 0.9rem;
+    text-align: center;
   }
 `;
 
@@ -214,15 +262,72 @@ export const OrderData = styled.div`
   display: grid;
   gap: 12px;
   min-width: 0;
+  width: 100%;
 `;
 
 export const DataSection = styled.section`
   display: grid;
-  gap: 11px;
-  padding: 13px;
+  gap: 13px;
+  padding: clamp(14px, 1.5vw, 19px);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  border-radius: 14px;
   background: var(--color-surface);
+
+  .payment-summary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+    padding-top: 11px;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .payment-summary > div {
+    display: grid;
+    gap: 5px;
+    padding: 12px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 11px;
+    transition: background var(--transition-normal);
+  }
+
+  .payment-summary > div.is-success {
+    background: var(--color-success-soft);
+    border-color: var(--color-success);
+  }
+
+  .payment-summary > div.is-danger {
+    background: var(--color-danger-soft);
+    border-color: var(--color-danger);
+  }
+
+  .payment-summary span {
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+
+  .payment-summary strong {
+    font-size: 1.12rem;
+    font-weight: 900;
+  }
+
+  .payment-summary > div.is-success span,
+  .payment-summary > div.is-success strong {
+    color: var(--color-success);
+  }
+
+  .payment-summary > div.is-danger span,
+  .payment-summary > div.is-danger strong {
+    color: var(--color-danger);
+  }
+
+  @media (max-width: 420px) {
+    .payment-summary {
+      gap: 6px;
+    }
+    .payment-summary > div {
+      padding: 10px 8px;
+    }
+  }
 `;
 
 export const DataSectionHeading = styled.div`
@@ -250,7 +355,6 @@ export const CustomerInput = styled.input`
 export const Select = styled.select`
   ${field}
 `;
-
 
 export const StyledInputDateDisplay = styled.input`
   ${field}
@@ -371,15 +475,19 @@ export const CombinedPaymentRow = styled.div`
 `;
 
 export const DetailsNav = styled.nav`
-  grid-area: options;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 9px;
+  display: flex !important;
+
+  @media (max-width: 520px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
 `;
 
 export const OptionCard = styled.div`
   position: relative;
   min-width: 0;
+  width: 100%;
+  display: flex;
   overflow: hidden;
   border: 1px solid var(--color-border);
   border-radius: 14px;
@@ -423,14 +531,20 @@ export const OptionCard = styled.div`
       background: var(--color-primary-soft);
     }
   }
-  @media (max-width: 500px) {
+  @media (max-width: 520px) {
     > button:not(.button-delete) {
-      flex-direction: column;
-      gap: 4px;
-      min-height: 68px;
+      justify-content: center;
+      gap: 5px;
+      min-height: 58px;
+      padding: 7px 3px;
     }
-    .containerInfo {
-      text-align: center;
+
+    .containerInfo span {
+      font-size: 0.72rem;
+    }
+
+    .containerInfo small {
+      font-size: 0.61rem;
     }
   }
 `;
@@ -472,14 +586,86 @@ export const OrderFooter = styled.footer`
 export const TotalSection = styled.div`
   grid-area: totals;
   display: grid;
-  gap: 7px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-areas:
+    "discount discount"
+    "subtotal total"
+    "promotions promotions";
+  align-items: stretch;
+  gap: 10px;
+  min-width: 0;
+
+  > * {
+    min-width: 0;
+  }
+
+  @media (max-width: 560px) {
+    /* Subtotal y total siguen juntos para conservar la lectura comparativa. */
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+`;
+
+export const DiscountRow = styled.div`
+  grid-area: discount;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  padding: 12px 15px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface-muted);
+
+  &.is-active {
+    border-color: var(--color-success);
+    background: var(--color-success-soft);
+  }
+
+  &.is-inactive {
+    opacity: 0.72;
+  }
+`;
+
+export const DiscountInfo = styled.div`
+  min-width: 0;
+  span {
+    color: var(--color-text-secondary);
+    font-size: 0.84rem;
+    font-weight: 850;
+  }
+`;
+
+export const DiscountAmount = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 9px;
+  margin-left: auto;
+
+  strong {
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+    font-weight: 900;
+    white-space: nowrap;
+  }
+
+  .is-active & strong {
+    color: var(--color-success);
+  }
 `;
 
 export const SubtotalRow = styled.div`
+  grid-area: subtotal;
   display: grid;
-  gap: 5px;
-  padding: 10px 12px;
-  border-radius: 10px;
+  align-content: center;
+  gap: 7px;
+  min-width: 0;
+  padding: 13px 15px;
+  border: 1px solid var(--color-border);
+  border-radius: 13px;
   background: var(--color-surface-muted);
 `;
 
@@ -504,14 +690,15 @@ export const SpanTextDiscount = styled.span`
 `;
 
 export const TotalRow = styled.div`
+  grid-area: total;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
   gap: 9px;
-  padding: 11px 13px;
+  min-width: 0;
+  padding: 13px 15px;
   border: 1px solid var(--color-primary-soft);
-  border-radius: var(--radius-lg);
+  border-radius: 13px;
   background: linear-gradient(
     110deg,
     var(--color-primary-soft),
@@ -525,35 +712,65 @@ export const TotalInfo = styled.div`
   justify-content: space-between;
   gap: 12px;
   width: 100%;
+  min-width: 0;
   color: var(--color-primary);
+
   strong:first-child {
-    font-size: 1.15rem;
+    font-size: 1.08rem;
     font-weight: 900;
   }
+
   strong:last-child {
-    font-size: 1.3rem;
-    font-weight: 900;
+    font-size: clamp(1.2rem, 1.8vw, 1.55rem);
+    font-weight: 950;
+    white-space: nowrap;
   }
 `;
 
 export const PromotionsToggle = styled.button`
-  justify-self: start;
-  padding: 4px 8px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  padding: 0;
   border: 1px solid var(--color-border-strong);
-  border-radius: 7px;
+  border-radius: 8px;
   background: var(--color-surface);
   color: var(--color-primary);
-  font-size: 0.7rem;
-  font-weight: 850;
+  font-size: 1rem;
+  font-weight: 900;
+  cursor: pointer;
+  transition: transform var(--transition-normal);
+
+  &[aria-expanded="true"] {
+    background: var(--color-primary-soft);
+  }
 `;
 
 export const PromotionsDetails = styled.div`
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 6px);
+  right: 0;
+  width: min(350px, 100%);
+  max-height: 240px;
+  overflow-y: auto;
   display: grid;
-  gap: 6px;
-  padding: 10px 12px;
-  border: 1px dashed var(--color-border-strong);
-  border-radius: 10px;
+  gap: 9px;
+  padding: 14px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 12px;
   background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+
+  > h4 {
+    margin: 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text);
+    font-size: 0.85rem;
+  }
 `;
 
 export const PromotionRow = styled.div`
@@ -590,11 +807,12 @@ export const Error = styled.p<{ $paid?: boolean }>`
 
   && {
     border: 1px solid
-      ${({ $paid }) =>
-        $paid ? "var(--color-success)" : "var(--color-danger)"} !important;
+      ${({ $paid }) => ($paid ? "var(--color-success)" : "var(--color-danger)")} !important;
 
     background: ${({ $paid }) =>
-      $paid ? "var(--color-success-soft)" : "var(--color-danger-soft)"} !important;
+      $paid
+        ? "var(--color-success-soft)"
+        : "var(--color-danger-soft)"} !important;
 
     color: ${({ $paid }) =>
       $paid ? "var(--color-success)" : "var(--color-danger)"} !important;
@@ -972,13 +1190,16 @@ export const PromotionsDetailsRow = styled.div`
 export const DeliveryTimeRow = styled.div`
   grid-area: delivery;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 0.55fr);
   align-items: center;
-  gap: 10px;
+  gap: 14px;
   width: 100%;
   min-width: 0;
-  max-width: 100%;
   box-sizing: border-box;
+  padding: 13px 15px;
+  border: 1px solid var(--color-border);
+  border-radius: 13px;
+  background: var(--color-surface);
 
   > * {
     min-width: 0;
@@ -989,16 +1210,16 @@ export const DeliveryTimeRow = styled.div`
   label {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 9px;
     color: var(--color-text);
-    font-size: 0.83rem;
-    font-weight: 800;
+    font-size: 0.88rem;
+    font-weight: 850;
   }
 
   label span {
     flex-shrink: 0;
     color: var(--color-primary);
-    font-size: 1.15rem;
+    font-size: 1.2rem;
   }
 
   input {
@@ -1012,7 +1233,7 @@ export const DeliveryTimeRow = styled.div`
     justify-self: stretch;
   }
 
-  @media (max-width: 460px) {
+  @media (max-width: 560px) {
     grid-template-columns: minmax(0, 1fr);
   }
 `;
@@ -1025,13 +1246,21 @@ export const ObservationField = styled.div`
   flex-direction: column;
   gap: 7px;
   width: 100%;
+  min-width: 0;
+  height: 100%;
 
   label {
-    color: var(--color-primary);
-    font-size: 0.85rem;
-    font-weight: 700;
+    color: var(--color-text);
+    font-size: 0.84rem;
+    font-weight: 800;
   }
-  input{
+
+  textarea {
+    flex: 1;
+    min-height: 78px;
+  }
+
+  input {
     ${field}
   }
 `;
@@ -1039,15 +1268,14 @@ export const ObservationField = styled.div`
 export const ObservationTextarea = styled.textarea`
   width: 100%;
   min-height: 78px;
+  height: 100%;
   box-sizing: border-box;
   padding: 10px 12px;
   resize: vertical;
-  border: 1px solid var(--color-accent);
-  border-radius: 9px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
   background: var(--color-white);
-  color: var(--color-primary);
-  font-size: inherit;
-  font-weight: inherit;
+  color: var(--color-text);
   font-size: 0.88rem;
   line-height: 1.5;
   outline: none;
@@ -1057,7 +1285,7 @@ export const ObservationTextarea = styled.textarea`
   }
 
   &:focus {
-    border-color: var(--color-primary);
+    border-color: var(--color-accent);
     box-shadow: 0 0 0 3px var(--color-primary-soft);
   }
 `;

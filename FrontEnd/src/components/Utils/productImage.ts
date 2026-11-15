@@ -1,20 +1,71 @@
+/* Imágenes locales de respaldo por categoría.
+ * La fotografía propia del producto siempre tiene prioridad.
+ */
+import polloImage from "../../assets/images/categories/cat-pollo.jpg";
+import carneImage from "../../assets/images/categories/cat-carne.jpg";
+import milanesaImage from "../../assets/images/categories/cat-milanesa.jpg";
+import pastasImage from "../../assets/images/categories/cat-pastas.jpg";
+import tartasImage from "../../assets/images/categories/cat-tartas.jpg";
+import empanadasImage from "../../assets/images/categories/cat-empanadas.jpg";
+import pizzaImage from "../../assets/images/categories/cat-pizza.jpg";
+import guarnicionesImage from "../../assets/images/categories/cat-guarniciones.jpg";
+import sandwichesImage from "../../assets/images/categories/cat-sandwiches.jpg";
+import minutasImage from "../../assets/images/categories/cat-minutas.jpg";
+import ensaladasImage from "../../assets/images/categories/cat-ensaladas.jpg";
+import postresImage from "../../assets/images/categories/cat-postres.jpg";
+import bebidasImage from "../../assets/images/categories/cat-bebidas.jpg";
+import congeladosImage from "../../assets/images/categories/cat-congelados.jpg";
+import panificadosImage from "../../assets/images/categories/cat-panificados.jpg";
+
 const CATEGORY_IMAGES: Record<string, string> = {
-  hamburguesa: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=900&q=85",
-  carne: "https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=900&q=85",
-  sanguche: "https://images.unsplash.com/photo-1553909489-cd47e0ef937f?w=900&q=85",
-  sandwich: "https://images.unsplash.com/photo-1553909489-cd47e0ef937f?w=900&q=85",
-  pizza: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=900&q=85",
-  lomito: "https://images.unsplash.com/photo-1553909489-cd47e0ef937f?w=900&q=85",
-  empanada: "https://images.pexels.com/photos/22764499/pexels-photo-22764499.jpeg?auto=compress&cs=tinysrgb&w=900",
-  casera: "https://images.unsplash.com/photo-1547592180-85f173990554?w=900&q=85",
-  adicional: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=900&q=85",
-  papa: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=900&q=85",
-  ensalada: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=900&q=85",
+  pollo: polloImage,
+  carne: carneImage,
+  carnes: carneImage,
+  milanesa: milanesaImage,
+  milanesas: milanesaImage,
+  pastas: pastasImage,
+  pasta: pastasImage,
+  tartas: tartasImage,
+  tarta: tartasImage,
+  empanadas: empanadasImage,
+  empanada: empanadasImage,
+  pizza: pizzaImage,
+  pizzas: pizzaImage,
+  guarnicion: guarnicionesImage,
+  guarniciones: guarnicionesImage,
+  sandwich: sandwichesImage,
+  sandwiches: sandwichesImage,
+  sanguche: sandwichesImage,
+  sanguches: sandwichesImage,
+  minuta: minutasImage,
+  minutas: minutasImage,
+  ensalada: ensaladasImage,
+  ensaladas: ensaladasImage,
+  postre: postresImage,
+  postres: postresImage,
+  bebida: bebidasImage,
+  bebidas: bebidasImage,
+  congelado: congeladosImage,
+  congelados: congeladosImage,
+  panificado: panificadosImage,
+  panificados: panificadosImage,
 };
+
+const normalizeCategory = (category?: string) =>
+  (category || "")
+    .trim()
+    .toLocaleLowerCase("es")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+
 export const getProductFallbackImage = (category?: string) => {
-  const normalized = (category || "").toLocaleLowerCase("es");
-  const found = Object.entries(CATEGORY_IMAGES).find(([key]) => normalized.includes(key));
-  return found?.[1] || "https://images.unsplash.com/photo-1547592180-85f173990554?w=900&q=85";
+  const normalized = normalizeCategory(category);
+  const match = Object.entries(CATEGORY_IMAGES).find(([key]) =>
+    normalized.includes(key),
+  );
+
+  return match?.[1] || "/images/Products.png";
 };
+
 export const getProductImage = (image?: string | null, category?: string) =>
   image?.trim() || getProductFallbackImage(category);

@@ -54,7 +54,6 @@ import {
   Select,
   SmallTextAddedIngredients,
   SmallTextRemovedIngredients,
-  SpanTextDiscount,
   SpanTextIngredientModalEyebrow,
   SpanTextOptionStatus,
   SubtotalInfo,
@@ -64,10 +63,14 @@ import {
   TotalSection,
   CombinedPaymentRow,
   DataSection,
+  DiscountRow,
+  DiscountInfo,
+  DiscountAmount,
 } from "./OrderFormStyles.ts";
 import TimePicker from "../../TimePicker/TimePicker.tsx";
 import { useAlert } from "../../context/AlertContext.tsx";
 import { ActionButton } from "../../Utils/ButtonStyles.ts";
+import { FaArrowDownWideShort } from "react-icons/fa6";
 
 interface CreateOrderProps {
   nextOrderNumber: number;
@@ -101,7 +104,7 @@ interface CreateOrderProps {
   setFieldValue: (field: string, value: unknown) => void;
 }
 
-function CreateOrderContent({
+const OrderCreateForm = ({
   nextOrderNumber,
   orderNumberLabel,
   values,
@@ -115,7 +118,7 @@ function CreateOrderContent({
   unavailableIngredients,
   appliedPromotions,
   setFieldValue,
-}: CreateOrderProps) {
+}: CreateOrderProps) => {
   const selectedDay = useSelector((state: RootState) => state.daySelected.day);
   const [showPromotions, setShowPromotions] = useState(false);
   const [ingredientItemIndex, setIngredientItemIndex] = useState<number | null>(
@@ -250,11 +253,6 @@ function CreateOrderContent({
 
     setFieldValue("payments", current);
   };
-
-  const promotionsQuantity = appliedPromotions.reduce(
-    (total, promotion) => total + promotion.quantity,
-    0,
-  );
 
   // Configuración única de las tarjetas; las acciones originales se conservan.
   const optionCards = [
@@ -718,13 +716,21 @@ function CreateOrderContent({
                     0,
                   );
                   const balance = Math.max(0, totalPrice - paid);
+                  const fullyPaid = Math.abs(totalPrice - paid) < 0.01;
+                  const noBalance = balance < 0.01;
                   return (
                     <>
-                      <div>
+                      <div
+                        className={
+                          fullyPaid && totalPrice !== 0
+                            ? "is-success"
+                            : "is-danger"
+                        }
+                      >
                         <span>Total abonado</span>
                         <strong>${paid.toLocaleString("es-AR")}</strong>
                       </div>
-                      <div>
+                      <div className={noBalance ? "is-success" : "is-danger"}>
                         <span>Saldo pendiente</span>
                         <strong>${balance.toLocaleString("es-AR")}</strong>
                       </div>
@@ -798,19 +804,67 @@ function CreateOrderContent({
         </Field>
       </DeliveryTimeRow>
 
-      {/* Totales, medios de pago y acción principal. */}
+      {/* Descuentos primero; subtotal y total en una misma fila. */}
       <OrderFooter>
         <TotalSection>
+          <DiscountRow
+            className={promotionDiscount > 0 ? "is-active" : "is-inactive"}
+          >
+            <DiscountInfo>
+              <span>Descuentos aplicados</span>
+            </DiscountInfo>
+            <DiscountAmount>
+              <strong>
+                {promotionDiscount > 0
+                  ? `-$${promotionDiscount.toLocaleString("es-AR")}`
+                  : "$0"}
+              </strong>
+              {promotionDiscount > 0 && appliedPromotions.length > 0 && (
+                <PromotionsToggle
+                  type="button"
+                  aria-label={
+                    showPromotions
+                      ? "Ocultar descuentos"
+                      : "Mostrar desglose de descuentos"
+                  }
+                  aria-expanded={showPromotions}
+                  aria-controls="order-discount-details"
+                  onClick={() => setShowPromotions((previous) => !previous)}
+                >
+                  <span aria-hidden="true">
+                    <FaArrowDownWideShort />
+                  </span>
+                </PromotionsToggle>
+              )}
+            </DiscountAmount>
+            {showPromotions &&
+              promotionDiscount > 0 &&
+              appliedPromotions.length > 0 && (
+                <PromotionsDetails
+                  id="order-discount-details"
+                  role="region"
+                  aria-label="Detalle de descuentos"
+                >
+                  <h4>Detalle de descuentos</h4>
+                  {appliedPromotions.map((applied) => (
+                    <PromotionRow key={applied.promotion.id}>
+                      <span>
+                        {applied.promotion.name} ×{applied.quantity}
+                      </span>
+                      <strong>
+                        ${applied.totalPrice.toLocaleString("es-AR")}
+                      </strong>
+                    </PromotionRow>
+                  ))}
+                </PromotionsDetails>
+              )}
+          </DiscountRow>
+
           <SubtotalRow>
             <SubtotalInfo>
               <span>Subtotal</span>
               <strong>${subtotal.toLocaleString("es-AR")}</strong>
             </SubtotalInfo>
-            {promotionDiscount > 0 && (
-              <SpanTextDiscount>
-                Descuento -${promotionDiscount.toLocaleString("es-AR")}
-              </SpanTextDiscount>
-            )}
           </SubtotalRow>
 
           <TotalRow>
@@ -818,30 +872,7 @@ function CreateOrderContent({
               <strong>Total</strong>
               <strong>${totalPrice.toLocaleString("es-AR")}</strong>
             </TotalInfo>
-            {appliedPromotions.length > 0 && (
-              <PromotionsToggle
-                type="button"
-                onClick={() => setShowPromotions((previous) => !previous)}
-              >
-                🎁 {promotionsQuantity} promo
-                {promotionsQuantity !== 1 ? "s" : ""}{" "}
-                {showPromotions ? "▲" : "▼"}
-              </PromotionsToggle>
-            )}
           </TotalRow>
-
-          {showPromotions && appliedPromotions.length > 0 && (
-            <PromotionsDetails>
-              {appliedPromotions.map((applied) => (
-                <PromotionRow key={applied.promotion.id}>
-                  <span>
-                    🎁 {applied.promotion.name} ×{applied.quantity}
-                  </span>
-                  <strong>${applied.totalPrice.toLocaleString("es-AR")}</strong>
-                </PromotionRow>
-              ))}
-            </PromotionsDetails>
-          )}
         </TotalSection>
       </OrderFooter>
       {ingredientItemIndex !== null &&
@@ -1108,8 +1139,6 @@ function CreateOrderContent({
         })()}
     </OrderSection>
   );
-}
+};
 
-export default function OrderCreateForm(props: CreateOrderProps) {
-  return <CreateOrderContent {...props} />;
-}
+export default OrderCreateForm;

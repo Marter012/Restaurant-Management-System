@@ -59,14 +59,19 @@ const Navigation = () => {
           <span>Promociones</span>
         </NavLink>
 
+        <NavLink to="/orders/new" onClick={() => setShowMenu(false)}>
+          <FaGlobe />
+          <span>Pedidos Fisicos</span>
+        </NavLink>
+
+        <NavLink to="/orders/online-orders" onClick={() => setShowMenu(false)}>
+          <FaGlobe />
+          <span>Pedidos Online</span>
+        </NavLink>
+
         <NavLink to="/orders" onClick={() => setShowMenu(false)}>
           <FaClipboardList />
           <span>Comandas</span>
-        </NavLink>
-
-        <NavLink to="/online-orders" onClick={() => setShowMenu(false)}>
-          <FaGlobe />
-          <span>Pedidos online</span>
         </NavLink>
 
         <NavLink to="/cashRegister" onClick={() => setShowMenu(false)}>
@@ -74,14 +79,13 @@ const Navigation = () => {
           <span>Caja</span>
         </NavLink>
 
-        <NavLink to="/settings" onClick={() => setShowMenu(false)}>
-          <FaCog />
-          <span>Configuración</span>
-        </NavLink>
-
         <NavLink to="/store" onClick={() => setShowMenu(false)}>
           <FaGlobe />
           <span>Store</span>
+        </NavLink>
+        <NavLink to="/settings" onClick={() => setShowMenu(false)}>
+          <FaCog />
+          <span>Configuración</span>
         </NavLink>
       </div>
     </NavigationContainer>

@@ -199,17 +199,16 @@ export const OrderPanelSurface = styled.div`
 `;
 
 export const MainOrder = styled.main`
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  display: block;
   width: 100%;
-  height: 100%;
+  flex: 1 1 auto;
   min-width: 0;
   min-height: 0;
   box-sizing: border-box;
   overflow: hidden;
+
   > div {
-    display: block;
+    display: none;
     width: 100%;
     height: 100%;
     min-width: 0;
@@ -219,76 +218,59 @@ export const MainOrder = styled.main`
     overscroll-behavior: contain;
   }
 
-  @media (max-width: 900px) {
+  > div.mobile-active {
     display: block;
-    height: 100%;
-    min-height: 0;
-    overflow: hidden;
+  }
 
-    > div {
-      display: none;
-      width: 100%;
-      height: 100%;
-      min-height: 0;
-      overflow-y: auto;
-      overflow-x: hidden;
-      overscroll-behavior: contain;
-    }
-
-    > div.mobile-active {
-      display: block;
-    }
-
-    > div.mobile-hidden {
-      display: none;
-    }
+  > div.mobile-hidden {
+    display: none;
   }
 `;
+
 /* =========================================================
-   SELECTOR MOBILE
+   SELECTOR DE VISTA PRODUCTOS / COMANDA
 ========================================================= */
 
 export const MobileOrderSelector = styled.nav`
-  display: none;
-
-  @media (max-width: 900px) {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 5px;
-    width: 100%;
-    margin-bottom: 12px;
-    padding: 5px;
-    box-sizing: border-box;
-    border: 1px solid var(--color-border);
-    border-radius: 10px;
-    background: var(--color-surface-hover);
-  }
+  display: grid;
+  flex: 0 0 auto;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  width: 100%;
+  margin: 0 0 12px;
+  padding: 5px;
+  box-sizing: border-box;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface-hover);
 
   @media (max-width: 500px) {
     gap: 4px;
-    margin-bottom: 10px;
+    margin-bottom: 9px;
     padding: 4px;
   }
 `;
 
 export const MobileOrderButton = styled.button<{ $active: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
   width: 100%;
   min-width: 0;
-  min-height: 42px;
-  padding: 8px 10px;
+  min-height: 44px;
+  padding: 9px 12px;
   border: 1px solid
     ${({ $active }) => ($active ? "var(--color-primary)" : "transparent")};
-  border-radius: 7px;
+  border-radius: 9px;
   background: ${({ $active }) =>
     $active ? "var(--color-primary)" : "transparent"};
   color: ${({ $active }) =>
     $active ? "var(--color-white)" : "var(--color-text-secondary)"};
   font-size: 0.9rem;
-  font-weight: ${({ $active }) => ($active ? 800 : 600)};
+  font-weight: ${({ $active }) => ($active ? 800 : 650)};
   cursor: pointer;
-  transition:
-    background 0.2s ease,
-    transform 0.2s ease;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
 
   &:hover {
     background: ${({ $active }) =>
@@ -296,11 +278,17 @@ export const MobileOrderButton = styled.button<{ $active: boolean }>`
   }
 
   &:active {
-    transform: scale(0.98);
+    transform: scale(0.985);
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 2px;
   }
 
   @media (max-width: 500px) {
-    min-height: 38px;
+    min-height: 40px;
+    padding: 8px 6px;
     font-size: 0.82rem;
   }
 `;

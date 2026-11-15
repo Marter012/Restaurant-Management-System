@@ -4,18 +4,22 @@ export const ContainerPage = styled.main`
   box-sizing: border-box;
 
   /* =====================================================
-     DESKTOP — SIDEBAR 258px
+     GENERAL — DESKTOP / TABLET
+     Width controlled by the parent CSS Grid.
   ===================================================== */
 
-  width: calc(100% - 258px);
+  width: 100%;
   min-width: 0;
+
   height: 100dvh;
-  margin: 0 0 0 258px;
+  min-height: 0;
+
   padding: 34px clamp(22px, 3.2vw, 48px) 42px;
 
   display: flex;
   flex-direction: column;
   align-items: center;
+
   gap: 24px;
 
   background: var(--color-background);
@@ -25,6 +29,7 @@ export const ContainerPage = styled.main`
 
   overflow-x: hidden;
   overflow-y: auto;
+
   scrollbar-width: none;
 
   &::-webkit-scrollbar {
@@ -37,17 +42,17 @@ export const ContainerPage = styled.main`
   }
 
   /* =====================================================
-     TABLET — SIDEBAR 82px
+     TABLET — COMPACT SIDEBAR
   ===================================================== */
 
   @media (min-width: 621px) and (max-width: 1024px) {
-    width: calc(100% - 82px);
-    margin-left: 82px;
+    width: 100%;
 
     height: 100dvh;
     min-height: 0;
 
     padding: 30px clamp(18px, 3vw, 30px) 38px;
+
     gap: 22px;
   }
 
@@ -93,12 +98,12 @@ export const ContainerPage = styled.main`
   @media (max-width: 620px) {
     width: 100%;
     min-width: 0;
-    margin: 0;
 
     height: 100dvh;
     min-height: 0;
 
     padding: 150px 14px 30px;
+
     gap: 20px;
 
     overflow-x: hidden;
@@ -155,6 +160,7 @@ export const ContainerPage = styled.main`
     textarea {
       min-height: 42px;
       max-width: 100%;
+
       font-family: var(--font-family-base);
       font-size: 16px;
     }
@@ -165,6 +171,7 @@ export const ContainerPage = styled.main`
 
     button {
       min-height: 40px;
+
       font-family: var(--font-family-base);
       font-size: var(--font-size-sm);
       line-height: 1.4;
@@ -187,6 +194,7 @@ export const ContainerPage = styled.main`
   @media (max-width: 380px) {
     padding-right: 11px;
     padding-left: 11px;
+
     gap: 17px;
 
     h1 {

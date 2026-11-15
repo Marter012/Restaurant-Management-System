@@ -66,9 +66,15 @@ import usePrintAgent from "../../../hooks/usePrintOrder.ts";
 import { api } from "../../../services/api.ts";
 
 import ModalForm from "../../ModalForm/ModalForm.tsx";
-import { NewOrderPageShell, NewOrderPageHeader, NewOrderPageContent, NewOrderPageFooter } from "./NewOrderPageStyles.ts";
+import {
+  NewOrderPageContent,
+  NewOrderPageActions,
+  BackToOrdersButton,
+} from "./NewOrderPageStyles.ts";
 import OrderCreateForm from "../../Forms/OrderForm/OrderCreateForm.tsx";
 import { useAlert } from "../../context/AlertContext.tsx";
+import { ContainerPage } from "../PageStyles.ts";
+import PageHeader from "../../PageHeaders/PageHeaders.tsx";
 interface NewOrderPageProps {
   parentOrder?: IOrder | null;
 }
@@ -89,9 +95,11 @@ interface PromotionMatch {
 const NewOrderPage = ({ parentOrder = null }: NewOrderPageProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const routeParentOrder = (location.state as { parentOrder?: IOrder } | null)?.parentOrder;
+  const routeParentOrder = (location.state as { parentOrder?: IOrder } | null)
+    ?.parentOrder;
   const effectiveParentOrder = parentOrder ?? routeParentOrder ?? null;
-  const onClose = () => navigate("/orders", { replace: true, state: location.state?.returnState });
+  const onClose = () =>
+    navigate("/orders", { replace: true, state: location.state?.returnState });
   const dispatch = useDispatch<AppDispatch>();
   const { printTicket } = usePrintAgent();
 
@@ -514,7 +522,9 @@ const NewOrderPage = ({ parentOrder = null }: NewOrderPageProps) => {
             extra_items: values.extra_items ?? [],
             payments: values.payments ?? [],
             confirmed_out_of_stock: confirmedOutOfStock,
-            ...(effectiveParentOrder ? { parent_order_id: effectiveParentOrder.id } : {}),
+            ...(effectiveParentOrder
+              ? { parent_order_id: effectiveParentOrder.id }
+              : {}),
           };
 
           const createdOrder = await createOrderAPI(order);
@@ -840,186 +850,197 @@ const NewOrderPage = ({ parentOrder = null }: NewOrderPageProps) => {
         const promotionDiscount = Math.max(0, subtotal - totalPrice);
 
         return (
-          <NewOrderPageShell>
-            <NewOrderPageHeader>
-              <div>
-                <span>GESTIÓN DE VENTAS</span>
-                <h1>{effectiveParentOrder ? `Adicional de comanda #${effectiveParentOrder.order_number}` : "Nueva comanda"}</h1>
-                <p>Seleccioná productos y completá los datos de la comanda.</p>
-              </div>
-              <button type="button" onClick={onClose}>Volver a comandas</button>
-            </NewOrderPageHeader>
-            <NewOrderPageContent>
-            <OrderCreateBody>
-              <MobileOrderSelector>
-                <MobileOrderButton
-                  type="button"
-                  $active={mobileSection === "products"}
-                  onClick={() => setMobileSection("products")}
-                >
-                  🛒 Productos
-                </MobileOrderButton>
-
-                <MobileOrderButton
-                  type="button"
-                  $active={mobileSection === "order"}
-                  onClick={() => setMobileSection("order")}
-                >
-                  🧾 Comanda
-                </MobileOrderButton>
-              </MobileOrderSelector>
-
-              <MainOrder>
-                <div
-                  className={
-                    mobileSection === "products"
-                      ? "mobile-active"
-                      : "mobile-hidden"
-                  }
-                >
-                  <ProductsForOrder
-                    products={products}
-                    items={values.items}
-                    addProduct={addProduct}
-                    allowOutOfStock={allowOutOfStock}
-                    unavailableIngredients={unavailableIngredients}
-                    increaseQuantity={increaseQuantity}
-                    decreaseQuantity={decreaseQuantity}
-                    addPromotion={addPromotion}
-                  />
-                </div>
-
-                <div
-                  className={
-                    mobileSection === "order"
-                      ? "mobile-active"
-                      : "mobile-hidden"
-                  }
-                >
-                  <OrderCreateForm
-                    nextOrderNumber={nextOrderNumber}
-                    orderNumberLabel={
-                      effectiveParentOrder && nextAdditionalNumber !== null
-                        ? `Adicional N.º ${nextAdditionalNumber}`
-                        : `N.º de Orden: ${nextOrderNumber}`
-                    }
-                    values={values}
-                    subtotal={subtotal}
-                    promotionDiscount={promotionDiscount}
-                    totalPrice={totalPrice}
-                    getProduct={getProduct}
-                    increaseQuantity={increaseQuantity}
-                    decreaseQuantity={decreaseQuantity}
-                    allowOutOfStock={allowOutOfStock}
-                    unavailableIngredients={unavailableIngredients}
-                    isSubmitting={isSubmitting}
-                    appliedPromotions={appliedPromotions}
-                    setFieldValue={setFieldValue}
-                  />
-                </div>
-              </MainOrder>
-              <ModalForm
-                isOpen={showStockWarning}
-                title="Confirmar venta sin stock"
-                onClose={() => setShowStockWarning(false)}
-                size="compact"
-                footerActions={
-                  <StockWarningButton
-                    type="button"
-                    $variant="primary"
-                    onClick={() => {
-                      confirmedNoStock.current = true;
-                      setShowStockWarning(false);
-                      void submitForm();
-                    }}
-                  >
-                    Confirmar con cocina
-                  </StockWarningButton>
-                }
-              >
-                <StockWarningContent>
-                  <StockWarningIcon aria-hidden="true">!</StockWarningIcon>
-                  <StockWarningMessage>
-                    <strong>
-                      Esta comanda se registrará sin modificar el inventario.
-                    </strong>
-                    <span>
-                      Antes de continuar, corroborá con cocina que todos los
-                      productos solicitados estén disponibles. El stock no se
-                      descontará ni se actualizará al registrar esta venta.
-                    </span>
-                  </StockWarningMessage>
-                </StockWarningContent>
-              </ModalForm>
-              {(() => {
-                const fingerprint = getPromotionFingerprint(values.items);
-                const conflicts = getPromotionConflicts(values.items);
-                const resolved = promotionChoice?.fingerprint === fingerprint;
-                if (!conflicts.length || resolved) return null;
-                return (
-                  <ModalForm
-                    isOpen
-                    title="Elegir promoción"
-                    onClose={() =>
-                      setPromotionChoice({ fingerprint, selectedIds: [] })
-                    }
-                  >
-                    <PromotionChoiceContent>
-                      <p>
-                        Hay promociones que utilizan algunas de las mismas
-                        unidades. Elegí cuál querés aplicar:
-                      </p>
-                      {conflicts.map((promotion) => (
-                        <PromotionChoiceCard key={promotion.id}>
-                          <div>
-                            <strong>{promotion.name}</strong>
-                            <span>
-                              ${promotion.price.toLocaleString("es-AR")}
-                            </span>
-                          </div>
-                          <PromotionChoiceButton
-                            type="button"
-                            onClick={() =>
-                              setPromotionChoice({
-                                fingerprint,
-                                selectedIds: [promotion.id],
-                              })
-                            }
-                          >
-                            Elegir esta promoción
-                          </PromotionChoiceButton>
-                        </PromotionChoiceCard>
-                      ))}
-                      <PromotionChoiceActions>
-                        <PromotionChoiceButton
-                          type="button"
-                          $secondary
-                          onClick={() =>
-                            setPromotionChoice({
-                              fingerprint,
-                              selectedIds: [],
-                            })
-                          }
-                        >
-                          No aplicar ninguna
-                        </PromotionChoiceButton>
-                      </PromotionChoiceActions>
-                    </PromotionChoiceContent>
-                  </ModalForm>
-                );
-              })()}
-            </OrderCreateBody>
-            </NewOrderPageContent>
-            <NewOrderPageFooter>
+          <ContainerPage>
+            <PageHeader
+              title={
+                effectiveParentOrder
+                  ? `Adicional de comanda #${effectiveParentOrder.order_number}`
+                  : "Nueva comanda"
+              }
+              description="Seleccioná productos y completá los datos de la comanda."
+            />
+            <NewOrderPageActions>
+              <BackToOrdersButton type="button" onClick={onClose}>
+                Volver a comandas
+              </BackToOrdersButton>
               <CreateOrderButton
                 type="button"
                 onClick={() => void submitForm()}
-                disabled={isSubmitting || (values.items.length === 0 && (values.extra_items ?? []).length === 0)}
+                disabled={
+                  isSubmitting ||
+                  (values.items.length === 0 &&
+                    (values.extra_items ?? []).length === 0)
+                }
               >
-                {isSubmitting ? "Creando comanda..." : effectiveParentOrder ? "Crear adicional" : "Crear comanda"}
+                {isSubmitting
+                  ? "Creando comanda..."
+                  : effectiveParentOrder
+                    ? "Crear adicional"
+                    : "Crear comanda"}
               </CreateOrderButton>
-            </NewOrderPageFooter>
-          </NewOrderPageShell>
+            </NewOrderPageActions>
+            <NewOrderPageContent>
+              <OrderCreateBody>
+                <MobileOrderSelector>
+                  <MobileOrderButton
+                    type="button"
+                    $active={mobileSection === "products"}
+                    onClick={() => setMobileSection("products")}
+                  >
+                    🛒 Productos
+                  </MobileOrderButton>
+
+                  <MobileOrderButton
+                    type="button"
+                    $active={mobileSection === "order"}
+                    onClick={() => setMobileSection("order")}
+                  >
+                    🧾 Comanda
+                  </MobileOrderButton>
+                </MobileOrderSelector>
+
+                <MainOrder>
+                  <div
+                    className={
+                      mobileSection === "products"
+                        ? "mobile-active"
+                        : "mobile-hidden"
+                    }
+                  >
+                    <ProductsForOrder
+                      products={products}
+                      items={values.items}
+                      addProduct={addProduct}
+                      allowOutOfStock={allowOutOfStock}
+                      unavailableIngredients={unavailableIngredients}
+                      increaseQuantity={increaseQuantity}
+                      decreaseQuantity={decreaseQuantity}
+                      addPromotion={addPromotion}
+                    />
+                  </div>
+
+                  <div
+                    className={
+                      mobileSection === "order"
+                        ? "mobile-active"
+                        : "mobile-hidden"
+                    }
+                  >
+                    <OrderCreateForm
+                      nextOrderNumber={nextOrderNumber}
+                      orderNumberLabel={
+                        effectiveParentOrder && nextAdditionalNumber !== null
+                          ? `Adicional N.º ${nextAdditionalNumber}`
+                          : `N.º de Orden: ${nextOrderNumber}`
+                      }
+                      values={values}
+                      subtotal={subtotal}
+                      promotionDiscount={promotionDiscount}
+                      totalPrice={totalPrice}
+                      getProduct={getProduct}
+                      increaseQuantity={increaseQuantity}
+                      decreaseQuantity={decreaseQuantity}
+                      allowOutOfStock={allowOutOfStock}
+                      unavailableIngredients={unavailableIngredients}
+                      isSubmitting={isSubmitting}
+                      appliedPromotions={appliedPromotions}
+                      setFieldValue={setFieldValue}
+                    />
+                  </div>
+                </MainOrder>
+                <ModalForm
+                  isOpen={showStockWarning}
+                  title="Confirmar venta sin stock"
+                  onClose={() => setShowStockWarning(false)}
+                  size="compact"
+                  footerActions={
+                    <StockWarningButton
+                      type="button"
+                      $variant="primary"
+                      onClick={() => {
+                        confirmedNoStock.current = true;
+                        setShowStockWarning(false);
+                        void submitForm();
+                      }}
+                    >
+                      Confirmar con cocina
+                    </StockWarningButton>
+                  }
+                >
+                  <StockWarningContent>
+                    <StockWarningIcon aria-hidden="true">!</StockWarningIcon>
+                    <StockWarningMessage>
+                      <strong>
+                        Esta comanda se registrará sin modificar el inventario.
+                      </strong>
+                      <span>
+                        Antes de continuar, corroborá con cocina que todos los
+                        productos solicitados estén disponibles. El stock no se
+                        descontará ni se actualizará al registrar esta venta.
+                      </span>
+                    </StockWarningMessage>
+                  </StockWarningContent>
+                </ModalForm>
+                {(() => {
+                  const fingerprint = getPromotionFingerprint(values.items);
+                  const conflicts = getPromotionConflicts(values.items);
+                  const resolved = promotionChoice?.fingerprint === fingerprint;
+                  if (!conflicts.length || resolved) return null;
+                  return (
+                    <ModalForm
+                      isOpen
+                      title="Elegir promoción"
+                      onClose={() =>
+                        setPromotionChoice({ fingerprint, selectedIds: [] })
+                      }
+                    >
+                      <PromotionChoiceContent>
+                        <p>
+                          Hay promociones que utilizan algunas de las mismas
+                          unidades. Elegí cuál querés aplicar:
+                        </p>
+                        {conflicts.map((promotion) => (
+                          <PromotionChoiceCard key={promotion.id}>
+                            <div>
+                              <strong>{promotion.name}</strong>
+                              <span>
+                                ${promotion.price.toLocaleString("es-AR")}
+                              </span>
+                            </div>
+                            <PromotionChoiceButton
+                              type="button"
+                              onClick={() =>
+                                setPromotionChoice({
+                                  fingerprint,
+                                  selectedIds: [promotion.id],
+                                })
+                              }
+                            >
+                              Elegir esta promoción
+                            </PromotionChoiceButton>
+                          </PromotionChoiceCard>
+                        ))}
+                        <PromotionChoiceActions>
+                          <PromotionChoiceButton
+                            type="button"
+                            $secondary
+                            onClick={() =>
+                              setPromotionChoice({
+                                fingerprint,
+                                selectedIds: [],
+                              })
+                            }
+                          >
+                            No aplicar ninguna
+                          </PromotionChoiceButton>
+                        </PromotionChoiceActions>
+                      </PromotionChoiceContent>
+                    </ModalForm>
+                  );
+                })()}
+              </OrderCreateBody>
+            </NewOrderPageContent>
+          </ContainerPage>
         );
       }}
     </Formik>
