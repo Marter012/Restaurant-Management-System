@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { FaCheck, FaPlus, FaTimes, FaUtensils } from "react-icons/fa";
 import type { StoreProduct } from "../../types/store.ts";
 import { money } from "../../utils/money.ts";

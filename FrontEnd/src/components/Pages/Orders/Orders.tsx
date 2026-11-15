@@ -6,7 +6,7 @@ import {
   MdOutlineAccessTime,
 } from "react-icons/md";
 import { useSelector, useDispatch } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import ManageOrder from "../../ManageOrder/ManageOrder.tsx";
 
@@ -35,16 +35,11 @@ import PageHeader from "../../PageHeaders/PageHeaders.tsx";
 import { ContainerPage } from "../PageStyles.ts";
 import type { IOrder } from "../../../interfaces/Order.ts";
 
-import ModalOrderCreate from "../../Modals/ModalOrder/ModalOrderCreate.tsx";
 import { StatusButton } from "../../Utils/ButtonStyles.ts";
 
 const Orders = () => {
   const dispatch = useDispatch<AppDispatch>();
-
-  const [showNewOrder, setShowNewOrder] = useState(false);
-
-  const [parentOrderForAdditional, setParentOrderForAdditional] =
-    useState<IOrder | null>(null);
+  const navigate = useNavigate();
 
   const [showBlockedNotice, setShowBlockedNotice] = useState(false);
   const [showReadOnlyOrders, setShowReadOnlyOrders] = useState(false);
@@ -130,46 +125,10 @@ const Orders = () => {
     setShowBlockedNotice(false);
   };
 
-  const closeNewOrder = () => {
-    setShowNewOrder(false);
-    setParentOrderForAdditional(null);
-  };
+  const openNewOrder = () => navigate("/orders/new");
 
-  const openNewOrder = () => {
-    setParentOrderForAdditional(null);
-    setShowNewOrder(true);
-  };
-
-  const openAdditionalOrder = (order: IOrder) => {
-    setParentOrderForAdditional(order);
-    setShowNewOrder(true);
-  };
-
-  useEffect(() => {
-    if (orderToEdit) setShowNewOrder(false);
-  }, [orderToEdit]);
-
-  useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && showNewOrder) {
-        closeNewOrder();
-      }
-    };
-
-    document.addEventListener("keydown", handleEscape);
-
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-    };
-  }, [showNewOrder]);
-
-  useEffect(() => {
-    document.body.style.overflow = showNewOrder ? "hidden" : "";
-
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [showNewOrder]);
+  const openAdditionalOrder = (order: IOrder) =>
+    navigate("/orders/new", { state: { parentOrder: order } });
 
   // Fecha de la otra caja abierta.
   const anotherCashDate = anotherOpenCashRegister
@@ -321,12 +280,6 @@ const Orders = () => {
         </ContainerOrder>
       )}
 
-      {/* MODAL DE CREACIÓN DE COMANDA */}
-      <ModalOrderCreate
-        isOpen={showNewOrder}
-        onClose={closeNewOrder}
-        parentOrder={parentOrderForAdditional}
-      />
     </ContainerPage>
   );
 };

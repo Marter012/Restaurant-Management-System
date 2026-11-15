@@ -60,6 +60,7 @@ const PromotionForm = ({
 }: PromotionFormProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const products = useSelector((state: RootState) => state.products.products);
+  const promotionListForDuplicateCheck = useSelector((state: RootState) => state.promotion.promotions);
 
   const activeProducts = useMemo(
     () => products.filter((product) => product.status),
@@ -146,6 +147,23 @@ const PromotionForm = ({
           };
 
           if (mode === "create") {
+            const normalizeName = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("es").replace(/[^a-z0-9]+/g, " ").trim();
+            const compositionKey = (items: { quantity: number; product_ids: string[] }[]) =>
+              items.map((item) => `${Number(item.quantity)}:${[...item.product_ids].sort().join(",")}`).sort().join("|");
+            const newName = normalizeName(promotionData.name);
+            const newComposition = compositionKey(promotionData.items);
+            const matchedPromotion = promotionListForDuplicateCheck.find((existing) => {
+              const existingName = normalizeName(existing.name || "");
+              const similarName = existingName === newName || (newName.length >= 4 && existingName.length >= 4 && (existingName.includes(newName) || newName.includes(existingName)));
+              const sameComposition = compositionKey(existing.items.map((item) => ({ quantity: item.quantity, product_ids: item.product_ids }))) === newComposition;
+              return similarName || sameComposition;
+            });
+            if (matchedPromotion) {
+              const statusLabel = matchedPromotion.status ? "ACTIVA" : "INACTIVA";
+              const reason = compositionKey(matchedPromotion.items.map((item) => ({ quantity: item.quantity, product_ids: item.product_ids }))) === newComposition ? "La composición de productos coincide" : "El nombre es igual o parecido";
+              const confirmed = window.confirm(`Ya existe una promoción similar: "${matchedPromotion.name}" (${statusLabel}). ${reason}. ¿Querés crearla de todas formas?`);
+              if (!confirmed) return;
+            }
             const created = await createPromotionAPI(promotionData);
             dispatch(addPromotion(created));
           } else if (mode === "edit" && promotion) {
@@ -416,6 +434,17 @@ const PromotionForm = ({
                                     ))}
                                   </CategorySelect>
                                 </ProductToolbar>
+                                <AddItemButton
+                                  type="button"
+                                  onClick={() => {
+                                    const nextIds = Array.from(new Set([...item.product_ids, ...filtered.map((product) => product.id)]));
+                                    setFieldValue(`items.${index}.product_ids`, nextIds);
+                                    setFieldValue(`items.${index}.name`, getGroupName(nextIds));
+                                  }}
+                                  disabled={!filtered.length || filtered.every((product) => item.product_ids.includes(product.id))}
+                                >
+                                  <FaCheck /> Seleccionar todos los filtrados ({filtered.length})
+                                </AddItemButton>
                               </GroupControlsRow>
 
                               <ProductSelection>

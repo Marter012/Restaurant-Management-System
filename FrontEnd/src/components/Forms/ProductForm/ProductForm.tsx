@@ -142,6 +142,21 @@ const ProductForm = ({
           };
 
           if (mode === "create") {
+            const normalizedNewName = normalizeText(values.name || "");
+            const similarProduct = products.find((existing) => {
+              const existingName = normalizeText(existing.name || "");
+              return existingName === normalizedNewName ||
+                (normalizedNewName.length >= 4 && existingName.length >= 4 &&
+                  (existingName.includes(normalizedNewName) || normalizedNewName.includes(existingName)));
+            });
+            if (similarProduct) {
+              const statusLabel = similarProduct.status ? "activo" : "inactivo";
+              const confirmed = window.confirm(
+                `Ya existe un producto con un nombre igual o parecido: "${similarProduct.name}" (${statusLabel}). ¿Querés crear otro producto de todas formas?`,
+              );
+              if (!confirmed) return;
+            }
+
             const productData = {
               ...formattedValues,
               quantity: 0,

@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import Home from "../Pages/Home/Home.tsx";
 import Products from "../Pages/Products/Products.tsx";
 import Orders from "../Pages/Orders/Orders.tsx";
+import NewOrder from "../Pages/NewOrder/NewOrder.tsx";
 import CashRegister from "../Pages/Cash/CashRegister.tsx";
 import Login from "../Pages/Login/Login.tsx";
 import ProtectedRoute from "../ProtectedRoute/ProtectedRoute.tsx";
@@ -10,8 +11,8 @@ import PrivateLayout from "../PrivateLayout/PrivateLayout.tsx";
 import Promotions from "../Pages/Promotions/Promotions.tsx";
 import Settings from "../Pages/Settings/Settings.tsx";
 import OnlineOrders from "../Pages/OnlineOrders/OnlineOrders.tsx";
+import SettingsStore from "../Pages/Settings/SettingsStore.tsx";
 import { ContainerPage } from "../Pages/PageStyles.ts";
-import SettingsStore from "../Pages/Settings/SettingsStore/SettingsStore.tsx";
 const SettingsStorePage = () => <ContainerPage><SettingsStore /></ContainerPage>;
 
 const Router = () => {
@@ -33,6 +34,7 @@ const Router = () => {
           <Route path="/products" element={<Products />} />
           <Route path="/promotions" element={<Promotions />} />
           <Route path="/orders" element={<Orders />} />
+          <Route path="/orders/new" element={<NewOrder />} />
           <Route path="/online-orders" element={<OnlineOrders />} />
           <Route path="/store" element={<SettingsStorePage />} />
           <Route path="/cashRegister" element={<CashRegister />} />
