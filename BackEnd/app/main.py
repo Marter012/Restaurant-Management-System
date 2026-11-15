@@ -82,24 +82,36 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# ==========================================
+# CORS CONFIGURATION
+# ==========================================
+
+cors_origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:5174",
+    "http://127.0.0.1:5174",
+    "http://192.168.100.190:5173",
+    "http://192.168.56.1:5173",
+    "https://restaurant-management-system-phi-umber.vercel.app",
+    os.getenv("FRONTEND_URL", ""),
+    os.getenv("STORE_FRONTEND_URL", ""),
+]
+
+# Normalizar dominios y eliminar barras finales.
+cors_origins = list({
+    origin.strip().rstrip("/")
+    for origin in cors_origins
+    if origin and origin.strip()
+})
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[origin for origin in [
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "http://localhost:5174",
-        "http://127.0.0.1:5174",
-        "http://192.168.100.190:5173",
-        "http://192.168.56.1:5173",
-        "https://restaurant-management-system-phi-umber.vercel.app",
-        os.getenv("STORE_FRONTEND_URL", ""),
-    ] if origin],
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 app.add_exception_handler(
     RequestValidationError,
