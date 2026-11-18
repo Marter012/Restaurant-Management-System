@@ -35,8 +35,7 @@ interface Props {
   totalQR: number;
   totalDebit: number;
   previousClosedCash: any;
-  onOpenIncome: () => void;
-  onOpenExpense: () => void;
+  onOpenMovement: () => void;
   onCloseCash: () => void;
   onSelectSale: (sale: any) => void;
   onEditMovement: (movement: any) => void;
@@ -58,8 +57,7 @@ const CashDashboardContent = ({
   totalQR,
   totalDebit,
   previousClosedCash,
-  onOpenIncome,
-  onOpenExpense,
+  onOpenMovement,
   onCloseCash,
   onSelectSale,
   onEditMovement,
@@ -238,16 +236,9 @@ const CashDashboardContent = ({
               <button
                 type="button"
                 className="secondary"
-                onClick={onOpenIncome}
+                onClick={onOpenMovement}
               >
-                ＋ Registrar ingreso
-              </button>
-              <button
-                type="button"
-                className="secondary"
-                onClick={onOpenExpense}
-              >
-                − Registrar egreso
+                ＋ Registrar movimiento extra
               </button>
               <CashDashboardCloseButton type="button" onClick={onCloseCash}>
                 Cerrar caja
@@ -342,7 +333,10 @@ const CashDashboardContent = ({
 
               const handleClick = () => {
                 if (isOrder) onSelectSale(activity.order);
-                else onEditMovement(activity.movement);
+              };
+
+              const handleDoubleClick = () => {
+                if (!isOrder) onEditMovement(activity.movement);
               };
 
               return (
@@ -352,6 +346,7 @@ const CashDashboardContent = ({
                   role="button"
                   tabIndex={0}
                   onClick={handleClick}
+                  onDoubleClick={handleDoubleClick}
                   onKeyDown={(event) => {
                     if (event.key === "Enter" || event.key === " ") {
                       event.preventDefault();

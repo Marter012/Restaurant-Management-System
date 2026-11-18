@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { FaCheck, FaPlus } from "react-icons/fa";
+import { Check, Plus } from "@phosphor-icons/react";
 
 import {
   FormContainer,
@@ -458,7 +458,7 @@ const ProductForm = ({
                                 $selected={selected}
                                 onClick={() => toggleIngredient(ingredient)}
                               >
-                                {selected ? <FaCheck /> : <FaPlus />}
+                                {selected ? <Check /> : <Plus />}
 
                                 {formatCategory(ingredient)}
                               </IngredientChip>

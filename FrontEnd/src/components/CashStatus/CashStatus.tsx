@@ -3,16 +3,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { createPortal } from "react-dom";
 
-import {
-  FaCalendarAlt,
-  FaSun,
-  FaMoon,
-  FaChevronDown,
-  FaChevronLeft,
-  FaChevronRight,
-  FaCheck,
-  FaLayerGroup,
-} from "react-icons/fa";
+import { CalendarBlank, Sun, Moon, CaretDown, CaretLeft, CaretRight, Check, Stack } from "@phosphor-icons/react";
 
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
@@ -55,7 +46,6 @@ import {
 import { getDateOnly } from "../Utils/Formats.tsx";
 
 export type ViewMode = "auto" | "desktop" | "tablet" | "mobile";
-
 
 type CashStatusType = "open" | "closed" | "not-open";
 
@@ -250,8 +240,7 @@ const CashStatus = ({ viewMode = "auto" }: CashStatusProps) => {
 
     const isMobile =
       viewMode === "mobile" ||
-      (viewMode === "auto" &&
-        window.matchMedia("(max-width: 700px)").matches);
+      (viewMode === "auto" && window.matchMedia("(max-width: 700px)").matches);
 
     if (isMobile) {
       setDropdownStyle({
@@ -276,25 +265,27 @@ const CashStatus = ({ viewMode = "auto" }: CashStatusProps) => {
 
     const dropdownHeight = Math.min(dropdownRect.height, viewportHeight - 24);
 
-    const spaceBelow = viewportHeight - rect.bottom;
-    const spaceAbove = rect.top;
+    // El portal toma como referencia la parte superior
+// de CashStatus, no la parte inferior de la tarjeta.
+const spaceBelow = viewportHeight - rect.top;
+const spaceAbove = rect.top;
 
-    const placement =
-      spaceBelow < dropdownHeight + 12 && spaceAbove > spaceBelow
-        ? "top"
-        : "bottom";
+const placement =
+  spaceBelow < dropdownHeight + 12 && spaceAbove > dropdownHeight + 12
+    ? "top"
+    : "bottom";
 
-    setDropdownPlacement(placement);
+setDropdownPlacement(placement);
 
-    const left = Math.max(
-      12,
-      Math.min(rect.left, viewportWidth - dropdownWidth - 12),
-    );
+const left = Math.max(
+  12,
+  Math.min(rect.left, viewportWidth - dropdownWidth - 12),
+);
 
-    let top =
-      placement === "bottom"
-        ? rect.bottom + 12
-        : rect.top - dropdownHeight - 12;
+let top =
+  placement === "bottom"
+    ? rect.top
+    : rect.top - dropdownHeight - 12;
 
     top = Math.max(12, Math.min(top, viewportHeight - dropdownHeight - 12));
 
@@ -501,7 +492,7 @@ const CashStatus = ({ viewMode = "auto" }: CashStatusProps) => {
         onClick={() => handleShiftChange(shift)}
       >
         <span className="option-icon">
-          {shift === "morning" ? <FaSun /> : <FaMoon />}
+          {shift === "morning" ? <Sun /> : <Moon />}
         </span>
 
         <ShiftOptionInfo>
@@ -512,7 +503,7 @@ const CashStatus = ({ viewMode = "auto" }: CashStatusProps) => {
 
         <StatusDot $status={status} />
 
-        {isSelected && <FaCheck className="check" />}
+        {isSelected && <Check className="check" />}
       </ShiftOption>
     );
   };
@@ -544,7 +535,7 @@ const CashStatus = ({ viewMode = "auto" }: CashStatusProps) => {
                       onClick={() => changeMonth(-1)}
                       aria-label="Mes anterior"
                     >
-                      <FaChevronLeft />
+                      <CaretLeft />
                     </CalendarNavigation>
 
                     <strong>{monthLabel}</strong>
@@ -554,7 +545,7 @@ const CashStatus = ({ viewMode = "auto" }: CashStatusProps) => {
                       onClick={() => changeMonth(1)}
                       aria-label="Mes siguiente"
                     >
-                      <FaChevronRight />
+                      <CaretRight />
                     </CalendarNavigation>
                   </CalendarHeader>
 
@@ -579,7 +570,7 @@ const CashStatus = ({ viewMode = "auto" }: CashStatusProps) => {
                   </CalendarGrid>
 
                   <CalendarFooter type="button" onClick={handleToday}>
-                    <FaCalendarAlt />
+                    <CalendarBlank />
                     <span>
                       Hoy,{" "}
                       {new Date().toLocaleDateString("es-AR", {
@@ -641,14 +632,17 @@ const CashStatus = ({ viewMode = "auto" }: CashStatusProps) => {
           <DateTimeGroup>
             <DateButton as="div" $active={showDropdown}>
               <span className="date-icon-wrap">
-                <FaCalendarAlt className="calendar-icon" />
+                <CalendarBlank className="calendar-icon" />
+                <span className="calendar-day-number" aria-hidden="true">
+                  {selectedDateObject.getDate()}
+                </span>
               </span>
               <DateInfo>
                 <small>FECHA OPERATIVA</small>
                 <span className="date-medium">{mediumDateLabel}</span>
                 <span className="date-short">{shortDateLabel}</span>
               </DateInfo>
-              <FaChevronDown
+              <CaretDown
                 className={`arrow ${showDropdown ? "open" : ""}`}
               />
             </DateButton>
@@ -661,26 +655,28 @@ const CashStatus = ({ viewMode = "auto" }: CashStatusProps) => {
               type="button"
               $selected={selectedShift === "morning"}
               title="Seleccionar turno mañana"
+              aria-label="Seleccionar turno mañana"
               aria-pressed={selectedShift === "morning"}
               onClick={(event) => {
                 event.stopPropagation();
                 handleShiftChange("morning");
               }}
             >
-              <FaSun />
+              <Sun />
               <span>Mañana</span>
             </ShiftChoice>
             <ShiftChoice
               type="button"
               $selected={selectedShift === "night"}
               title="Seleccionar turno noche"
+              aria-label="Seleccionar turno noche"
               aria-pressed={selectedShift === "night"}
               onClick={(event) => {
                 event.stopPropagation();
                 handleShiftChange("night");
               }}
             >
-              <FaMoon />
+              <Moon />
               <span>Noche</span>
             </ShiftChoice>
           </ShiftToggle>
@@ -689,7 +685,7 @@ const CashStatus = ({ viewMode = "auto" }: CashStatusProps) => {
             $status={currentStatus}
             title={getStatusText(currentStatus)}
           >
-            <FaLayerGroup className="cash-icon" />
+            <Stack className="cash-icon" />
             <span className="cash-copy">
               <small>Caja</small>
               <strong>

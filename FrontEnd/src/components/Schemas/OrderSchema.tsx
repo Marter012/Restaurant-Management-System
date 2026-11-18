@@ -95,6 +95,11 @@ export const getOrderInitialValues = (order: IOrder) => ({
   status_payment: order.status_payment ?? "pending",
   delivery_time: order.delivery_time ?? "",
   status: order.status ?? true,
+  extra_items: (order.extra_items ?? []).map((extra) => ({
+    name: extra.name ?? "",
+    price: Number(extra.price ?? 0),
+    quantity: Number(extra.quantity ?? 1),
+  })),
 
   // Solo las órdenes históricas marcadas como pagadas reciben el fallback.
   // Pendientes y parciales nunca deben interpretarse como totalmente abonadas.

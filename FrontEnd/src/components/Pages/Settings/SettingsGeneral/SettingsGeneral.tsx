@@ -1,8 +1,9 @@
+import CardLoading from "../../../CardLoading/CardLoading.tsx";
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../../../../store/store.ts";
-import { setEstablishmentName } from "../../../../store/slices/establishmentSlice.ts";
-import { FaCheck, FaExclamationTriangle, FaStore, FaTag, FaHistory, FaBoxOpen } from "react-icons/fa";
+import { setEstablishmentName, setEstablishmentLogo } from "../../../../store/slices/establishmentSlice.ts";
+import { Check, Warning, Storefront, Tag, ClockCounterClockwise, Package } from "@phosphor-icons/react";
 
 import {
   getSettingsAPI,
@@ -46,7 +47,8 @@ import {
   RetentionPreview,
   WarningBox,
   ActionRow,
-  Loading,
+  LogoPreviewRow,
+  LogoPreviewImage,
 } from "./SettingsGeneralStyles.ts";
 
 const DEFAULT_OPERATIONAL: GeneralSettings = { allow_out_of_stock: false };
@@ -61,6 +63,8 @@ const SettingsGeneral = () => {
 
   const [name, setName] = useState("");
   const [savedName, setSavedName] = useState("");
+  const [logo, setLogo] = useState<string | null>(null);
+  const [savedLogo, setSavedLogo] = useState<string | null>(null);
   const [operational, setOperational] = useState<GeneralSettings>(DEFAULT_OPERATIONAL);
   const [savedOperational, setSavedOperational] = useState<GeneralSettings>(DEFAULT_OPERATIONAL);
   const [commercial, setCommercial] = useState<CommercialSettings>(DEFAULT_COMMERCIAL);
@@ -81,6 +85,7 @@ const SettingsGeneral = () => {
     () => name.trim() !== savedName,
     [name, savedName],
   );
+  const logoChanged = logo !== savedLogo;
   const operationalChanged =
     operational.allow_out_of_stock !== savedOperational.allow_out_of_stock;
   const commercialChanged =
@@ -106,6 +111,7 @@ const SettingsGeneral = () => {
         if (!active) return;
 
         const initialName = establishmentData.name ?? "";
+        const initialLogo = establishmentData.logo ?? null;
         const initialOperational = {
           allow_out_of_stock: Boolean(operationalData.allow_out_of_stock),
         };
@@ -120,6 +126,8 @@ const SettingsGeneral = () => {
 
         setName(initialName);
         setSavedName(initialName);
+        setLogo(initialLogo);
+        setSavedLogo(initialLogo);
         setOperational(initialOperational);
         setSavedOperational(initialOperational);
         setCommercial(initialCommercial);
@@ -143,6 +151,37 @@ const SettingsGeneral = () => {
     };
   }, []);
 
+  const handleLogoFile = (file?: File) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setError("Seleccioná un archivo de imagen válido.");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const image = new Image();
+      image.onload = () => {
+        const canvas = document.createElement("canvas");
+        const maxSize = 512;
+        const scale = Math.min(1, maxSize / Math.max(image.width, image.height));
+        canvas.width = Math.max(1, Math.round(image.width * scale));
+        canvas.height = Math.max(1, Math.round(image.height * scale));
+        const context = canvas.getContext("2d");
+        if (!context) {
+          setError("No se pudo procesar la imagen seleccionada.");
+          return;
+        }
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        setLogo(canvas.toDataURL("image/png"));
+        setError("");
+      };
+      image.onerror = () => setError("No se pudo leer la imagen seleccionada.");
+      image.src = String(reader.result);
+    };
+    reader.onerror = () => setError("No se pudo cargar el archivo seleccionado.");
+    reader.readAsDataURL(file);
+  };
+
   const saveName = async () => {
     setError("");
     setMessage("");
@@ -153,12 +192,16 @@ const SettingsGeneral = () => {
 
     setSavingName(true);
     try {
-      const result = await updateEstablishmentAPI({ name: name.trim() });
+      const result = await updateEstablishmentAPI({ name: name.trim(), logo });
       const persistedName = result.name;
+      const persistedLogo = result.logo ?? null;
       setName(persistedName);
       setSavedName(persistedName);
+      setLogo(persistedLogo);
+      setSavedLogo(persistedLogo);
       dispatch(setEstablishmentName(persistedName));
-      setMessage("Nombre del establecimiento actualizado.");
+      dispatch(setEstablishmentLogo(persistedLogo));
+      setMessage("Identidad del establecimiento actualizada.");
     } catch {
       setError("No se pudo actualizar el nombre del establecimiento.");
     } finally {
@@ -271,7 +314,7 @@ const SettingsGeneral = () => {
   };
 
   if (loading) {
-    return <Loading>Cargando configuración del establecimiento...</Loading>;
+    return <CardLoading icon={<Storefront />} text="Cargando configuración del establecimiento..." />;
   }
 
   return (
@@ -293,7 +336,7 @@ const SettingsGeneral = () => {
 
       <Section>
         <SectionHeader>
-          <SectionIcon><FaStore /></SectionIcon>
+          <SectionIcon><Storefront /></SectionIcon>
           <div>
             <SectionTitle>Identidad del establecimiento</SectionTitle>
             <SectionDescription>
@@ -311,20 +354,36 @@ const SettingsGeneral = () => {
             placeholder="Ej.: Boutique de Sabores"
           />
         </Field>
+        <Field>
+          <Label htmlFor="establishment-logo">Logo del establecimiento</Label>
+          <Input
+            id="establishment-logo"
+            type="file"
+            accept="image/png,image/jpeg,image/webp,image/svg+xml"
+            onChange={(event) => handleLogoFile(event.currentTarget.files?.[0])}
+          />
+          <HelpText>Se adapta al navbar y al ícono de la pestaña. La imagen se optimiza a un máximo de 512 px.</HelpText>
+          {logo && (
+            <LogoPreviewRow>
+              <LogoPreviewImage src={logo} alt="Vista previa del logo" />
+              <SecondaryButton type="button" onClick={() => setLogo(null)}>Quitar logo</SecondaryButton>
+            </LogoPreviewRow>
+          )}
+        </Field>
         <ActionRow>
           <SaveButton
             type="button"
             onClick={() => void saveName()}
-            disabled={!nameChanged || savingName}
+            disabled={(!nameChanged && !logoChanged) || savingName}
           >
-            <FaCheck /> {savingName ? "Guardando..." : "Guardar nombre"}
+            <Check /> {savingName ? "Guardando..." : "Guardar identidad"}
           </SaveButton>
         </ActionRow>
       </Section>
 
       <Section>
         <SectionHeader>
-          <SectionIcon><FaBoxOpen /></SectionIcon>
+          <SectionIcon><Package /></SectionIcon>
           <div>
             <SectionTitle>Políticas operativas del sistema</SectionTitle>
             <SectionDescription>
@@ -361,14 +420,14 @@ const SettingsGeneral = () => {
             onClick={() => void saveOperational()}
             disabled={!operationalChanged || savingOperational}
           >
-            <FaCheck /> {savingOperational ? "Guardando..." : "Guardar política operativa"}
+            <Check /> {savingOperational ? "Guardando..." : "Guardar política operativa"}
           </SaveButton>
         </ActionRow>
       </Section>
 
       <Section>
         <SectionHeader>
-          <SectionIcon><FaTag /></SectionIcon>
+          <SectionIcon><Tag /></SectionIcon>
           <div>
             <SectionTitle>Política de descuentos generales</SectionTitle>
             <SectionDescription>
@@ -429,7 +488,7 @@ const SettingsGeneral = () => {
             onClick={() => void saveCommercial()}
             disabled={!commercialChanged || savingCommercial}
           >
-            <FaCheck />
+            <Check />
             {savingCommercial ? "Guardando..." : "Guardar configuración comercial"}
           </SaveButton>
         </ActionRow>
@@ -437,7 +496,7 @@ const SettingsGeneral = () => {
 
       <Section>
         <SectionHeader>
-          <SectionIcon><FaHistory /></SectionIcon>
+          <SectionIcon><ClockCounterClockwise /></SectionIcon>
           <div>
             <SectionTitle>Conservación del historial de actividad</SectionTitle>
             <SectionDescription>
@@ -469,7 +528,7 @@ const SettingsGeneral = () => {
         {preview && (
           <RetentionPreview>
             <WarningBox>
-              <FaExclamationTriangle />
+              <Warning />
               <div>
                 <strong>Se requiere confirmación</strong>
                 <span>

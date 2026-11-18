@@ -316,6 +316,15 @@ export const ItemHeader = styled.div`
     letter-spacing: 0.09em;
   }
 
+  > button:not(:last-child) {
+    flex: 0 0 auto;
+    width: auto;
+    min-height: 36px;
+    padding: 0 12px;
+    white-space: nowrap;
+    font-size: 0.72rem;
+  }
+
   strong {
     overflow: hidden;
     color: var(--color-primary);
@@ -347,17 +356,18 @@ export const RemoveItemButton = styled.button`
 
 export const GroupControlsRow = styled.div`
   display: grid;
-  grid-template-columns: auto auto minmax(150px, 1fr) 170px;
+  grid-template-columns: minmax(120px, auto) minmax(110px, auto) minmax(220px, 1fr);
   align-items: end;
   gap: 12px;
   min-width: 0;
 
   @media (max-width: 1050px) {
-    grid-template-columns: auto auto minmax(130px, 1fr);
+    grid-template-columns: minmax(110px, auto) minmax(100px, auto) minmax(180px, 1fr);
+    gap: 9px;
   }
 
   @media (max-width: 760px) {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr 1fr;
     align-items: center;
   }
 

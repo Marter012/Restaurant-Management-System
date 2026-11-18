@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { IoClose } from "react-icons/io5";
+import { X } from "@phosphor-icons/react";
 
 import {
   ModalContainer,
@@ -75,7 +75,7 @@ const ModalForm = ({
               onClick={onClose}
               aria-label="Cerrar modal"
             >
-              <IoClose />
+              <X />
             </CloseButton>
           )}
         </ModalHeader>

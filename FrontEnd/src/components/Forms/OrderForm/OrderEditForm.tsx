@@ -32,6 +32,7 @@ import {
   OrderHeader,
   OrderItem,
   OrderItems,
+  QuantityControls,
   OrderOptionsColumn,
   OrderSection,
   OrderSummaryColumn,
@@ -141,6 +142,11 @@ function EditOrderContent({
         order_number: values.order_number,
         customer_name: values.customer_name,
         observations: values.observations?.trim() ?? "",
+        extra_items: (values.extra_items ?? []).map((extra) => ({
+          name: extra.name.trim(),
+          price: Number(extra.price),
+          quantity: Number(extra.quantity),
+        })),
         method_payment: isPending
           ? "pending"
           : (payments[0]?.method_payment ?? values.method_payment),
@@ -372,6 +378,14 @@ function EditOrderContent({
                                 ? item.name || "Promoción"
                                 : product?.name || item.name || "Producto"}
                             </h4>
+                            {isPromotion && item.promotion_selections?.length ? (
+                              <small>
+                                Incluye: {item.promotion_selections.map((selection) => {
+                                  const selectedProduct = products.find((candidate) => candidate.id === selection.product_id);
+                                  return `${selection.product_name || selection.name || selectedProduct?.name || "Producto"} × ${Number(selection.quantity) * Number(item.quantity)}`;
+                                }).join(", ")}
+                              </small>
+                            ) : null}
                             {item.garnish && (
                               <small>Guarnición: {item.garnish}</small>
                             )}
@@ -389,6 +403,39 @@ function EditOrderContent({
                   ) : (
                     <p>Esta comanda no tiene productos registrados.</p>
                   )}
+                  {(values.extra_items ?? []).map((extra, extraIndex) => (
+                    <OrderItem key={`extra-${extraIndex}`}>
+                      <img className="order-item-image" src="/images/Products.png" alt={extra.name} />
+                      <div>
+                        <h4>{extra.name}</h4>
+                        <small>Producto extra</small>
+                        <span>{formatOrderMoney(Number(extra.price) * Number(extra.quantity))}</span>
+                      </div>
+                      <QuantityControls>
+                        <button
+                          type="button"
+                          disabled={readOnly}
+                          onClick={() => {
+                            const next = [...(values.extra_items ?? [])];
+                            const quantity = Number(next[extraIndex].quantity) - 1;
+                            if (quantity <= 0) next.splice(extraIndex, 1);
+                            else next[extraIndex] = { ...next[extraIndex], quantity };
+                            setFieldValue("extra_items", next);
+                          }}
+                        >−</button>
+                        <strong>{extra.quantity}</strong>
+                        <button
+                          type="button"
+                          disabled={readOnly}
+                          onClick={() => {
+                            const next = [...(values.extra_items ?? [])];
+                            next[extraIndex] = { ...next[extraIndex], quantity: Number(next[extraIndex].quantity) + 1 };
+                            setFieldValue("extra_items", next);
+                          }}
+                        >+</button>
+                      </QuantityControls>
+                    </OrderItem>
+                  ))}
                 </OrderItems>
                 <p className="locked-note">
                   Los productos, cantidades, ingredientes y configuraciones se

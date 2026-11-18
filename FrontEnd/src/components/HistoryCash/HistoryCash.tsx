@@ -4,14 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../../store/store.ts";
 import type { ICashRegister, IUpdateCashRegister } from "../../interfaces/CashRegister.ts";
 import { formatDate, getDateOnly } from "../Utils/Formats.tsx";
-import { MdPrint } from "react-icons/md";
-import {
-  MdArrowForwardIos, MdCalendarMonth, MdCheckCircle, MdChevronLeft,
-  MdChevronRight, MdClose, MdInfoOutline, MdInventory2, MdPayments,
-  MdReceiptLong, MdTrendingUp, MdWarningAmber, MdWbSunny,
-  MdNightlightRound, MdAccountBalanceWallet, MdArrowDownward,
-  MdArrowUpward, MdEdit, MdSave, MdLock,
-} from "react-icons/md";
+import { Printer } from "@phosphor-icons/react";
+import { CaretRight, CalendarDots, CheckCircle, CaretLeft, X, Info, Package, Wallet, Receipt, TrendUp, Warning, Sun, Moon, ArrowDown, ArrowUp, PencilSimple, FloppyDisk, Lock } from "@phosphor-icons/react";
 import { buildCashTicket } from "../Tickets/CashTicket.ts";
 import usePrintAgent from "../../hooks/usePrintOrder.ts";
 import ModalPrintFalse from "../ModalPrintFalse/ModalPrintFalse.tsx";
@@ -213,29 +207,29 @@ const HistoryCash = () => {
       <HistoryExplorer>
         <HistoryHeader>
           <HeaderTitleGroup>
-            <HeaderIcon><MdAccountBalanceWallet /></HeaderIcon>
+            <HeaderIcon><Wallet /></HeaderIcon>
             <div>
               <HeaderTitle>Historial de cajas</HeaderTitle>
               <HeaderDescription>Consultá cierres, movimientos y resultados de cada turno.</HeaderDescription>
             </div>
           </HeaderTitleGroup>
           <MonthSelector aria-label="Seleccionar mes del historial">
-            <MonthButton type="button" onClick={() => changeMonth(-1)} aria-label="Mes anterior"><MdChevronLeft /></MonthButton>
-            <MonthTitle><MdCalendarMonth />{monthName}</MonthTitle>
-            <MonthButton type="button" onClick={() => changeMonth(1)} aria-label="Mes siguiente"><MdChevronRight /></MonthButton>
+            <MonthButton type="button" onClick={() => changeMonth(-1)} aria-label="Mes anterior"><CaretLeft /></MonthButton>
+            <MonthTitle><CalendarDots />{monthName}</MonthTitle>
+            <MonthButton type="button" onClick={() => changeMonth(1)} aria-label="Mes siguiente"><CaretRight /></MonthButton>
           </MonthSelector>
         </HistoryHeader>
 
         <HistoryStatsGrid>
-          <HistoryStatCard><HistoryStatIcon $tone="primary"><MdInventory2 /></HistoryStatIcon><div><HistoryStatLabel>Registros del mes</HistoryStatLabel><HistoryStatValue>{monthCashRegisters.length}</HistoryStatValue></div></HistoryStatCard>
-          <HistoryStatCard><HistoryStatIcon $tone="accent"><MdTrendingUp /></HistoryStatIcon><div><HistoryStatLabel>Ventas registradas</HistoryStatLabel><HistoryStatValue>{currency(monthlySales)}</HistoryStatValue></div></HistoryStatCard>
-          <HistoryStatCard><HistoryStatIcon $tone="soft"><MdPayments /></HistoryStatIcon><div><HistoryStatLabel>Promedio por caja</HistoryStatLabel><HistoryStatValue>{currency(averageSales)}</HistoryStatValue></div></HistoryStatCard>
+          <HistoryStatCard><HistoryStatIcon $tone="primary"><Package /></HistoryStatIcon><div><HistoryStatLabel>Registros del mes</HistoryStatLabel><HistoryStatValue>{monthCashRegisters.length}</HistoryStatValue></div></HistoryStatCard>
+          <HistoryStatCard><HistoryStatIcon $tone="accent"><TrendUp /></HistoryStatIcon><div><HistoryStatLabel>Ventas registradas</HistoryStatLabel><HistoryStatValue>{currency(monthlySales)}</HistoryStatValue></div></HistoryStatCard>
+          <HistoryStatCard><HistoryStatIcon $tone="soft"><Wallet /></HistoryStatIcon><div><HistoryStatLabel>Promedio por caja</HistoryStatLabel><HistoryStatValue>{currency(averageSales)}</HistoryStatValue></div></HistoryStatCard>
         </HistoryStatsGrid>
 
         <HistoryList>
           <HistoryListHeader><span>Fecha y turno</span><span>Ventas</span><span>Estado</span><span /></HistoryListHeader>
           {monthCashRegisters.length === 0 ? (
-            <EmptyMessage><MdInfoOutline /><strong>No hay cajas registradas</strong><span>No se encontraron cierres durante {monthName}.</span></EmptyMessage>
+            <EmptyMessage><Info /><strong>No hay cajas registradas</strong><span>No se encontraron cierres durante {monthName}.</span></EmptyMessage>
           ) : monthCashRegisters.map((cash) => {
             const selected = selectedCashRegisterId === cash.id;
             return (
@@ -243,14 +237,14 @@ const HistoryCash = () => {
                 <HistoryRowMain role="button" tabIndex={0} aria-pressed={selected}
                   onClick={() => setSelectedCashRegisterId(cash.id)}
                   onKeyDown={(event) => handleRowKeyDown(event, cash.id)}>
-                  <RowDate><span><MdCalendarMonth /></span><div><strong>{formatDate(cash.date)}</strong><RowShift $night={cash.shift === "night"}>{cash.shift === "night" ? <MdNightlightRound /> : <MdWbSunny />}{formatShift(cash.shift)}</RowShift></div></RowDate>
+                  <RowDate><span><CalendarDots /></span><div><strong>{formatDate(cash.date)}</strong><RowShift $night={cash.shift === "night"}>{cash.shift === "night" ? <Moon /> : <Sun />}{formatShift(cash.shift)}</RowShift></div></RowDate>
                   <RowSales>{currency(cash.sales_total)}</RowSales>
                   <RowStatus $closed={cash.status_cash_register === "close"}>{formatStatus(cash.status_cash_register)}</RowStatus>
-                  <RowArrow><MdArrowForwardIos /></RowArrow>
+                  <RowArrow><CaretRight /></RowArrow>
                 </HistoryRowMain>
                 <PrintAction type="button" title="Imprimir cierre de caja" aria-label={`Imprimir cierre del ${formatDate(cash.date)}`}
                   onClick={() => void handlePrint(cash)} disabled={printingCashRegisterId === cash.id}>
-                  <MdPrint />{printingCashRegisterId === cash.id && <span>...</span>}
+                  <Printer />{printingCashRegisterId === cash.id && <span>...</span>}
                 </PrintAction>
               </HistoryRow>
             );
@@ -263,30 +257,30 @@ const HistoryCash = () => {
           <>
             <DetailHeader>
               <div>
-                <DetailHeaderTitle><DetailHeaderIcon><MdReceiptLong /></DetailHeaderIcon>Detalle del cierre</DetailHeaderTitle>
+                <DetailHeaderTitle><DetailHeaderIcon><Receipt /></DetailHeaderIcon>Detalle del cierre</DetailHeaderTitle>
                 <DetailHeaderDescription>Información completa del registro seleccionado.</DetailHeaderDescription>
               </div>
               <DetailHeaderActions>
-                {isAdmin && <EditCashButton type="button" onClick={() => openEdit(selectedCashRegister)}><MdEdit />Editar caja</EditCashButton>}
+                {isAdmin && <EditCashButton type="button" onClick={() => openEdit(selectedCashRegister)}><PencilSimple />Editar caja</EditCashButton>}
                 <PrintDetailButton type="button" onClick={() => void handlePrint(selectedCashRegister)} disabled={printingCashRegisterId === selectedCashRegister.id}>
-                  <MdPrint />{printingCashRegisterId === selectedCashRegister.id ? "Imprimiendo..." : "Imprimir cierre"}
+                  <Printer />{printingCashRegisterId === selectedCashRegister.id ? "Imprimiendo..." : "Imprimir cierre"}
                 </PrintDetailButton>
-                <DetailCloseButton type="button" onClick={() => setSelectedCashRegisterId(null)} aria-label="Cerrar detalle" title="Cerrar detalle"><MdClose /></DetailCloseButton>
+                <DetailCloseButton type="button" onClick={() => setSelectedCashRegisterId(null)} aria-label="Cerrar detalle" title="Cerrar detalle"><X /></DetailCloseButton>
               </DetailHeaderActions>
             </DetailHeader>
 
             <CashIdentityCard>
               <CashIdentityMain>
                 <CashIdentityDate>{formatDate(selectedCashRegister.date)}</CashIdentityDate>
-                <CashIdentityMeta>Turno <ShiftBadge $night={selectedCashRegister.shift === "night"}>{selectedCashRegister.shift === "night" ? <MdNightlightRound /> : <MdWbSunny />}{formatShift(selectedCashRegister.shift)}</ShiftBadge></CashIdentityMeta>
+                <CashIdentityMeta>Turno <ShiftBadge $night={selectedCashRegister.shift === "night"}>{selectedCashRegister.shift === "night" ? <Moon /> : <Sun />}{formatShift(selectedCashRegister.shift)}</ShiftBadge></CashIdentityMeta>
               </CashIdentityMain>
               <SummaryStatus $closed={selectedCashRegister.status_cash_register === "close"}>
-                {selectedCashRegister.status_cash_register === "close" ? <MdCheckCircle /> : <MdWarningAmber />}{formatStatus(selectedCashRegister.status_cash_register)}
+                {selectedCashRegister.status_cash_register === "close" ? <CheckCircle /> : <Warning />}{formatStatus(selectedCashRegister.status_cash_register)}
               </SummaryStatus>
             </CashIdentityCard>
 
             <SummarySection>
-              <SummarySectionHeader><SummarySectionTitle><MdPayments />Resumen del turno</SummarySectionTitle><SectionTag>Totales</SectionTag></SummarySectionHeader>
+              <SummarySectionHeader><SummarySectionTitle><Wallet />Resumen del turno</SummarySectionTitle><SectionTag>Totales</SectionTag></SummarySectionHeader>
               <SummaryGrid>
                 <SummaryCard><SummaryCardLabel>Efectivo de apertura</SummaryCardLabel><SummaryCardValue>{currency(selectedCashRegister.opening_amount)}</SummaryCardValue></SummaryCard>
                 <SummaryCard><SummaryCardLabel>Ventas totales</SummaryCardLabel><SummaryCardValue>{currency(selectedCashRegister.sales_total)}</SummaryCardValue></SummaryCard>
@@ -297,7 +291,7 @@ const HistoryCash = () => {
 
             <DetailColumns>
               <SummarySection>
-                <SummarySectionHeader><SummarySectionTitle><MdPayments />Ventas por método de pago</SummarySectionTitle><SectionTag>{currency(selectedCashRegister.sales_total)}</SectionTag></SummarySectionHeader>
+                <SummarySectionHeader><SummarySectionTitle><Wallet />Ventas por método de pago</SummarySectionTitle><SectionTag>{currency(selectedCashRegister.sales_total)}</SectionTag></SummarySectionHeader>
                 <DetailGrid>
                   <DetailItem><DetailItemLabel><DetailItemIcon>💵</DetailItemIcon>Efectivo</DetailItemLabel><DetailItemValue>{currency(selectedCashRegister.sales_cash)}</DetailItemValue></DetailItem>
                   <DetailItem><DetailItemLabel><DetailItemIcon>🏦</DetailItemIcon>Transferencia</DetailItemLabel><DetailItemValue>{currency(selectedCashRegister.sales_transfer)}</DetailItemValue></DetailItem>
@@ -306,18 +300,18 @@ const HistoryCash = () => {
                 </DetailGrid>
               </SummarySection>
               <SummarySection>
-                <SummarySectionHeader><SummarySectionTitle><MdAccountBalanceWallet />Movimientos manuales</SummarySectionTitle></SummarySectionHeader>
+                <SummarySectionHeader><SummarySectionTitle><Wallet />Movimientos manuales</SummarySectionTitle></SummarySectionHeader>
                 <DetailGrid>
-                  <DetailItem><DetailItemLabel><DetailItemIcon><MdArrowUpward /></DetailItemIcon>Ingresos totales</DetailItemLabel><DetailItemValue>{currency(selectedCashRegister.manual_income)}</DetailItemValue></DetailItem>
-                  <DetailItem><DetailItemLabel><DetailItemIcon><MdArrowDownward /></DetailItemIcon>Egresos totales</DetailItemLabel><DetailItemValue>{currency(selectedCashRegister.manual_expense)}</DetailItemValue></DetailItem>
-                  <DetailItem><DetailItemLabel><DetailItemIcon><MdArrowUpward /></DetailItemIcon>Ingresos en efectivo</DetailItemLabel><DetailItemValue>{currency(selectedCashRegister.manual_income_cash)}</DetailItemValue></DetailItem>
-                  <DetailItem><DetailItemLabel><DetailItemIcon><MdArrowDownward /></DetailItemIcon>Egresos en efectivo</DetailItemLabel><DetailItemValue>{currency(selectedCashRegister.manual_expense_cash)}</DetailItemValue></DetailItem>
+                  <DetailItem><DetailItemLabel><DetailItemIcon><ArrowUp /></DetailItemIcon>Ingresos totales</DetailItemLabel><DetailItemValue>{currency(selectedCashRegister.manual_income)}</DetailItemValue></DetailItem>
+                  <DetailItem><DetailItemLabel><DetailItemIcon><ArrowDown /></DetailItemIcon>Egresos totales</DetailItemLabel><DetailItemValue>{currency(selectedCashRegister.manual_expense)}</DetailItemValue></DetailItem>
+                  <DetailItem><DetailItemLabel><DetailItemIcon><ArrowUp /></DetailItemIcon>Ingresos en efectivo</DetailItemLabel><DetailItemValue>{currency(selectedCashRegister.manual_income_cash)}</DetailItemValue></DetailItem>
+                  <DetailItem><DetailItemLabel><DetailItemIcon><ArrowDown /></DetailItemIcon>Egresos en efectivo</DetailItemLabel><DetailItemValue>{currency(selectedCashRegister.manual_expense_cash)}</DetailItemValue></DetailItem>
                 </DetailGrid>
               </SummarySection>
             </DetailColumns>
 
             <SummarySection>
-              <SummarySectionHeader><SummarySectionTitle><MdAccountBalanceWallet />Control de efectivo</SummarySectionTitle></SummarySectionHeader>
+              <SummarySectionHeader><SummarySectionTitle><Wallet />Control de efectivo</SummarySectionTitle></SummarySectionHeader>
               <CashCalculation>
                 <CalculationTitle>Cálculo del efectivo esperado</CalculationTitle>
                 <CalculationRow><span>Efectivo de apertura</span><strong>{currency(selectedCashRegister.opening_amount)}</strong></CalculationRow>
@@ -334,7 +328,7 @@ const HistoryCash = () => {
             </SummarySection>
 
             <SummarySection>
-              <SummarySectionHeader><SummarySectionTitle><MdCalendarMonth />Información del turno</SummarySectionTitle></SummarySectionHeader>
+              <SummarySectionHeader><SummarySectionTitle><CalendarDots />Información del turno</SummarySectionTitle></SummarySectionHeader>
               <TurnInfoGrid>
                 <TurnInfoCard><span>Apertura</span><strong>{selectedCashRegister.opened_at ? getDateOnly(selectedCashRegister.opened_at) : "—"}</strong></TurnInfoCard>
                 <TurnInfoCard><span>Cierre</span><strong>{selectedCashRegister.closed_at ? getDateOnly(selectedCashRegister.closed_at) : "—"}</strong></TurnInfoCard>
@@ -343,7 +337,7 @@ const HistoryCash = () => {
           </>
         ) : (
           <DetailEmptyState>
-            <DetailEmptyIcon><MdReceiptLong /></DetailEmptyIcon>
+            <DetailEmptyIcon><Receipt /></DetailEmptyIcon>
             <DetailEmptyTitle>Detalle del cierre de caja</DetailEmptyTitle>
             <DetailEmptyDescription>Seleccioná un registro del historial para consultar los importes, los medios de pago y el control de efectivo del turno.</DetailEmptyDescription>
           </DetailEmptyState>
@@ -354,10 +348,10 @@ const HistoryCash = () => {
         <EditModalOverlay onMouseDown={(event) => { if (event.target === event.currentTarget) closeEdit(); }}>
           <EditModal role="dialog" aria-modal="true" aria-labelledby="edit-cash-title">
             <EditModalHeader>
-              <div><EditModalTitle id="edit-cash-title"><MdEdit />Modificar caja</EditModalTitle><p>Los cambios quedarán registrados en el historial.</p></div>
-              <EditModalClose type="button" onClick={closeEdit} disabled={saving} aria-label="Cerrar"><MdClose /></EditModalClose>
+              <div><EditModalTitle id="edit-cash-title"><PencilSimple />Modificar caja</EditModalTitle><p>Los cambios quedarán registrados en el historial.</p></div>
+              <EditModalClose type="button" onClick={closeEdit} disabled={saving} aria-label="Cerrar"><X /></EditModalClose>
             </EditModalHeader>
-            <EditNotice><MdLock />Edición habilitada exclusivamente para administradores.</EditNotice>
+            <EditNotice><Lock />Edición habilitada exclusivamente para administradores.</EditNotice>
             <EditForm onSubmit={handleEditSubmit}>
               <EditField><label htmlFor="cash-date">Fecha</label><input id="cash-date" type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} required /></EditField>
               <EditField><label htmlFor="cash-shift">Turno</label><select id="cash-shift" value={form.shift} onChange={(e) => setForm({ ...form, shift: e.target.value as "morning" | "night" })}><option value="morning">Mañana</option><option value="night">Noche</option></select></EditField>
@@ -368,7 +362,7 @@ const HistoryCash = () => {
               <EditField><label htmlFor="cash-closing">Efectivo contado al cierre</label><input id="cash-closing" type="number" min="0" step="0.01" value={form.closing_amount} onChange={(e) => setForm({ ...form, closing_amount: e.target.value })} disabled={form.status_cash_register === "open"} placeholder="Importe contado" /></EditField>
               <EditField><label htmlFor="cash-active">Registro</label><select id="cash-active" value={String(form.status)} onChange={(e) => setForm({ ...form, status: e.target.value === "true" })}><option value="true">Activo</option><option value="false">Inactivo</option></select></EditField>
               {editError && <EditError role="alert">{editError}</EditError>}
-              <EditActions><EditCancelButton type="button" onClick={closeEdit} disabled={saving}>Cancelar</EditCancelButton><EditSaveButton type="submit" disabled={saving || !userResolved || !isAdmin}><MdSave />{saving ? "Guardando..." : "Guardar cambios"}</EditSaveButton></EditActions>
+              <EditActions><EditCancelButton type="button" onClick={closeEdit} disabled={saving}>Cancelar</EditCancelButton><EditSaveButton type="submit" disabled={saving || !userResolved || !isAdmin}><FloppyDisk />{saving ? "Guardando..." : "Guardar cambios"}</EditSaveButton></EditActions>
             </EditForm>
           </EditModal>
         </EditModalOverlay>

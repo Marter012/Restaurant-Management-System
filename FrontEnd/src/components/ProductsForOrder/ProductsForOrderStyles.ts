@@ -3,14 +3,14 @@ import styled from "styled-components";
 export const ProductsSection = styled.section`
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 10px;
   width: 100%;
   min-width: 0;
   box-sizing: border-box;
-  padding: clamp(12px, 1.8vw, 24px);
+  padding: clamp(10px, 1.2vw, 16px);
 
   border: 1px solid var(--color-border);
-  border-radius: 20px;
+  border-radius: 15px;
   background: var(--color-surface);
   box-shadow: var(--shadow-md);
 
@@ -141,15 +141,15 @@ export const ProductGrid = styled.div`
 
   grid-template-columns: repeat(
     auto-fill,
-    minmax(min(100%, 250px), 1fr)
+    minmax(min(100%, 205px), 1fr)
   );
 
-  grid-auto-rows: minmax(310px, auto);
+  grid-auto-rows: minmax(245px, auto);
 
   align-items: stretch;
   align-content: start;
 
-  gap: 18px;
+  gap: 12px;
 
   width: 100%;
   min-width: 0;
@@ -164,10 +164,10 @@ export const ProductGrid = styled.div`
   @media (max-width: 650px) {
     grid-template-columns: repeat(
       auto-fill,
-      minmax(min(100%, 220px), 1fr)
+      minmax(min(100%, 190px), 1fr)
     );
 
-    grid-auto-rows: minmax(285px, auto);
+    grid-auto-rows: minmax(225px, auto);
     gap: 13px;
   }
 
@@ -984,4 +984,29 @@ export const ProductTypeTab = styled.button<{ $active: boolean }>`
         ? "var(--color-primary-hover)"
         : "var(--color-primary-soft)"};
   }
+`;
+
+export const PromotionCategoryCollage = styled.div<{ $count: number }>`
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 3px;
+  width: 100%;
+  height: 142px;
+  overflow: hidden;
+  border-radius: 11px;
+  background: var(--color-surface-muted);
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    object-fit: cover;
+  }
+  img:only-child {
+    grid-column: 1 / -1;
+    grid-row: 1 / -1;
+  }
+  @media (max-width: 480px) { height: 155px; }
 `;

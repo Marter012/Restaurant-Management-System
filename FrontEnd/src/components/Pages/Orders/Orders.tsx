@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
-import { FaCashRegister } from "react-icons/fa";
-import {
-  MdOutlineWarning,
-  MdOutlineCalendarToday,
-  MdOutlineAccessTime,
-} from "react-icons/md";
+import { CashRegister } from "@phosphor-icons/react";
+import { Warning, CalendarBlank, Clock } from "@phosphor-icons/react";
 import { useSelector, useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -148,7 +144,7 @@ const Orders = () => {
       {showBlockedNotice && anotherOpenCashRegister && (
         <OrderNotice role="status" aria-live="polite">
           <OrderNoticeIcon>
-            <MdOutlineWarning />
+            <Warning />
           </OrderNoticeIcon>
 
           <OrderNoticeContent>
@@ -161,7 +157,7 @@ const Orders = () => {
 
             <OrderNoticeDetails>
               <OrderNoticeDetail>
-                <MdOutlineCalendarToday />
+                <CalendarBlank />
                 <span>
                   <strong>Día de la caja abierta:</strong>{" "}
                   {formatDate(anotherCashDate)}
@@ -169,7 +165,7 @@ const Orders = () => {
               </OrderNoticeDetail>
 
               <OrderNoticeDetail>
-                <MdOutlineAccessTime />
+                <Clock />
                 <span>
                   <strong>Turno:</strong>{" "}
                   {anotherOpenCashRegister.shift === "morning"
@@ -185,7 +181,7 @@ const Orders = () => {
                 type="button"
                 onClick={handleGoToOpenCash}
               >
-                <FaCashRegister /> Comandas ¬{" "}
+                <CashRegister /> Comandas ¬{" "}
                 {formatDate(anotherOpenCashRegister?.opened_at || "")} | Turno{" "}
                 {anotherOpenCashRegister?.shift === "morning"
                   ? "Mañana"
@@ -193,7 +189,7 @@ const Orders = () => {
               </StatusButton>
 
               <StatusButton type="button" onClick={handleOpenSelectedDayOrders}>
-                <FaCashRegister />
+                <CashRegister />
                 Comandas ¬ {selectedDay} | Turno{" "}
                 {selectedShift === "morning" ? "Mañana" : "Noche"}
               </StatusButton>
@@ -208,7 +204,7 @@ const Orders = () => {
         !showReadOnlyOrders && (
           <OrderNotice role="status" aria-live="polite">
             <OrderNoticeIcon>
-              <MdOutlineWarning />
+              <Warning />
             </OrderNoticeIcon>
 
             <OrderNoticeContent>
@@ -221,14 +217,14 @@ const Orders = () => {
 
               <OrderNoticeDetails>
                 <OrderNoticeDetail>
-                  <MdOutlineCalendarToday />
+                  <CalendarBlank />
                   <span>
                     <strong>Fecha:</strong> {formatDate(day)}
                   </span>
                 </OrderNoticeDetail>
 
                 <OrderNoticeDetail>
-                  <MdOutlineAccessTime />
+                  <Clock />
                   <span>
                     <strong>Turno:</strong>{" "}
                     {shift === "morning" ? "Mañana" : "Noche"}
@@ -241,7 +237,7 @@ const Orders = () => {
                   type="button"
                   onClick={handleOpenSelectedDayOrders}
                 >
-                  <FaCashRegister />
+                  <CashRegister />
                   Comandas | {formatDate(day)} | Turno{" "}
                   {shift === "morning" ? "Mañana" : "Noche"}
                 </StatusButton>
@@ -254,7 +250,7 @@ const Orders = () => {
       {!cashRegister && !anotherOpenCashRegister && !showReadOnlyOrders && (
         <CashMessageLink to="/cashRegister">
           <CashMessage>
-            <FaCashRegister />
+            <CashRegister />
 
             <h2>No hay una caja disponible</h2>
 

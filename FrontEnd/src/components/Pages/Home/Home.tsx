@@ -1,17 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  FaBolt,
-  FaBoxOpen,
-  FaCashRegister,
-  FaClipboardList,
-  FaClock,
-  FaHistory,
-  FaPrint,
-  FaSignOutAlt,
-  FaShoppingCart,
-  FaTag,
-  FaUsers,
-} from "react-icons/fa";
+import { Lightning, Package, CashRegister, ClipboardText, Clock, ClockCounterClockwise, Printer, SignOut, ShoppingCart, Tag, Users } from "@phosphor-icons/react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -205,7 +193,8 @@ const Home = () => {
         (order) =>
           order.created_at?.slice(0, 10) === dashboardDay &&
           order?.cash_register_id === selectedCashRegister?.id &&
-          order.status !== false,
+          order.status !== false &&
+          order.status_payment === "paid",
       ),
     [orders, dashboardDay, selectedCashRegister],
   );
@@ -246,7 +235,8 @@ const Home = () => {
           .filter(
             (order) =>
               order.created_at?.slice(0, 10) === dateKey &&
-              order.status !== false,
+              order.status !== false &&
+              order.status_payment === "paid",
           )
           .reduce((sum, order) => sum + Number(order.total_price || 0), 0);
 
@@ -385,11 +375,11 @@ const Home = () => {
         }));
 
   const activityIcon = (tone: ActivityTone) => {
-    if (tone === "orders") return <FaShoppingCart />;
-    if (tone === "cash") return <FaCashRegister />;
-    if (tone === "promotions") return <FaTag />;
-    if (tone === "products") return <FaBoxOpen />;
-    return <FaHistory />;
+    if (tone === "orders") return <ShoppingCart />;
+    if (tone === "cash") return <CashRegister />;
+    if (tone === "promotions") return <Tag />;
+    if (tone === "products") return <Package />;
+    return <ClockCounterClockwise />;
   };
 
   const greeting = getGreeting(currentTime);
@@ -420,7 +410,7 @@ const Home = () => {
               aria-label="Cerrar sesión"
               className="buttonExit"
             >
-              <FaSignOutAlt />
+              <SignOut />
             </LogoutButton>
           </Profile>
         </HeaderTools>
@@ -431,29 +421,29 @@ const Home = () => {
           <StatTopline>
             <StatLabel>Ventas de hoy</StatLabel>
             <StatIcon>
-              <FaShoppingCart />
+              <ShoppingCart />
             </StatIcon>
           </StatTopline>
           <StatValue>{currency(daySales)}</StatValue>
-          <StatFootnote>Según comandas registradas</StatFootnote>
+          <StatFootnote>Solo comandas concretadas y pagadas</StatFootnote>
         </StatCard>
 
         <StatCard>
           <StatTopline>
             <StatLabel>Comandas</StatLabel>
             <StatIcon>
-              <FaClipboardList />
+              <ClipboardText />
             </StatIcon>
           </StatTopline>
           <StatValue>{dayOrders.length}</StatValue>
-          <StatFootnote>Del día seleccionado</StatFootnote>
+          <StatFootnote>Comandas concretadas y pagadas del día</StatFootnote>
         </StatCard>
 
         <StatCard>
           <StatTopline>
             <StatLabel>Promociones</StatLabel>
             <StatIcon>
-              <FaTag />
+              <Tag />
             </StatIcon>
           </StatTopline>
           <StatValue>{activePromotions.length} activas</StatValue>
@@ -464,7 +454,7 @@ const Home = () => {
           <StatTopline>
             <StatLabel>Productos</StatLabel>
             <StatIcon>
-              <FaBoxOpen />
+              <Package />
             </StatIcon>
           </StatTopline>
           <StatValue>{activeProducts.length}</StatValue>
@@ -475,7 +465,7 @@ const Home = () => {
           <StatTopline>
             <StatLabel>Caja actual</StatLabel>
             <StatIcon>
-              <FaCashRegister />
+              <CashRegister />
             </StatIcon>
           </StatTopline>
           <StatValue $compact>{cashStatusLabel}</StatValue>
@@ -587,7 +577,7 @@ const Home = () => {
               ))
             ) : (
               <EmptyState>
-                <FaClock />
+                <Clock />
                 Todavía no hay actividad registrada para esta fecha.
               </EmptyState>
             )}
@@ -599,7 +589,7 @@ const Home = () => {
         <QuickAccessHeader>
           <div>
             <QuickAccessTitle>
-              <FaBolt /> Accesos rápidos
+              <Lightning /> Accesos rápidos
             </QuickAccessTitle>
             <QuickAccessDescription>
               Acciones frecuentes para administrar el negocio.
@@ -610,7 +600,7 @@ const Home = () => {
         <QuickAccessGrid>
           <QuickAccessButton type="button" onClick={handleNewOrder}>
             <QuickAccessIcon>
-              <FaShoppingCart />
+              <ShoppingCart />
             </QuickAccessIcon>
             <QuickAccessText>Nueva comanda</QuickAccessText>
           </QuickAccessButton>
@@ -619,7 +609,7 @@ const Home = () => {
             onClick={() => navigate("/products")}
           >
             <QuickAccessIcon>
-              <FaBoxOpen />
+              <Package />
             </QuickAccessIcon>
             <QuickAccessText>Gestionar productos</QuickAccessText>
           </QuickAccessButton>
@@ -628,7 +618,7 @@ const Home = () => {
             onClick={() => navigate("/promotions")}
           >
             <QuickAccessIcon>
-              <FaTag />
+              <Tag />
             </QuickAccessIcon>
             <QuickAccessText>Administrar promociones</QuickAccessText>
           </QuickAccessButton>
@@ -637,7 +627,7 @@ const Home = () => {
             onClick={() => navigate("/cashRegister")}
           >
             <QuickAccessIcon>
-              <FaCashRegister />
+              <CashRegister />
             </QuickAccessIcon>
             <QuickAccessText>Ver caja</QuickAccessText>
           </QuickAccessButton>
@@ -648,7 +638,7 @@ const Home = () => {
             }
           >
             <QuickAccessIcon>
-              <FaUsers />
+              <Users />
             </QuickAccessIcon>
             <QuickAccessText>Usuarios</QuickAccessText>
           </QuickAccessButton>
@@ -659,7 +649,7 @@ const Home = () => {
             }
           >
             <QuickAccessIcon>
-              <FaPrint />
+              <Printer />
             </QuickAccessIcon>
             <QuickAccessText>Impresión</QuickAccessText>
           </QuickAccessButton>

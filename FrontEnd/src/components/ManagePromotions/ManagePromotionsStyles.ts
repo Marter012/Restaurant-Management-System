@@ -50,7 +50,8 @@ export const CategoryTab = styled.button<{ $active: boolean }>`
   border-radius: 10px;
   background: ${({ $active }) =>
     $active ? "var(--color-primary)" : "transparent"};
-  color: ${({ $active }) => ($active ? "var(--color-white)" : "var(--color-text)")};
+  color: ${({ $active }) =>
+    $active ? "var(--color-white)" : "var(--color-text)"};
   font: inherit;
   font-size: 0.9rem;
   font-weight: 650;
@@ -96,16 +97,14 @@ export const Filter = styled.div`
   }
 
   @media (max-width: 1200px) {
-  grid-template-columns:
-    minmax(0, 1fr)
-    minmax(130px, 0.7fr)
-    minmax(0, 1fr);
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(130px, 0.7fr)
+      minmax(0, 1fr);
 
-  align-items: end;
-  gap: 12px;
-}
-
-
+    align-items: end;
+    gap: 12px;
+  }
 
   @media (max-width: 850px) {
     grid-template-columns: minmax(0, 1fr) minmax(130px, 0.6fr);
@@ -167,7 +166,8 @@ export const SearchControl = styled.label`
   }
   &:focus-within {
     border-color: var(--color-accent);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 13%, transparent);
+    box-shadow: 0 0 0 3px
+      color-mix(in srgb, var(--color-accent) 13%, transparent);
   }
 
   @media (max-width: 520px) {
@@ -282,6 +282,69 @@ export const PromotionImage = styled.div`
 
   @media (max-width: 520px) {
     height: 180px;
+  }
+  .promotion-product-collage {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    gap: 2px;
+    overflow: hidden;
+    border-radius: inherit;
+    background: var(--color-surface-muted);
+  }
+
+  /* Una categoría: ocupa toda la imagen. */
+  .promotion-product-collage--1 {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  /* Dos categorías: dos imágenes iguales, sin cuadrantes vacíos. */
+  .promotion-product-collage--2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  /* Tres categorías: una imagen amplia y dos apiladas a su derecha. */
+  .promotion-product-collage--3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+  }
+
+  .promotion-product-collage--3 img:first-child {
+    grid-column: 1;
+    grid-row: 1 / 3;
+  }
+
+  .promotion-product-collage--3 img:nth-child(2) {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .promotion-product-collage--3 img:nth-child(3) {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  /* Cuatro categorías: cuadrícula 2 x 2. */
+  .promotion-product-collage--4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+  }
+
+  .promotion-product-collage img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    object-fit: cover;
+  }
+
+  /* Más de cuatro categorías */
+  .promotion-product-collage--many {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
   }
 `;
 
@@ -442,14 +505,14 @@ export const AddPromotionButton = styled.button`
     white-space: nowrap;
     flex-shrink: 0;
   }
- @media (max-width: 600px) {
-  width: 100%;
-  height: 46px;
-  min-height: 46px;
-  padding: 0 8px;
-  font-size: 0.8rem;
-  white-space: nowrap;
-}
+  @media (max-width: 600px) {
+    width: 100%;
+    height: 46px;
+    min-height: 46px;
+    padding: 0 8px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
 `;
 
 export const PromotionActions = styled.div`

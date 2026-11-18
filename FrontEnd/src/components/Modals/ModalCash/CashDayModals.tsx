@@ -1,10 +1,9 @@
-import { FaEdit } from "react-icons/fa";
+import { PencilSimple } from "@phosphor-icons/react";
 import type { FormEvent } from "react";
 
 import OpenCashSection from "./OpenCashModal/OpenCashSection.tsx";
 import CloseCashSection from "./CloseCashModal/CloseCashSection.tsx";
-import RegisterIncome from "./RegisterIncome/RegisterIncome.tsx";
-import RegisterExpense from "./RegisterExpense/RegisterExpense.tsx";
+import CashMovementForm from "../../Forms/CashMovementForm/CashMovementForm.tsx";
 import EditMovementForm from "./EditMovement/EditMovementForm.tsx";
 import SaleDetailsContent from "./SaleDetails/SaleDetailsContent.tsx";
 
@@ -23,13 +22,12 @@ import {
 
 import ModalForm from "../../ModalForm/ModalForm.tsx";
 
-import type { ICashMovement } from "../../../interfaces/CashMovements.ts";
+import type { ICashMovement, CashMovementType, CashPaymentMethod } from "../../../interfaces/CashMovements.ts";
 
 export type CashDayModalMode =
   | "open"
   | "close"
-  | "income"
-  | "expense"
+  | "movement"
   | "editMovement"
   | "sale"
   | null;
@@ -48,6 +46,11 @@ interface Props {
   editingMovement: ICashMovement | null;
   editDescription: string;
   editAmount: string;
+  editType: CashMovementType;
+  editMethodPayment: CashPaymentMethod;
+  onEditType: (value: CashMovementType) => void;
+  onEditMethodPayment: (value: CashPaymentMethod) => void;
+  onDeleteMovement: () => void;
 
   selectedSale: any;
 
@@ -80,6 +83,11 @@ const CashDayModals = (props: Props) => {
     editingMovement,
     editDescription,
     editAmount,
+    editType,
+    editMethodPayment,
+    onEditType,
+    onEditMethodPayment,
+    onDeleteMovement,
     selectedSale,
     onClose,
     onOpenSubmit,
@@ -101,11 +109,9 @@ const CashDayModals = (props: Props) => {
       ? `Abrir caja ${selectedShift === "morning" ? "Turno mañana" : "Turno noche"}`
       : mode === "close"
         ? `Cerrar caja ${selectedShift === "morning" ? "de mañana" : "de noche"}`
-        : mode === "income"
-          ? "Agregar ingreso"
-          : mode === "expense"
-            ? "Agregar egreso"
-            : mode === "editMovement"
+        : mode === "movement"
+          ? "Registrar movimiento extra"
+          : mode === "editMovement"
               ? "Modificar movimiento"
               : mode === "sale"
                 ? `Venta #${selectedSale?.order_number ?? ""}`
@@ -116,7 +122,7 @@ const CashDayModals = (props: Props) => {
       ? openingSubmitting
       : mode === "close"
         ? closingSubmitting
-        : mode === "income" || mode === "expense"
+        : mode === "movement"
           ? movementSubmitting
           : mode === "editMovement"
             ? editSubmitting
@@ -139,19 +145,17 @@ const CashDayModals = (props: Props) => {
       >
         {busy ? "Cerrando..." : "Cerrar caja"}
       </CashSubmit>
-    ) : mode === "income" || mode === "expense" ? (
+    ) : mode === "movement" ? (
       <MovementSubmit
         type="submit"
         form="cash-movement-form"
         disabled={busy}
       >
-        {busy
-          ? "Guardando..."
-          : mode === "income"
-            ? "Agregar ingreso"
-            : "Agregar egreso"}
+        {busy ? "Guardando..." : "Registrar movimiento"}
       </MovementSubmit>
     ) : mode === "editMovement" ? (
+      <div style={{ display: "flex", gap: 8 }}>
+      {editingMovement?.category === "manual" && !editingMovement?.order_id && <button type="button" disabled={busy} onClick={onDeleteMovement}>Eliminar movimiento</button>}
       <EditMovementSaveButton
         type="submit"
         form="edit-movement-form"
@@ -159,16 +163,16 @@ const CashDayModals = (props: Props) => {
       >
         {busy ? "Guardando..." : "Guardar cambios"}
       </EditMovementSaveButton>
+      </div>
     ) : mode === "sale" ? (
       <EditOrderButton type="button" onClick={onEditOrder}>
-        <FaEdit />
+        <PencilSimple />
         Modificar comanda
       </EditOrderButton>
     ) : undefined;
 
   const modalSize =
-    mode === "income" ||
-    mode === "expense" ||
+    mode === "movement" ||
     mode === "open" ||
     mode === "close"
       ? "compact"
@@ -199,17 +203,10 @@ const CashDayModals = (props: Props) => {
         />
       )}
 
-      {mode === "income" && (
-        <RegisterIncome
-          cashRegisterId={cashRegisterId}
-          onSubmittingChange={onSubmittingMovement}
-          onSubmit={onMovementSubmit}
-          onClose={onClose}
-        />
-      )}
-
-      {mode === "expense" && (
-        <RegisterExpense
+      {mode === "movement" && (
+        <CashMovementForm
+          type="inflow"
+          allowTypeSelection
           cashRegisterId={cashRegisterId}
           onSubmittingChange={onSubmittingMovement}
           onSubmit={onMovementSubmit}
@@ -221,9 +218,13 @@ const CashDayModals = (props: Props) => {
         <EditMovementForm
           description={editDescription}
           amount={editAmount}
+          type={editType}
+          methodPayment={editMethodPayment}
           saving={editSubmitting}
           onDescriptionChange={onEditDescription}
           onAmountChange={onEditAmount}
+          onTypeChange={onEditType}
+          onMethodPaymentChange={onEditMethodPayment}
           onSubmit={onEditSubmit}
         />
       )}

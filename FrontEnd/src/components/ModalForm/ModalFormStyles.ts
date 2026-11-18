@@ -24,7 +24,7 @@ export const ModalContainer = styled.div<ModalContainerProps>`
 
   width: ${({ $size = "default" }) => {
     if ($size === "compact") return "min(620px, calc(100vw - 32px))";
-    if ($size === "small") return "min(680px, calc(100vw - 32px))";
+    if ($size === "small") return "min(460px, calc(100vw - 32px))";
     if ($size === "large") return "min(1450px, calc(100vw - 32px))";
     return "min(1120px, calc(100vw - 32px))";
   }};
@@ -33,10 +33,10 @@ export const ModalContainer = styled.div<ModalContainerProps>`
   max-width: calc(100vw - 24px);
 
   height: ${({ $size }) =>
-    $size === "compact" ? "auto" : "min(90dvh, 900px)"};
+    $size === "compact" || $size === "small" ? "auto" : "min(90dvh, 900px)"};
 
   max-height: ${({ $size }) =>
-    $size === "compact"
+    $size === "compact" || $size === "small"
       ? "min(520px, calc(100dvh - 32px))"
       : "calc(100dvh - 24px)"};
 
@@ -55,14 +55,16 @@ export const ModalContainer = styled.div<ModalContainerProps>`
     width: ${({ $size }) =>
       $size === "compact"
         ? "min(620px, calc(100vw - 32px))"
-        : "calc(100vw - 40px)"};
+        : $size === "small"
+          ? "min(460px, calc(100vw - 32px))"
+          : "calc(100vw - 40px)"};
 
     max-width: calc(100vw - 32px);
     height: ${({ $size }) =>
       $size === "compact" ? "auto" : "min(88dvh, 820px)"};
 
     max-height: ${({ $size }) =>
-      $size === "compact"
+      $size === "compact" || $size === "small"
         ? "min(520px, calc(100dvh - 32px))"
         : "calc(100dvh - 32px)"};
 
@@ -74,7 +76,7 @@ export const ModalContainer = styled.div<ModalContainerProps>`
     max-width: calc(100vw - 24px);
 
     height: ${({ $size }) =>
-      $size === "compact" ? "auto" : "min(90dvh, 760px)"};
+      $size === "compact" || $size === "small" ? "auto" : "min(90dvh, 760px)"};
 
     max-height: calc(100dvh - 24px);
     border-radius: var(--radius-md);

@@ -1,22 +1,8 @@
+import CardLoading from "../CardLoading/CardLoading.tsx";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 
-import {
-  MdBolt,
-  MdCheckCircle,
-  MdError,
-  MdHistory,
-  MdListAlt,
-  MdPrint,
-  MdQueue,
-  MdReceiptLong,
-  MdRefresh,
-  MdSearch,
-  MdSettings,
-  MdWarning,
-  MdWifi,
-  MdWifiOff,
-} from "react-icons/md";
+import { Lightning, CheckCircle, WarningCircle, ClockCounterClockwise, ListBullets, Printer, Stack, Receipt, ArrowsClockwise, MagnifyingGlass, Gear, Warning, WifiHigh, WifiSlash } from "@phosphor-icons/react";
 
 import { useSelector } from "react-redux";
 
@@ -73,7 +59,6 @@ import {
   SecondaryButton,
   ActionGrid,
   RefreshButton,
-  Loading,
   ErrorMessage,
   EmptyMessage,
   QueueSummary,
@@ -778,7 +763,7 @@ const handleFullRefresh = async () => {
         <div>
           <PrintCenterEyebrow>ADMINISTRACIÓN DEL DISPOSITIVO</PrintCenterEyebrow>
           <PrintCenterTitle>
-            <MdPrint /> Centro de impresión
+            <Printer /> Centro de impresión
           </PrintCenterTitle>
           <PrintCenterLead>
             Gestioná la conexión del agente, las impresoras y los trabajos de impresión.
@@ -792,24 +777,21 @@ const handleFullRefresh = async () => {
             <small>{systemReady ? "Sistema listo para imprimir" : printerStatusMessage}</small>
           </PrintCenterStatus>
           <RefreshButton type="button" onClick={handleFullRefresh} disabled={loading}>
-            <MdRefresh />
+            <ArrowsClockwise />
             {loading ? "Actualizando..." : "Actualizar"}
           </RefreshButton>
         </HeaderActions>
       </PrintCenterHeader>
 
       {loading && !config && isPrintServer() ? (
-        <Loading>
-          <MdRefresh />
-          <span>Conectando con el sistema de impresión...</span>
-        </Loading>
+        <CardLoading icon={<ArrowsClockwise />} text="Conectando con el sistema de impresión..." progress={62} />
       ) : (
         <>
           <DashboardGrid>
             <StatusCard $active={online}>
               <StatusCardHeader>
                 <StatusIcon $active={online}>
-                  {online ? <MdWifi /> : <MdWifiOff />}
+                  {online ? <WifiHigh /> : <WifiSlash />}
                 </StatusIcon>
                 <StatusDot $active={online} />
               </StatusCardHeader>
@@ -823,7 +805,7 @@ const handleFullRefresh = async () => {
             <StatusCard $active={printerConnected && printerOnline}>
               <StatusCardHeader>
                 <StatusIcon $active={printerConnected && printerOnline}>
-                  {printerConnected && printerOnline ? <MdPrint /> : <MdWarning />}
+                  {printerConnected && printerOnline ? <Printer /> : <Warning />}
                 </StatusIcon>
                 <StatusDot $active={printerConnected && printerOnline} />
               </StatusCardHeader>
@@ -837,7 +819,7 @@ const handleFullRefresh = async () => {
             <StatusCard $active={windowsQueueCount === 0 && agentQueueCount === 0}>
               <StatusCardHeader>
                 <StatusIcon $active={windowsQueueCount === 0 && agentQueueCount === 0}>
-                  <MdQueue />
+                  <Stack />
                 </StatusIcon>
                 <StatusDot $active={windowsQueueCount === 0 && agentQueueCount === 0} />
               </StatusCardHeader>
@@ -853,7 +835,7 @@ const handleFullRefresh = async () => {
             <StatusCard $active={Boolean(historyCount)}>
               <StatusCardHeader>
                 <StatusIcon $active={Boolean(historyCount)}>
-                  <MdHistory />
+                  <ClockCounterClockwise />
                 </StatusIcon>
                 <StatusDot $active={Boolean(historyCount)} />
               </StatusCardHeader>
@@ -876,7 +858,7 @@ const handleFullRefresh = async () => {
               <SectionHeader>
                 <div>
                   <SectionTitle>
-                    <SectionIcon><MdSettings /></SectionIcon>
+                    <SectionIcon><Gear /></SectionIcon>
                     Configuración de impresión
                   </SectionTitle>
                   <SectionDescription>
@@ -937,7 +919,7 @@ const handleFullRefresh = async () => {
                       onClick={handleSaveConfig}
                       disabled={!isPrintServer() || !config || savingConfig}
                     >
-                      <MdSettings />
+                      <Gear />
                       {savingConfig ? "Guardando..." : "Guardar configuración"}
                     </SaveButton>
                     {!isPrintServer() && (
@@ -957,7 +939,7 @@ const handleFullRefresh = async () => {
                 <SectionHeader>
                   <div>
                     <SectionTitle>
-                      <SectionIcon><MdBolt /></SectionIcon>
+                      <SectionIcon><Lightning /></SectionIcon>
                       Acciones rápidas
                     </SectionTitle>
                     <SectionDescription>
@@ -972,7 +954,7 @@ const handleFullRefresh = async () => {
                     onClick={() => void handleTestPrinter()}
                     disabled={testingPrinter || diagnosticLoadingKey !== null || !isPrintServer() || !hasAvailablePrinter}
                   >
-                    <MdPrint />
+                    <Printer />
                     {testingPrinter ? "Probando..." : "Prueba de impresión"}
                   </ActionButton>
                   <SecondaryButton
@@ -980,7 +962,7 @@ const handleFullRefresh = async () => {
                     onClick={() => void handleDiscoverPrinters()}
                     disabled={printerDiscoveryLoading || loading}
                   >
-                    <MdSearch />
+                    <MagnifyingGlass />
                     {printerDiscoveryLoading ? "Buscando..." : "Buscar impresoras"}
                   </SecondaryButton>
                   <SecondaryButton
@@ -991,7 +973,7 @@ const handleFullRefresh = async () => {
                     }}
                     disabled={diagnosticLoadingKey !== null}
                   >
-                    <MdListAlt />
+                    <ListBullets />
                     Diagnóstico
                   </SecondaryButton>
                   <SecondaryButton
@@ -999,7 +981,7 @@ const handleFullRefresh = async () => {
                     onClick={() => void handleOpenQueueWindows()}
                     disabled={diagnosticLoadingKey !== null || testingPrinter}
                   >
-                    <MdQueue />
+                    <Stack />
                     Abrir cola Windows
                   </SecondaryButton>
                 </ActionGrid>
@@ -1008,13 +990,13 @@ const handleFullRefresh = async () => {
               <WorkPanel>
                 <WorkTabs role="tablist" aria-label="Información de impresión">
                   <WorkTab type="button" role="tab" aria-selected={activeWorkTab === "queue"} $active={activeWorkTab === "queue"} onClick={() => selectWorkTab("queue")}>
-                    <MdQueue /> Cola de impresión
+                    <Stack /> Cola de impresión
                   </WorkTab>
                   <WorkTab type="button" role="tab" aria-selected={activeWorkTab === "jobs"} $active={activeWorkTab === "jobs"} onClick={() => selectWorkTab("jobs")}>
-                    <MdHistory /> Trabajos recientes
+                    <ClockCounterClockwise /> Trabajos recientes
                   </WorkTab>
                   <WorkTab type="button" role="tab" aria-selected={activeWorkTab === "orders"} $active={activeWorkTab === "orders"} onClick={() => selectWorkTab("orders")}>
-                    <MdReceiptLong /> Comandas
+                    <Receipt /> Comandas
                   </WorkTab>
                 </WorkTabs>
 
@@ -1023,31 +1005,31 @@ const handleFullRefresh = async () => {
                     <>
                       <QueueSummary>
                         <QueueSummaryItem>
-                          <QueueSummaryIcon><MdPrint /></QueueSummaryIcon>
+                          <QueueSummaryIcon><Printer /></QueueSummaryIcon>
                           <div>
                             <QueueBadgeLabel>Cola de Windows</QueueBadgeLabel>
                             <QueueBadgeValue>{windowsQueueCount}</QueueBadgeValue>
                           </div>
                         </QueueSummaryItem>
                         <QueueSummaryItem>
-                          <QueueSummaryIcon><MdListAlt /></QueueSummaryIcon>
+                          <QueueSummaryIcon><ListBullets /></QueueSummaryIcon>
                           <div>
                             <QueueBadgeLabel>Trabajos del agente</QueueBadgeLabel>
                             <QueueBadgeValue>{agentQueueCount}</QueueBadgeValue>
                           </div>
                         </QueueSummaryItem>
                         <QueueBadge $warning={windowsQueueCount + agentQueueCount > 0}>
-                          {windowsQueueCount + agentQueueCount > 0 ? <MdWarning /> : <MdCheckCircle />}
+                          {windowsQueueCount + agentQueueCount > 0 ? <Warning /> : <CheckCircle />}
                           {windowsQueueCount + agentQueueCount > 0 ? "Hay trabajos pendientes de impresión" : "No hay trabajos pendientes"}
                         </QueueBadge>
                       </QueueSummary>
                       <ResponsiveRow>
                         <SecondaryButton type="button" onClick={() => void runDiagnostic("queue")} disabled={diagnosticLoadingKey !== null}>
-                          <MdRefresh />
+                          <ArrowsClockwise />
                           {diagnosticLoadingKey === "queue" ? "Consultando cola..." : "Actualizar información de cola"}
                         </SecondaryButton>
                         <SecondaryButton type="button" onClick={() => void handleOpenQueueWindows()} disabled={diagnosticLoadingKey !== null || testingPrinter}>
-                          <MdQueue />
+                          <Stack />
                           Abrir cola de Windows
                         </SecondaryButton>
                       </ResponsiveRow>
@@ -1068,7 +1050,7 @@ const handleFullRefresh = async () => {
                           <SectionDescription>Consultá los trabajos y cancelá los que todavía estén en proceso.</SectionDescription>
                         </div>
                         <RefreshButton type="button" onClick={() => void runDiagnostic("jobs")} disabled={diagnosticLoadingKey !== null}>
-                          <MdRefresh /> Consultar
+                          <ArrowsClockwise /> Consultar
                         </RefreshButton>
                       </ResponsiveRow>
                       {diagnosticLoadingKey === "jobs" ? (
@@ -1117,7 +1099,7 @@ const handleFullRefresh = async () => {
                         <>
                           <QueueSummary>
                             <QueueSummaryItem>
-                              <QueueSummaryIcon><MdReceiptLong /></QueueSummaryIcon>
+                              <QueueSummaryIcon><Receipt /></QueueSummaryIcon>
                               <div>
                                 <QueueBadgeLabel>Comandas encontradas</QueueBadgeLabel>
                                 <QueueBadgeValue>{cashOrders.length}</QueueBadgeValue>
@@ -1130,7 +1112,7 @@ const handleFullRefresh = async () => {
                             <OrderList>
                               {cashOrders.map((order) => (
                                 <OrderItem key={order.id} $selected={selectedOrderId === order.id} onClick={() => setSelectedOrderId(order.id)}>
-                                  <OrderIcon><MdReceiptLong /></OrderIcon>
+                                  <OrderIcon><Receipt /></OrderIcon>
                                   <OrderInfo>
                                     <OrderTitle>Comanda #{order.order_number}</OrderTitle>
                                     <OrderCustomer>{order.customer_name || "Sin cliente"}</OrderCustomer>
@@ -1142,7 +1124,7 @@ const handleFullRefresh = async () => {
                           )}
                           <ResponsiveRow>
                             <ActionButton type="button" disabled={!selectedOrder || printingOrderId !== null} onClick={() => void handleReprintOrder()}>
-                              <MdPrint />
+                              <Printer />
                               {printingOrderId === selectedOrder?.id ? "Enviando..." : selectedOrder ? `Reimprimir comanda #${selectedOrder.order_number}` : "Seleccioná una comanda"}
                             </ActionButton>
                           </ResponsiveRow>
@@ -1162,7 +1144,7 @@ const handleFullRefresh = async () => {
               <SectionHeader>
                 <div>
                   <SectionTitle>
-                    <SectionIcon><MdSettings /></SectionIcon>
+                    <SectionIcon><Gear /></SectionIcon>
                     Diagnóstico avanzado
                   </SectionTitle>
                   <SectionDescription>
@@ -1173,10 +1155,10 @@ const handleFullRefresh = async () => {
               </SectionHeader>
 
               <ActionGrid>
-                <SecondaryButton type="button" onClick={() => void runDiagnostic("status")} disabled={diagnosticLoadingKey !== null}><MdWifi /> Estado del agente</SecondaryButton>
-                <SecondaryButton type="button" onClick={() => void runDiagnostic("queue")} disabled={diagnosticLoadingKey !== null}><MdQueue /> Consultar cola</SecondaryButton>
-                <SecondaryButton type="button" onClick={() => void runDiagnostic("jobs")} disabled={diagnosticLoadingKey !== null}><MdListAlt /> Consultar trabajos</SecondaryButton>
-                <SecondaryButton type="button" onClick={() => void runDiagnostic("history")} disabled={diagnosticLoadingKey !== null}><MdHistory /> Historial</SecondaryButton>
+                <SecondaryButton type="button" onClick={() => void runDiagnostic("status")} disabled={diagnosticLoadingKey !== null}><WifiHigh /> Estado del agente</SecondaryButton>
+                <SecondaryButton type="button" onClick={() => void runDiagnostic("queue")} disabled={diagnosticLoadingKey !== null}><Stack /> Consultar cola</SecondaryButton>
+                <SecondaryButton type="button" onClick={() => void runDiagnostic("jobs")} disabled={diagnosticLoadingKey !== null}><ListBullets /> Consultar trabajos</SecondaryButton>
+                <SecondaryButton type="button" onClick={() => void runDiagnostic("history")} disabled={diagnosticLoadingKey !== null}><ClockCounterClockwise /> Historial</SecondaryButton>
               </ActionGrid>
 
               <div ref={diagnosticResultRef}>
@@ -1216,7 +1198,7 @@ const handleFullRefresh = async () => {
 
           {error && (
             <ErrorMessage>
-              <MdError />
+              <WarningCircle />
               <span>No se pudo completar la operación. Revisá la conexión con el Print Agent.</span>
             </ErrorMessage>
           )}

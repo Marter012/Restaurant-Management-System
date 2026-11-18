@@ -1,42 +1,26 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-
+import { ShieldCheck } from "@phosphor-icons/react";
 import type { RootState } from "../../store/store.ts";
-
-import {
-  ProtectedLoading,
-  ProtectedSpinner,
-  ProtectedLoadingText,
-} from "./ProtectedRouteStyles.ts";
+import CardLoading from "../CardLoading/CardLoading.tsx";
+import { LoadingScreenLayout } from "../LoaginsScreen/LoadingScreenStyles.ts";
 
 const ProtectedRoute = () => {
   const location = useLocation();
-
   const { isLoginUser, isCheckingSession } = useSelector(
     (state: RootState) => state.user,
   );
 
-  // Esperar a que termine la comprobación de sesión.
   if (isCheckingSession) {
     return (
-      <ProtectedLoading>
-        <ProtectedSpinner />
-        <ProtectedLoadingText>
-          Verificando tu sesión...
-        </ProtectedLoadingText>
-      </ProtectedLoading>
+      <LoadingScreenLayout>
+        <CardLoading icon={<ShieldCheck />} text="Verificando tu sesión..." progress={55} />
+      </LoadingScreenLayout>
     );
   }
 
-  // Si no existe una sesión válida, enviar al login.
   if (!isLoginUser) {
-    return (
-      <Navigate
-        to="/login"
-        replace
-        state={{ from: location.pathname }}
-      />
-    );
+    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
   }
 
   return <Outlet />;

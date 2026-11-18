@@ -1,8 +1,4 @@
-import {
-  FaPowerOff,
-  FaExclamationTriangle,
-  FaTrashAlt,
-} from "react-icons/fa";
+import { Power, Warning, TrashSimple } from "@phosphor-icons/react";
 
 import {
   DeleteContainer,
@@ -30,11 +26,11 @@ const ModalProductDelete = ({
     <DeleteContainer>
       <DeleteIcon $danger={isDelete || isActive}>
         {isDelete ? (
-          <FaTrashAlt />
+          <TrashSimple />
         ) : isActive ? (
-          <FaPowerOff />
+          <Power />
         ) : (
-          <FaExclamationTriangle />
+          <Warning />
         )}
       </DeleteIcon>
 

@@ -4,6 +4,7 @@ import Layout from "./components/Layout/Layout.tsx";
 import { BrowserRouter } from "react-router-dom";
 
 import { GlobalStyles } from "./components/Utils/GlobalStyles.ts";
+import { PhosphorIconStyles } from "./utils/icons.ts";
 import { Provider } from "react-redux";
 import { store } from "./store/store.ts";
 import SessionInitializer from "./initialization/sessionInitializar.tsx";
@@ -19,6 +20,7 @@ createRoot(document.getElementById("root")!).render(
         </SessionInitializer>
 
         <GlobalStyles />
+        <PhosphorIconStyles />
         <GlobalConfigInputs />
       </AlertProvider>
     </Provider>

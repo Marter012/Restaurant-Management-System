@@ -1,23 +1,4 @@
-import {
-  FaCalendarAlt,
-  FaUser,
-  FaCoins,
-  FaCheckCircle,
-  FaCreditCard,
-  FaTruck,
-  FaBoxOpen,
-  FaWallet,
-  FaPlusCircle,
-  FaCommentDots,
-  FaMoneyBillWave,
-  FaExchangeAlt,
-  FaQrcode,
-  FaPercentage,
-  FaUtensils,
-  FaHamburger,
-  FaGlassWhiskey,
-  FaGift,
-} from "react-icons/fa";
+import { CalendarBlank, User, Coins, CheckCircle, CreditCard, Truck, Package, Wallet, PlusCircle, ChatCircleDots, Money, ArrowsLeftRight, QrCode, Percent, ForkKnife, Hamburger, Wine, Gift } from "@phosphor-icons/react";
 
 import type { IOrder } from "../../../interfaces/Order.ts";
 
@@ -71,12 +52,12 @@ const paymentNames: Record<string, string> = {
 };
 
 const paymentIcons = {
-  cash: <FaMoneyBillWave />,
-  transfer: <FaExchangeAlt />,
-  qr: <FaQrcode />,
-  debit: <FaCreditCard />,
-  debit_card: <FaCreditCard />,
-  mercado_pago: <FaWallet />,
+  cash: <Money />,
+  transfer: <ArrowsLeftRight />,
+  qr: <QrCode />,
+  debit: <CreditCard />,
+  debit_card: <CreditCard />,
+  mercado_pago: <Wallet />,
 };
 
 const paymentStatusNames: Record<string, string> = {
@@ -124,7 +105,7 @@ export default function ModalOrderOptions({ order }: Props) {
       <OrderOverview>
         <OverviewCard $tone={order.customer_name?.trim() ? "complete" : "missing"}>
           <OverviewIcon $type="customer">
-            <FaUser />
+            <User />
           </OverviewIcon>
           <OverviewContent>
             <span>Cliente</span>
@@ -134,7 +115,7 @@ export default function ModalOrderOptions({ order }: Props) {
 
         <OverviewCard $tone={Number(order.total_price) > 0 ? "complete" : "missing"}>
           <OverviewIcon $type="total">
-            <FaCoins />
+            <Coins />
           </OverviewIcon>
           <OverviewContent>
             <span>Total</span>
@@ -144,7 +125,7 @@ export default function ModalOrderOptions({ order }: Props) {
 
         <OverviewCard $tone={order.status ? "active" : "missing"}>
           <OverviewIcon $type="status">
-            <FaCheckCircle />
+            <CheckCircle />
           </OverviewIcon>
           <OverviewContent>
             <span>Estado</span>
@@ -156,7 +137,7 @@ export default function ModalOrderOptions({ order }: Props) {
 
         <OverviewCard $status={order.status_payment} $tone={!order.status_payment ? "missing" : undefined}>
           <OverviewIcon $type="payment">
-            <FaCreditCard />
+            <CreditCard />
           </OverviewIcon>
           <OverviewContent >
             <span>Pago</span>
@@ -171,7 +152,7 @@ export default function ModalOrderOptions({ order }: Props) {
 
         <OverviewCard $tone={order.delivery_time?.trim() ? "complete" : "missing"}>
           <OverviewIcon $type="delivery">
-            <FaTruck />
+            <Truck />
           </OverviewIcon>
           <OverviewContent>
             <span>Entrega</span>
@@ -183,7 +164,7 @@ export default function ModalOrderOptions({ order }: Props) {
 
         <OverviewCard $tone={createdAt !== "—" ? "complete" : "missing"}>
           <OverviewIcon $type="date">
-            <FaCalendarAlt />
+            <CalendarBlank />
           </OverviewIcon>
           <OverviewContent>
             <span>Creada</span>
@@ -194,7 +175,7 @@ export default function ModalOrderOptions({ order }: Props) {
 
       <DetailSection>
         <SectionHeader>
-          <FaBoxOpen />
+          <Package />
           <h3>Productos de la comanda</h3>
         </SectionHeader>
 
@@ -223,9 +204,9 @@ export default function ModalOrderOptions({ order }: Props) {
                         alt={item.name || "Producto"}
                       />
                     ) : isPromotion ? (
-                      <FaGift />
+                      <Gift />
                     ) : (
-                      <FaHamburger />
+                      <Hamburger />
                     )}
                   </OrderItemImage>
 
@@ -245,7 +226,7 @@ export default function ModalOrderOptions({ order }: Props) {
 
                     <ItemMetadata>
                       <span>
-                        <FaUtensils />
+                        <ForkKnife />
                         {item.quantity}{" "}
                         {item.quantity === 1 ? "unidad" : "unidades"}
                       </span>
@@ -257,7 +238,7 @@ export default function ModalOrderOptions({ order }: Props) {
                     {item.garnish && (
                       <ItemMetadata>
                         <span>
-                          <FaUtensils />
+                          <ForkKnife />
                           Guarnición: {item.garnish}
                         </span>
                       </ItemMetadata>
@@ -325,7 +306,7 @@ export default function ModalOrderOptions({ order }: Props) {
         {extraItems.length > 0 && (
           <>
             <SectionHeader $secondary>
-              <FaPlusCircle />
+              <PlusCircle />
               <h3>Extras</h3>
             </SectionHeader>
 
@@ -345,7 +326,7 @@ export default function ModalOrderOptions({ order }: Props) {
                       {extraImage ? (
                         <img src={extraImage} alt={extra.name} />
                       ) : (
-                        <FaGlassWhiskey />
+                        <Wine />
                       )}
                     </OrderItemImage>
 
@@ -373,7 +354,7 @@ export default function ModalOrderOptions({ order }: Props) {
 
       <DetailSection>
         <SectionHeader>
-          <FaWallet />
+          <Wallet />
           <h3>Información y pagos</h3>
         </SectionHeader>
 
@@ -401,7 +382,7 @@ export default function ModalOrderOptions({ order }: Props) {
                 <PaymentIcon $type={payment.method_payment}>
                   {paymentIcons[
                     payment.method_payment as keyof typeof paymentIcons
-                  ] ?? <FaCreditCard />}
+                  ] ?? <CreditCard />}
                 </PaymentIcon>
                 {paymentNames[payment.method_payment] ??
                   payment.method_payment}
@@ -414,7 +395,7 @@ export default function ModalOrderOptions({ order }: Props) {
             <DetailRow>
               <span className="payment-method">
                 <PaymentIcon $type="discount">
-                  <FaPercentage />
+                  <Percent />
                 </PaymentIcon>
                 Descuento
               </span>
@@ -429,7 +410,7 @@ export default function ModalOrderOptions({ order }: Props) {
           <DetailRow>
             <span className="payment-method">
               <PaymentIcon $type="date">
-                <FaCalendarAlt />
+                <CalendarBlank />
               </PaymentIcon>
               Fecha de creación
             </span>
@@ -440,7 +421,7 @@ export default function ModalOrderOptions({ order }: Props) {
         {order.observations ? (
           <>
             <SectionHeader $secondary>
-              <FaCommentDots />
+              <ChatCircleDots />
               <h3>Observaciones</h3>
             </SectionHeader>
             <ObservationContent>

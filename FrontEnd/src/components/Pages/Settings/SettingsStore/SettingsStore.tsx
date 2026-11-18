@@ -1,5 +1,6 @@
+import CardLoading from "../../../CardLoading/CardLoading.tsx";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { FaCheck, FaEye, FaImage, FaPalette, FaPhoneAlt, FaStore, FaTags, FaSearch, FaFilter, FaTimes, FaCheckDouble } from "react-icons/fa";
+import { Check, Eye, Image, Palette, Phone, Storefront, Tag, MagnifyingGlass, Funnel, X, Checks } from "@phosphor-icons/react";
 import {
   StoreSettingsWrap,
   StoreSettingsGrid,
@@ -12,7 +13,6 @@ import {
   StoreSettingsToggle,
   StoreSettingsOptions,
   StoreSettingsStatus,
-  StoreSettingsLoading,
 } from "./SettingsStoreStyles.ts";
 import type { Product } from "../../../../interfaces/Product.ts";
 import type { Promotion } from "../../../../interfaces/Promotion.ts";
@@ -288,17 +288,7 @@ export default function SettingsStore() {
 
   if (busy) return (
     <StoreSettingsWrap>
-      <StoreSettingsLoading role="status" aria-live="polite">
-        <div className="loading-card">
-          <div className="loading-icon"><FaStore /></div>
-          <div className="loading-spinner" aria-hidden="true" />
-          <span className="loading-eyebrow">BOUTIQUE DE SABORES</span>
-          <h2>Preparando tu Store</h2>
-          <p>Estamos reuniendo la información de tu tienda para que puedas administrar su contenido, apariencia y ventas.</p>
-          <div className="loading-progress" aria-hidden="true"><span /></div>
-          <small>Esto puede tardar unos segundos...</small>
-        </div>
-      </StoreSettingsLoading>
+      <CardLoading icon={<Storefront />} text="Preparando tu Store: cargando configuración, contenido y ventas..." progress={72} />
     </StoreSettingsWrap>
   );
 
@@ -316,7 +306,7 @@ export default function SettingsStore() {
 
       <StoreSettingsSection>
         <StoreSettingsSectionHeader>
-          <StoreSettingsSectionIcon><FaStore /></StoreSettingsSectionIcon>
+          <StoreSettingsSectionIcon><Storefront /></StoreSettingsSectionIcon>
           <div><h3>Identidad y contenido principal</h3><p>Nombre público, mensajes y contenido de portada que verá el cliente.</p></div>
         </StoreSettingsSectionHeader>
         <StoreSettingsGrid>
@@ -328,24 +318,24 @@ export default function SettingsStore() {
           <StoreSettingsField><span>URL del logo</span><input type="url" value={config.logo_url ?? ""} onChange={(event) => update("logo_url", event.target.value || null)} placeholder="https://..." /></StoreSettingsField>
         </StoreSettingsGrid>
         <StoreSettingsActions>
-          <button type="button" onClick={() => void saveSection("Identidad y contenido", ["store_title", "tagline", "hero_title", "hero_description", "hero_image", "logo_url"])} disabled={saving || !hasConfigChanges(["store_title", "tagline", "hero_title", "hero_description", "hero_image", "logo_url"])}><FaCheck /> {saving ? "Guardando..." : "Guardar identidad y contenido"}</button>
+          <button type="button" onClick={() => void saveSection("Identidad y contenido", ["store_title", "tagline", "hero_title", "hero_description", "hero_image", "logo_url"])} disabled={saving || !hasConfigChanges(["store_title", "tagline", "hero_title", "hero_description", "hero_image", "logo_url"])}><Check /> {saving ? "Guardando..." : "Guardar identidad y contenido"}</button>
         </StoreSettingsActions>
       </StoreSettingsSection>
 
       <StoreSettingsSection>
         <StoreSettingsSectionHeader>
-          <StoreSettingsSectionIcon><FaStore /></StoreSettingsSectionIcon>
+          <StoreSettingsSectionIcon><Storefront /></StoreSettingsSectionIcon>
           <div><h3>Disponibilidad de ventas online</h3><p>Controlá si los clientes pueden iniciar y completar pedidos desde la tienda pública.</p></div>
         </StoreSettingsSectionHeader>
         <StoreSettingsToggle><input type="checkbox" checked={publicSalesEnabled} onChange={(event) => setPublicSalesEnabled(event.target.checked)} /><span>Habilitar ventas y checkout del FrontEnd-Store</span></StoreSettingsToggle>
         <StoreSettingsActions>
-          <button type="button" onClick={() => void saveSection("Disponibilidad de ventas", [], { publicSales: true })} disabled={saving || publicSalesEnabled === savedPublicSalesEnabled}><FaCheck /> {saving ? "Guardando..." : "Guardar disponibilidad"}</button>
+          <button type="button" onClick={() => void saveSection("Disponibilidad de ventas", [], { publicSales: true })} disabled={saving || publicSalesEnabled === savedPublicSalesEnabled}><Check /> {saving ? "Guardando..." : "Guardar disponibilidad"}</button>
         </StoreSettingsActions>
       </StoreSettingsSection>
 
       <StoreSettingsSection>
         <StoreSettingsSectionHeader>
-          <StoreSettingsSectionIcon><FaPhoneAlt /></StoreSettingsSectionIcon>
+          <StoreSettingsSectionIcon><Phone /></StoreSettingsSectionIcon>
           <div><h3>Contacto y WhatsApp</h3><p>Datos públicos utilizados para la comunicación y confirmación de pedidos.</p></div>
         </StoreSettingsSectionHeader>
         <StoreSettingsGrid>
@@ -353,13 +343,13 @@ export default function SettingsStore() {
           <StoreSettingsField><span>WhatsApp de pedidos</span><input type="tel" inputMode="tel" value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="5493511234567" /><small>Ingresalo con código de país y área.</small></StoreSettingsField>
         </StoreSettingsGrid>
         <StoreSettingsActions>
-          <button type="button" onClick={() => void saveSection("Contacto y WhatsApp", [], { phone: true })} disabled={saving || phone.trim() === savedPhone}><FaCheck /> {saving ? "Guardando..." : "Guardar contacto"}</button>
+          <button type="button" onClick={() => void saveSection("Contacto y WhatsApp", [], { phone: true })} disabled={saving || phone.trim() === savedPhone}><Check /> {saving ? "Guardando..." : "Guardar contacto"}</button>
         </StoreSettingsActions>
       </StoreSettingsSection>
 
       <StoreSettingsSection>
         <StoreSettingsSectionHeader>
-          <StoreSettingsSectionIcon><FaPalette /></StoreSettingsSectionIcon>
+          <StoreSettingsSectionIcon><Palette /></StoreSettingsSectionIcon>
           <div><h3>Identidad visual</h3><p>Personalizá la paleta cromática de la tienda. Los cambios se reflejan en los componentes que consumen el tema del Store.</p></div>
         </StoreSettingsSectionHeader>
         <StoreSettingsGrid>
@@ -371,23 +361,23 @@ export default function SettingsStore() {
           ))}
         </StoreSettingsGrid>
         <StoreSettingsActions>
-          <button type="button" onClick={() => void saveSection("Identidad visual", ["theme"])} disabled={saving || !hasConfigChanges(["theme"])}><FaCheck /> {saving ? "Guardando..." : "Guardar identidad visual"}</button>
+          <button type="button" onClick={() => void saveSection("Identidad visual", ["theme"])} disabled={saving || !hasConfigChanges(["theme"])}><Check /> {saving ? "Guardando..." : "Guardar identidad visual"}</button>
         </StoreSettingsActions>
       </StoreSettingsSection>
 
       <StoreSettingsSection>
         <StoreSettingsSectionHeader>
-          <StoreSettingsSectionIcon><FaImage /></StoreSettingsSectionIcon>
+          <StoreSettingsSectionIcon><Image /></StoreSettingsSectionIcon>
           <div><h3>Productos publicados y destacados</h3><p>Elegí qué productos aparecen en el catálogo y cuáles se muestran como destacados.</p></div>
         </StoreSettingsSectionHeader>
         <StoreSettingsToggle><input type="checkbox" checked={config.catalog_restricted} onChange={(event) => update("catalog_restricted", event.target.checked)} /><span>Restringir el catálogo a los productos seleccionados</span></StoreSettingsToggle>
         <div className="store-selection-summary"><strong>{config.enabled_product_ids.length}</strong> productos seleccionados <span>·</span> {filteredProducts.length} resultados visibles de {products.length}</div>
         <div className="store-filter-toolbar">
-          <label className="store-search"><FaSearch /><input type="search" value={productSearch} onChange={(event) => setProductSearch(event.target.value)} placeholder="Buscar producto por nombre..." aria-label="Buscar productos para publicar" />{productSearch && <button type="button" onClick={() => setProductSearch("")} aria-label="Limpiar búsqueda"><FaTimes /></button>}</label>
-          <label className="store-filter-select"><FaFilter /><select value={productCategory} onChange={(event) => setProductCategory(event.target.value)}><option value="all">Todas las categorías</option>{categories.map((category) => <option key={category} value={category}>{category}</option>)}</select></label>
+          <label className="store-search"><MagnifyingGlass /><input type="search" value={productSearch} onChange={(event) => setProductSearch(event.target.value)} placeholder="Buscar producto por nombre..." aria-label="Buscar productos para publicar" />{productSearch && <button type="button" onClick={() => setProductSearch("")} aria-label="Limpiar búsqueda"><X /></button>}</label>
+          <label className="store-filter-select"><Funnel /><select value={productCategory} onChange={(event) => setProductCategory(event.target.value)}><option value="all">Todas las categorías</option>{categories.map((category) => <option key={category} value={category}>{category}</option>)}</select></label>
           <label className="store-filter-select"><select value={productStock} onChange={(event) => setProductStock(event.target.value)}><option value="all">Todo el stock</option><option value="available">Con stock</option><option value="empty">Sin stock</option></select></label>
         </div>
-        <div className="store-bulk-actions"><button type="button" onClick={() => updateVisibleProductSelection("enabled_product_ids", filteredProducts, true)}><FaCheckDouble /> Seleccionar resultados</button><button type="button" onClick={() => updateVisibleProductSelection("enabled_product_ids", filteredProducts, false)}>Quitar selección visible</button></div>
+        <div className="store-bulk-actions"><button type="button" onClick={() => updateVisibleProductSelection("enabled_product_ids", filteredProducts, true)}><Checks /> Seleccionar resultados</button><button type="button" onClick={() => updateVisibleProductSelection("enabled_product_ids", filteredProducts, false)}>Quitar selección visible</button></div>
         <StoreSettingsOptions>
           {filteredProducts.map((product) => (
             <label key={product.id}>
@@ -400,8 +390,8 @@ export default function SettingsStore() {
         <StoreSettingsToggle><input type="checkbox" checked={config.show_featured} onChange={(event) => update("show_featured", event.target.checked)} /><span>Mostrar sección de productos destacados</span></StoreSettingsToggle>
         {config.show_featured && <>
           <div className="store-selection-summary"><strong>{config.featured_product_ids.length}</strong> productos destacados</div>
-          <label className="store-search"><FaSearch /><input type="search" value={featuredSearch} onChange={(event) => setFeaturedSearch(event.target.value)} placeholder="Buscar producto para destacar..." aria-label="Buscar productos destacados" />{featuredSearch && <button type="button" onClick={() => setFeaturedSearch("")} aria-label="Limpiar búsqueda"><FaTimes /></button>}</label>
-          <div className="store-bulk-actions"><button type="button" onClick={() => updateVisibleProductSelection("featured_product_ids", filteredFeaturedProducts, true)}><FaCheckDouble /> Destacar resultados</button><button type="button" onClick={() => updateVisibleProductSelection("featured_product_ids", filteredFeaturedProducts, false)}>Quitar destacados visibles</button></div>
+          <label className="store-search"><MagnifyingGlass /><input type="search" value={featuredSearch} onChange={(event) => setFeaturedSearch(event.target.value)} placeholder="Buscar producto para destacar..." aria-label="Buscar productos destacados" />{featuredSearch && <button type="button" onClick={() => setFeaturedSearch("")} aria-label="Limpiar búsqueda"><X /></button>}</label>
+          <div className="store-bulk-actions"><button type="button" onClick={() => updateVisibleProductSelection("featured_product_ids", filteredFeaturedProducts, true)}><Checks /> Destacar resultados</button><button type="button" onClick={() => updateVisibleProductSelection("featured_product_ids", filteredFeaturedProducts, false)}>Quitar destacados visibles</button></div>
           <StoreSettingsOptions>{filteredFeaturedProducts.map((product) => (
             <label key={`featured-${product.id}`}>
               <input type="checkbox" checked={config.featured_product_ids.includes(product.id)} onChange={(event) => update("featured_product_ids", toggleId(config.featured_product_ids, product.id, event.target.checked))} />
@@ -410,19 +400,19 @@ export default function SettingsStore() {
           ))}{!filteredFeaturedProducts.length && <p>No hay productos que coincidan con la búsqueda.</p>}</StoreSettingsOptions>
         </>}
         <StoreSettingsActions>
-          <button type="button" onClick={() => void saveSection("Productos publicados y destacados", ["enabled_product_ids", "catalog_restricted", "featured_product_ids", "show_featured"])} disabled={saving || !hasConfigChanges(["enabled_product_ids", "catalog_restricted", "featured_product_ids", "show_featured"])}><FaCheck /> {saving ? "Guardando..." : "Guardar productos"}</button>
+          <button type="button" onClick={() => void saveSection("Productos publicados y destacados", ["enabled_product_ids", "catalog_restricted", "featured_product_ids", "show_featured"])} disabled={saving || !hasConfigChanges(["enabled_product_ids", "catalog_restricted", "featured_product_ids", "show_featured"])}><Check /> {saving ? "Guardando..." : "Guardar productos"}</button>
         </StoreSettingsActions>
       </StoreSettingsSection>
 
       <StoreSettingsSection>
         <StoreSettingsSectionHeader>
-          <StoreSettingsSectionIcon><FaTags /></StoreSettingsSectionIcon>
+          <StoreSettingsSectionIcon><Tag /></StoreSettingsSectionIcon>
           <div><h3>Promociones y descuentos del Store</h3><p>Controlá qué promociones se publican y los descuentos exclusivos del canal online.</p></div>
         </StoreSettingsSectionHeader>
         <StoreSettingsToggle><input type="checkbox" checked={config.show_promotions} onChange={(event) => update("show_promotions", event.target.checked)} /><span>Mostrar sección de promociones</span></StoreSettingsToggle>
         <StoreSettingsToggle><input type="checkbox" checked={config.promotion_selection_restricted} onChange={(event) => update("promotion_selection_restricted", event.target.checked)} /><span>Restringir a promociones seleccionadas</span></StoreSettingsToggle>
         <div className="store-selection-summary"><strong>{config.enabled_promotion_ids.length}</strong> promociones seleccionadas · {filteredPromotions.length} resultados visibles</div>
-        <label className="store-search"><FaSearch /><input type="search" value={promotionSearch} onChange={(event) => setPromotionSearch(event.target.value)} placeholder="Buscar promoción por nombre..." aria-label="Buscar promociones" />{promotionSearch && <button type="button" onClick={() => setPromotionSearch("")} aria-label="Limpiar búsqueda"><FaTimes /></button>}</label>
+        <label className="store-search"><MagnifyingGlass /><input type="search" value={promotionSearch} onChange={(event) => setPromotionSearch(event.target.value)} placeholder="Buscar promoción por nombre..." aria-label="Buscar promociones" />{promotionSearch && <button type="button" onClick={() => setPromotionSearch("")} aria-label="Limpiar búsqueda"><X /></button>}</label>
         <StoreSettingsOptions>
           {filteredPromotions.map((promotion) => (
             <label key={promotion.id}>
@@ -436,7 +426,7 @@ export default function SettingsStore() {
           <div className="store-discount-heading"><div><strong>Descuento general del Store</strong><p>Se aplica a los productos que no tengan un descuento individual.</p></div><span className="discount-badge">{config.general_store_discount}%</span></div>
           <StoreSettingsField className="store-discount-field"><span>Porcentaje general</span><div className="store-discount-input"><input type="number" min="0" max="100" step="0.5" value={config.general_store_discount} onChange={(event) => update("general_store_discount", Math.min(100, Math.max(0, Number(event.target.value) || 0)))} /><span>%</span></div></StoreSettingsField>
           <div className="store-discount-heading individual"><div><strong>Descuentos individuales por producto</strong><p>Un descuento individual reemplaza al porcentaje general para ese producto.</p></div><span className="discount-count">{Object.keys(config.product_discounts).length} personalizados</span></div>
-          <div className="store-discount-tools"><label className="store-search"><FaSearch /><input type="search" value={discountSearch} onChange={(event) => setDiscountSearch(event.target.value)} placeholder="Buscar producto..." aria-label="Buscar producto para configurar descuento" />{discountSearch && <button type="button" onClick={() => setDiscountSearch("")} aria-label="Limpiar búsqueda"><FaTimes /></button>}</label><label className="store-filter-select"><FaFilter /><select value={discountFilter} onChange={(event) => setDiscountFilter(event.target.value)}><option value="all">Todos los productos</option><option value="custom">Con descuento propio</option><option value="general">Usan descuento general</option></select></label></div>
+          <div className="store-discount-tools"><label className="store-search"><MagnifyingGlass /><input type="search" value={discountSearch} onChange={(event) => setDiscountSearch(event.target.value)} placeholder="Buscar producto..." aria-label="Buscar producto para configurar descuento" />{discountSearch && <button type="button" onClick={() => setDiscountSearch("")} aria-label="Limpiar búsqueda"><X /></button>}</label><label className="store-filter-select"><Funnel /><select value={discountFilter} onChange={(event) => setDiscountFilter(event.target.value)}><option value="all">Todos los productos</option><option value="custom">Con descuento propio</option><option value="general">Usan descuento general</option></select></label></div>
           <div className="store-product-discounts">
             {filteredDiscountProducts.map((product) => {
               const customDiscount = config.product_discounts[product.id];
@@ -446,25 +436,25 @@ export default function SettingsStore() {
           </div>
         </div>
         <StoreSettingsActions>
-          <button type="button" onClick={() => void saveSection("Promociones y descuentos", ["show_promotions", "promotion_selection_restricted", "enabled_promotion_ids", "general_store_discount", "product_discounts"])} disabled={saving || !hasConfigChanges(["show_promotions", "promotion_selection_restricted", "enabled_promotion_ids", "general_store_discount", "product_discounts"])}><FaCheck /> {saving ? "Guardando..." : "Guardar promociones y descuentos"}</button>
+          <button type="button" onClick={() => void saveSection("Promociones y descuentos", ["show_promotions", "promotion_selection_restricted", "enabled_promotion_ids", "general_store_discount", "product_discounts"])} disabled={saving || !hasConfigChanges(["show_promotions", "promotion_selection_restricted", "enabled_promotion_ids", "general_store_discount", "product_discounts"])}><Check /> {saving ? "Guardando..." : "Guardar promociones y descuentos"}</button>
         </StoreSettingsActions>
       </StoreSettingsSection>
 
       <StoreSettingsSection>
         <StoreSettingsSectionHeader>
-          <StoreSettingsSectionIcon><FaEye /></StoreSettingsSectionIcon>
+          <StoreSettingsSectionIcon><Eye /></StoreSettingsSectionIcon>
           <div><h3>Secciones y modalidades de compra</h3><p>Definí qué alternativas estarán disponibles para los clientes.</p></div>
         </StoreSettingsSectionHeader>
         <StoreSettingsToggle><input type="checkbox" checked={config.delivery_enabled} onChange={(event) => update("delivery_enabled", event.target.checked)} /><span>Habilitar entrega a domicilio</span></StoreSettingsToggle>
         <StoreSettingsToggle><input type="checkbox" checked={config.pickup_enabled} onChange={(event) => update("pickup_enabled", event.target.checked)} /><span>Habilitar retiro en el local</span></StoreSettingsToggle>
         <StoreSettingsActions>
-          <button type="button" onClick={() => void saveSection("Modalidades de compra", ["delivery_enabled", "pickup_enabled"])} disabled={saving || !hasConfigChanges(["delivery_enabled", "pickup_enabled"])}><FaCheck /> {saving ? "Guardando..." : "Guardar modalidades"}</button>
+          <button type="button" onClick={() => void saveSection("Modalidades de compra", ["delivery_enabled", "pickup_enabled"])} disabled={saving || !hasConfigChanges(["delivery_enabled", "pickup_enabled"])}><Check /> {saving ? "Guardando..." : "Guardar modalidades"}</button>
         </StoreSettingsActions>
       </StoreSettingsSection>
 
       <StoreSettingsSection>
         <StoreSettingsSectionHeader>
-          <StoreSettingsSectionIcon><FaEye /></StoreSettingsSectionIcon>
+          <StoreSettingsSectionIcon><Eye /></StoreSettingsSectionIcon>
           <div><h3>Previsualización de la tienda</h3><p>Vista del sitio público. Configurá VITE_STORE_PREVIEW_URL en el FrontEnd de gestión para habilitarla.</p></div>
         </StoreSettingsSectionHeader>
         {previewUrl !== "about:blank" ? <iframe ref={previewFrame} title="Previsualización del FrontEnd-Store" src={previewUrl} loading="lazy" onLoad={() => previewFrame.current?.contentWindow?.postMessage({ type: "STORE_PREVIEW_CONFIG", configuration: config }, "*")} /> : <p className="store-preview-empty">La previsualización no está configurada. Las opciones se pueden guardar igualmente.</p>}

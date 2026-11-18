@@ -160,7 +160,7 @@ export const PrivateLayoutContainer = styled.div`
   display: grid;
 
   grid-template-columns:
-    var(--sidebar-width)
+    76px
     minmax(0, 1fr);
 
   width: 100%;
@@ -168,7 +168,7 @@ export const PrivateLayoutContainer = styled.div`
 
   @media (min-width: 621px) and (max-width: 1024px) {
     grid-template-columns:
-      var(--sidebar-width-tablet)
+      76px
       minmax(0, 1fr);
   }
 

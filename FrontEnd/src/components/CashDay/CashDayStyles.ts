@@ -1423,6 +1423,18 @@ export const EditMovementField = styled.div`
     font-size: 13px;
     font-weight: 700;
   }
+
+  select {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 13px;
+    border: 1px solid var(--color-primary-soft);
+    border-radius: 10px;
+    background: var(--color-white);
+    color: var(--color-primary);
+    font: inherit;
+    font-size: 14px;
+  }
 `;
 
 export const EditMovementInput = styled.input`
@@ -1546,6 +1558,12 @@ export const CashDashboardActions = styled.div`
     border: 1px solid var(--color-primary-soft);
     border-radius: 10px;
     background: var(--color-white);
+
+    background: linear-gradient(
+      110deg,
+      var(--color-danger),
+      var(--color-success)
+    );
     color: var(--color-primary);
     font-weight: 700;
     font-size: 12px;
@@ -1569,7 +1587,7 @@ export const CashDashboardCloseButton = styled.button`
   padding: 9px 17px;
   border: 1px solid var(--color-primary);
   border-radius: 10px;
-  background: var(--color-primary);
+  background: var(--color-danger) !important;
   color: var(--color-white);
   font-size: 12px;
   font-weight: 800;

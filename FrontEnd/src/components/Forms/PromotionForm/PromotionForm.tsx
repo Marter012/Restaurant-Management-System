@@ -1,7 +1,9 @@
 import { useMemo, useState, type FocusEvent } from "react";
+import ModalForm from "../../ModalForm/ModalForm.tsx";
+import { Warning } from "@phosphor-icons/react";
 import { Formik, Form, Field, ErrorMessage, FieldArray } from "formik";
 import { useDispatch, useSelector } from "react-redux";
-import { FaImage, FaPlus, FaTrash, FaCheck, FaMinus } from "react-icons/fa";
+import { Image, Plus, Trash, Check, Minus } from "@phosphor-icons/react";
 
 import {
   FormContainer,
@@ -60,7 +62,9 @@ const PromotionForm = ({
 }: PromotionFormProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const products = useSelector((state: RootState) => state.products.products);
-  const promotionListForDuplicateCheck = useSelector((state: RootState) => state.promotion.promotions);
+  const promotionListForDuplicateCheck = useSelector(
+    (state: RootState) => state.promotion.promotions,
+  );
 
   const activeProducts = useMemo(
     () => products.filter((product) => product.status),
@@ -83,6 +87,13 @@ const PromotionForm = ({
   const [categoryByGroup, setCategoryByGroup] = useState<
     Record<number, string>
   >({});
+  const [duplicateWarning, setDuplicateWarning] = useState<{
+    name: string;
+    status: string;
+    reason: string;
+    data: Parameters<typeof createPromotionAPI>[0];
+  } | null>(null);
+  const [savingDuplicate, setSavingDuplicate] = useState(false);
 
   const getGroupName = (productIds: string[]) => {
     const selected = activeProducts.filter((product) =>
@@ -112,6 +123,22 @@ const PromotionForm = ({
 
     setFieldValue(fieldName, nextIds);
     setFieldValue(groupNameField, getGroupName(nextIds));
+  };
+
+  const confirmDuplicatePromotion = async () => {
+    if (!duplicateWarning || savingDuplicate) return;
+    setSavingDuplicate(true);
+    try {
+      const created = await createPromotionAPI(duplicateWarning.data);
+      dispatch(addPromotion(created));
+      setDuplicateWarning(null);
+      showAlert("Promoción creada correctamente", "success");
+      await onSuccess();
+    } catch (error) {
+      showAlert(getAxiosErrorMessage(error), "error");
+    } finally {
+      setSavingDuplicate(false);
+    }
   };
 
   return (
@@ -147,22 +174,64 @@ const PromotionForm = ({
           };
 
           if (mode === "create") {
-            const normalizeName = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("es").replace(/[^a-z0-9]+/g, " ").trim();
-            const compositionKey = (items: { quantity: number; product_ids: string[] }[]) =>
-              items.map((item) => `${Number(item.quantity)}:${[...item.product_ids].sort().join(",")}`).sort().join("|");
+            const normalizeName = (value: string) =>
+              value
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .toLocaleLowerCase("es")
+                .replace(/[^a-z0-9]+/g, " ")
+                .trim();
+            const compositionKey = (
+              items: { quantity: number; product_ids: string[] }[],
+            ) =>
+              items
+                .map(
+                  (item) =>
+                    `${Number(item.quantity)}:${[...item.product_ids].sort().join(",")}`,
+                )
+                .sort()
+                .join("|");
             const newName = normalizeName(promotionData.name);
             const newComposition = compositionKey(promotionData.items);
-            const matchedPromotion = promotionListForDuplicateCheck.find((existing) => {
-              const existingName = normalizeName(existing.name || "");
-              const similarName = existingName === newName || (newName.length >= 4 && existingName.length >= 4 && (existingName.includes(newName) || newName.includes(existingName)));
-              const sameComposition = compositionKey(existing.items.map((item) => ({ quantity: item.quantity, product_ids: item.product_ids }))) === newComposition;
-              return similarName || sameComposition;
-            });
+            const matchedPromotion = promotionListForDuplicateCheck.find(
+              (existing) => {
+                const existingName = normalizeName(existing.name || "");
+                const similarName =
+                  existingName === newName ||
+                  (newName.length >= 4 &&
+                    existingName.length >= 4 &&
+                    (existingName.includes(newName) ||
+                      newName.includes(existingName)));
+                const sameComposition =
+                  compositionKey(
+                    existing.items.map((item) => ({
+                      quantity: item.quantity,
+                      product_ids: item.product_ids,
+                    })),
+                  ) === newComposition;
+                return similarName || sameComposition;
+              },
+            );
             if (matchedPromotion) {
-              const statusLabel = matchedPromotion.status ? "ACTIVA" : "INACTIVA";
-              const reason = compositionKey(matchedPromotion.items.map((item) => ({ quantity: item.quantity, product_ids: item.product_ids }))) === newComposition ? "La composición de productos coincide" : "El nombre es igual o parecido";
-              const confirmed = window.confirm(`Ya existe una promoción similar: "${matchedPromotion.name}" (${statusLabel}). ${reason}. ¿Querés crearla de todas formas?`);
-              if (!confirmed) return;
+              const statusLabel = matchedPromotion.status
+                ? "ACTIVA"
+                : "INACTIVA";
+              const reason =
+                compositionKey(
+                  matchedPromotion.items.map((item) => ({
+                    quantity: item.quantity,
+                    product_ids: item.product_ids,
+                  })),
+                ) === newComposition
+                  ? "La composición de productos coincide"
+                  : "El nombre es igual o parecido";
+              setDuplicateWarning({
+                name: matchedPromotion.name,
+                status: statusLabel,
+                reason,
+                data: promotionData,
+              });
+              return;
             }
             const created = await createPromotionAPI(promotionData);
             dispatch(addPromotion(created));
@@ -203,6 +272,7 @@ const PromotionForm = ({
           .join(" + ");
 
         return (
+          <>
           <Form id="promotion-form">
             <FormContainer>
               <PromotionEditorLayout>
@@ -217,7 +287,7 @@ const PromotionForm = ({
                       />
                     ) : (
                       <PromotionImagePlaceholder>
-                        <FaImage />
+                        <Image />
                         <strong>Imagen de la promoción</strong>
                         <span>Seleccioná una fotografía</span>
                       </PromotionImagePlaceholder>
@@ -344,13 +414,28 @@ const PromotionForm = ({
                                   </strong>
                                 </div>
 
+                                <AddItemButton
+                                  type="button"
+                                  onClick={() => {
+                                    const nextIds = Array.from(new Set([
+                                      ...item.product_ids,
+                                      ...filtered.map((product) => product.id),
+                                    ]));
+                                    setFieldValue(`items.${index}.product_ids`, nextIds);
+                                    setFieldValue(`items.${index}.name`, getGroupName(nextIds));
+                                  }}
+                                  disabled={!filtered.length || filtered.every((product) => item.product_ids.includes(product.id))}
+                                >
+                                  <Check /> Seleccionar todos
+                                </AddItemButton>
+
                                 {values.items.length > 1 && (
                                   <RemoveItemButton
                                     type="button"
                                     onClick={() => remove(index)}
                                     aria-label={`Eliminar grupo ${index + 1}`}
                                   >
-                                    <FaTrash />
+                                    <Trash />
                                   </RemoveItemButton>
                                 )}
                               </ItemHeader>
@@ -378,7 +463,7 @@ const PromotionForm = ({
                                         )
                                       }
                                     >
-                                      <FaMinus />
+                                      <Minus />
                                     </button>
                                     <strong>{Number(item.quantity)}</strong>
                                     <button
@@ -391,7 +476,7 @@ const PromotionForm = ({
                                         )
                                       }
                                     >
-                                      <FaPlus />
+                                      <Plus />
                                     </button>
                                   </div>
                                 </GroupQuantityControl>
@@ -434,17 +519,6 @@ const PromotionForm = ({
                                     ))}
                                   </CategorySelect>
                                 </ProductToolbar>
-                                <AddItemButton
-                                  type="button"
-                                  onClick={() => {
-                                    const nextIds = Array.from(new Set([...item.product_ids, ...filtered.map((product) => product.id)]));
-                                    setFieldValue(`items.${index}.product_ids`, nextIds);
-                                    setFieldValue(`items.${index}.name`, getGroupName(nextIds));
-                                  }}
-                                  disabled={!filtered.length || filtered.every((product) => item.product_ids.includes(product.id))}
-                                >
-                                  <FaCheck /> Seleccionar todos los filtrados ({filtered.length})
-                                </AddItemButton>
                               </GroupControlsRow>
 
                               <ProductSelection>
@@ -470,7 +544,7 @@ const PromotionForm = ({
                                         }
                                       >
                                         <ProductCheck $selected={selected}>
-                                          {selected && <FaCheck />}
+                                          {selected && <Check />}
                                         </ProductCheck>
                                         <span>{product.name}</span>
                                       </ProductOption>
@@ -499,7 +573,7 @@ const PromotionForm = ({
                             push({ name: "", quantity: 1, product_ids: [] })
                           }
                         >
-                          <FaPlus /> Agregar grupo
+                          <Plus /> Agregar grupo
                         </AddItemButton>
                       </ItemsContainer>
                     )}
@@ -508,6 +582,27 @@ const PromotionForm = ({
               </PromotionEditorLayout>
             </FormContainer>
           </Form>
+          <ModalForm
+            isOpen={Boolean(duplicateWarning)}
+            title="Promoción similar encontrada"
+            description="Ya existe una promoción con un nombre o composición parecida."
+            icon={<Warning />}
+            size="small"
+            onClose={() => setDuplicateWarning(null)}
+            footerActions={
+              <button type="button" onClick={confirmDuplicatePromotion} disabled={savingDuplicate}>
+                {savingDuplicate ? "Creando..." : "Crear de todas formas"}
+              </button>
+            }
+          >
+            {duplicateWarning && (
+              <p>
+                Ya existe <strong>{duplicateWarning.name}</strong> ({duplicateWarning.status}).
+                {" "}{duplicateWarning.reason}. ¿Querés crearla de todas formas?
+              </p>
+            )}
+          </ModalForm>
+          </>
         );
       }}
     </Formik>

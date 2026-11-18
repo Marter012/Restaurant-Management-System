@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { FaShieldAlt } from "react-icons/fa";
+import { ShieldCheck } from "@phosphor-icons/react";
 
 import type { AppDispatch, RootState } from "../../store/store.ts";
 import AppInitializer from "../../initialization/appInitializer.tsx";
@@ -176,7 +176,7 @@ const PrivateLayout = () => {
         isOpen={showCredentialNotice}
         title="Actualización de seguridad obligatoria"
         description="Antes de utilizar el sistema, necesitás actualizar las credenciales iniciales."
-        icon={<FaShieldAlt />}
+        icon={<ShieldCheck />}
         onClose={() => {
           setShowCredentialNotice(false);
           navigate("/settings", {

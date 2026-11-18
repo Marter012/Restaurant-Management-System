@@ -34,6 +34,7 @@ export interface IngredientAvailabilityResponse {
 export interface EstablishmentSettings {
   name: string;
   phone_number?: string;
+  logo?: string | null;
 }
 
 export interface CommercialSettings {
@@ -130,6 +131,7 @@ export const getEstablishmentAPI =
     return {
       name: String(response.data?.name ?? "Boutique de Sabores"),
       phone_number: String(response.data?.phone_number ?? ""),
+      logo: response.data?.logo ?? null,
     };
   };
 
@@ -144,7 +146,8 @@ export const updateEstablishmentAPI = async (
 
   return {
     name: String(response.data?.name ?? data.name),
-    phone_number: String(response.data?.phone_number ?? data.phone_number),
+    phone_number: String(response.data?.phone_number ?? data.phone_number ?? ""),
+    logo: response.data?.logo ?? data.logo ?? null,
   };
 };
 

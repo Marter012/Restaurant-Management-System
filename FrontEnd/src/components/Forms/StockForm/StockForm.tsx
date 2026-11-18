@@ -1,13 +1,6 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 
-import {
-  FaBoxes,
-  FaLayerGroup,
-  FaExchangeAlt,
-  FaPlusCircle,
-  FaMinusCircle,
-  FaClipboardList,
-} from "react-icons/fa";
+import { Package, Stack, ArrowsLeftRight, PlusCircle, MinusCircle, ClipboardText } from "@phosphor-icons/react";
 
 import { useDispatch } from "react-redux";
 
@@ -119,7 +112,7 @@ const StockForm = ({ product, onSuccess }: StockFormProps) => {
                   </StockCurrentQuantity>
                 </StockProductInformation>
 
-                <FaBoxes className="stock-info-icon" />
+                <Package className="stock-info-icon" />
               </StockProductHeader>
             </StockInfo>
 
@@ -127,7 +120,7 @@ const StockForm = ({ product, onSuccess }: StockFormProps) => {
               <StockFormGrid>
                 <FormGroup>
                   <label htmlFor="quantity">
-                    <FaLayerGroup />
+                    <Stack />
                     Cantidad
                   </label>
 
@@ -147,7 +140,7 @@ const StockForm = ({ product, onSuccess }: StockFormProps) => {
 
                 <FormGroup>
                   <label>
-                    <FaExchangeAlt />
+                    <ArrowsLeftRight />
                     Tipo de movimiento
                   </label>
 
@@ -161,7 +154,7 @@ const StockForm = ({ product, onSuccess }: StockFormProps) => {
                       }
                     >
                       <MovementIcon>
-                        <FaPlusCircle />
+                        <PlusCircle />
                       </MovementIcon>
 
                       Ingreso
@@ -176,7 +169,7 @@ const StockForm = ({ product, onSuccess }: StockFormProps) => {
                       }
                     >
                       <MovementIcon>
-                        <FaMinusCircle />
+                        <MinusCircle />
                       </MovementIcon>
 
                       Egreso
@@ -192,7 +185,7 @@ const StockForm = ({ product, onSuccess }: StockFormProps) => {
 
               <FormGroup>
                 <label htmlFor="description">
-                  <FaClipboardList />
+                  <ClipboardText />
                   Descripción
                 </label>
 

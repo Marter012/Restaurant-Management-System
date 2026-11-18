@@ -471,6 +471,16 @@ const connectWebSocket = () => {
 
         if (event.type === "DATA_CHANGED") {
           if (currentDispatch) scheduleRefresh(currentDispatch);
+          if (
+            event.resource === "online_order" &&
+            (event.action === "created" || event.action === "refund_requested")
+          ) {
+            window.dispatchEvent(
+              new CustomEvent("online-order-notification", {
+                detail: { action: event.action, data: event.data },
+              }),
+            );
+          }
           void printRemoteOrder(event as unknown as WebSocketChangeEvent);
         }
       } catch (error) {

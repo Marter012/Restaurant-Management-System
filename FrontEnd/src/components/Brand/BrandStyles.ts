@@ -25,6 +25,14 @@ export const BrandContainer = styled.div`
     letter-spacing: -0.04em;
 
     box-shadow: var(--shadow-sm);
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: inherit;
+    }
   }
 
   .brand-info {
@@ -53,6 +61,21 @@ export const BrandContainer = styled.div`
     letter-spacing: 0.075em;
     line-height: 1.2;
     text-transform: uppercase;
+  }
+
+
+  @media (min-width: 621px) {
+    justify-content: center;
+
+    .brand-logo {
+      flex-basis: 46px;
+      width: 46px;
+      height: 46px;
+    }
+
+    .brand-info {
+      display: none;
+    }
   }
 
   /* TABLET */

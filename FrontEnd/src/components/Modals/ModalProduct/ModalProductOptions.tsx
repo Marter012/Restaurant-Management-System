@@ -1,14 +1,4 @@
-import {
-  FaCheckCircle,
-  FaExclamationCircle,
-  FaUtensils,
-  FaTag,
-  FaBoxes,
-  FaThLarge,
-  FaImage,
-  FaHandPaper,
-  FaAlignLeft,
-} from "react-icons/fa";
+import { CheckCircle, WarningCircle, ForkKnife, Tag, Package, GridFour, Image, Hand, AlignLeft } from "@phosphor-icons/react";
 
 import {
   ProductOptionsContainer,
@@ -96,7 +86,7 @@ const ModalProductOptions = ({ product }: ModalProductOptionsProps) => {
           />
 
           <ProductImageOverlay aria-hidden="true">
-            <FaImage />
+            <Image />
           </ProductImageOverlay>
         </ProductImageWrapper>
 
@@ -105,12 +95,12 @@ const ModalProductOptions = ({ product }: ModalProductOptionsProps) => {
 
           <ProductBadges>
             <ProductBadge variant="category">
-              <FaUtensils />
+              <ForkKnife />
               <span>{product.category || "Sin categoría"}</span>
             </ProductBadge>
 
             <ProductBadge variant={product.status ? "active" : "inactive"}>
-              <FaCheckCircle />
+              <CheckCircle />
               <span>{product.status ? "Activo" : "Inactivo"}</span>
             </ProductBadge>
           </ProductBadges>
@@ -124,7 +114,7 @@ const ModalProductOptions = ({ product }: ModalProductOptionsProps) => {
           <ProductMetrics>
             <ProductMetric>
               <MetricIcon>
-                <FaTag />
+                <Tag />
               </MetricIcon>
 
               <MetricInformation>
@@ -137,7 +127,7 @@ const ModalProductOptions = ({ product }: ModalProductOptionsProps) => {
 
             <ProductMetric>
               <MetricIcon>
-                <FaBoxes />
+                <Package />
               </MetricIcon>
 
               <MetricInformation>
@@ -151,7 +141,7 @@ const ModalProductOptions = ({ product }: ModalProductOptionsProps) => {
 
             <ProductMetric>
               <MetricIcon>
-                <FaExclamationCircle />
+                <WarningCircle />
               </MetricIcon>
 
               <MetricInformation>
@@ -164,7 +154,7 @@ const ModalProductOptions = ({ product }: ModalProductOptionsProps) => {
 
             <ProductMetric>
               <MetricIcon>
-                <FaThLarge />
+                <GridFour />
               </MetricIcon>
 
               <MetricInformation>
@@ -179,7 +169,7 @@ const ModalProductOptions = ({ product }: ModalProductOptionsProps) => {
       <ProductDetailsGrid>
         <ProductDetailCard>
           <ProductDetailHeader>
-            <FaUtensils />
+            <ForkKnife />
             <h3>Ingredientes</h3>
           </ProductDetailHeader>
 
@@ -200,7 +190,7 @@ const ModalProductOptions = ({ product }: ModalProductOptionsProps) => {
 
         <ProductDetailCard>
           <ProductDetailHeader>
-            <FaHandPaper />
+            <Hand />
             <h3>Guarniciones sin costo</h3>
           </ProductDetailHeader>
 
@@ -221,7 +211,7 @@ const ModalProductOptions = ({ product }: ModalProductOptionsProps) => {
 
         <ProductDescriptionCard>
           <ProductDetailHeader>
-            <FaAlignLeft />
+            <AlignLeft />
             <h3>Descripción</h3>
           </ProductDetailHeader>
 

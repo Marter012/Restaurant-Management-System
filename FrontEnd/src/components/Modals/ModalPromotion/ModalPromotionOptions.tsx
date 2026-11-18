@@ -1,4 +1,4 @@
-import { FaCalendarAlt, FaCheckCircle, FaPercent } from "react-icons/fa";
+import { CalendarBlank, CheckCircle, Percent } from "@phosphor-icons/react";
 import type { Promotion } from "../../../interfaces/Promotion";
 import {
   PromotionOptions,
@@ -32,7 +32,7 @@ export default function ModalPromotionOptions({
             }}
           />
           <span className="promotion-image-tag">
-            <FaPercent /> Promoción
+            <Percent /> Promoción
           </span>
         </div>
         <div className="promotion-overview-main">
@@ -45,11 +45,11 @@ export default function ModalPromotionOptions({
           <span
             className={`promotion-detail-status ${promotion.status ? "is-active" : "is-inactive"}`}
           >
-            <FaCheckCircle />
+            <CheckCircle />
             {promotion.status ? "Activa" : "Inactiva"}
           </span>
           <span className="promotion-availability">
-            <FaCalendarAlt />
+            <CalendarBlank />
             {promotion.status
               ? "Disponible para ventas"
               : "No disponible para ventas"}

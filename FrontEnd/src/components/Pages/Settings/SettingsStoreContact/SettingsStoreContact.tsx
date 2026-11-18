@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { FaWhatsapp } from "react-icons/fa";
+import { WhatsappLogo, Storefront } from "@phosphor-icons/react";
+import CardLoading from "../../../CardLoading/CardLoading.tsx";
 import {
   getEstablishmentSettingsAPI,
   updateEstablishmentSettingsAPI,
@@ -80,11 +81,15 @@ const SettingsStoreContact = () => {
     }
   };
 
+  if (loading) {
+    return <CardLoading icon={<Storefront />} text="Cargando teléfono comercial..." />;
+  }
+
   return (
     <StoreContactPanel>
       <StoreContactCopy>
         <strong>
-          <FaWhatsapp /> WhatsApp de pedidos
+          <WhatsappLogo /> WhatsApp de pedidos
         </strong>
         <p>
           Este número se utilizará en el botón de confirmación de la tienda para
@@ -102,13 +107,12 @@ const SettingsStoreContact = () => {
           placeholder="5493511234567"
           value={phone}
           onChange={(event) => setPhone(event.target.value)}
-          disabled={loading || saving}
+          disabled={saving}
         />
         <StoreContactActions>
-          <button type="submit" disabled={loading || saving}>
+          <button type="submit" disabled={saving}>
             {saving ? "Guardando..." : "Guardar teléfono"}
           </button>
-          {loading && <span>Cargando configuración...</span>}
         </StoreContactActions>
         {message && (
           <StoreContactMessage $error={error}>{message}</StoreContactMessage>

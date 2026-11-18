@@ -1,3 +1,4 @@
+import CardLoading from "../CardLoading/CardLoading.tsx";
 import {
   useEffect,
   useMemo,
@@ -6,22 +7,9 @@ import {
   type KeyboardEvent,
 } from "react";
 
-import {
-  FaCheck,
-  FaCheckCircle,
-  FaChevronRight,
-  FaChevronLeft,
-  FaEnvelope,
-  FaLock,
-  FaPaperPlane,
-  FaShieldAlt,
-  FaUser,
-  FaUserEdit,
-  FaUserSlash,
-  FaPlus,
-} from "react-icons/fa";
+import { Check, CheckCircle, CaretRight, CaretLeft, Envelope, Lock, PaperPlaneTilt, ShieldCheck, User, UserGear, UserMinus, Plus, Users } from "@phosphor-icons/react";
 
-import { RiUserAddFill } from "react-icons/ri";
+import { UserPlus } from "@phosphor-icons/react";
 
 import {
   getUsersAPI,
@@ -39,8 +27,8 @@ import {
 
 import { getAxiosErrorMessage } from "../Utils/ErrorAxios.tsx";
 
-import { IoEyeSharp } from "react-icons/io5";
-import { FaEyeSlash } from "react-icons/fa";
+import { Eye } from "@phosphor-icons/react";
+import { EyeSlash } from "@phosphor-icons/react";
 
 import {
   ManageUserPage,
@@ -881,14 +869,14 @@ const ManageUser = ({ forceCredentialUpdate = false }: ManageUserProps) => {
     <ManageUserPage>
 
           {loading ? (
-            <LoadingState>Cargando usuarios...</LoadingState>
+            <CardLoading icon={<Users />} text="Cargando usuarios..." />
           ) : (
             <>
               {error && <ErrorMessage>{error}</ErrorMessage>}
 
               {success && (
                 <SuccessMessage>
-                  <FaCheckCircle />
+                  <CheckCircle />
 
                   <span>{success}</span>
                 </SuccessMessage>
@@ -912,7 +900,7 @@ const ManageUser = ({ forceCredentialUpdate = false }: ManageUserProps) => {
                         aria-label="Crear usuario"
                         title="Crear usuario"
                       >
-                        <RiUserAddFill />
+                        <UserPlus />
                         <span>Crear usuario</span>
                       </CreateUserButton>
                     </UsersPanelActions>
@@ -959,7 +947,7 @@ const ManageUser = ({ forceCredentialUpdate = false }: ManageUserProps) => {
                           onClick={() => void handleSelectUser(user)}
                         >
                           <UserAvatar $active={user.status}>
-                            {user.status ? <FaUser /> : <FaUserSlash />}
+                            {user.status ? <User /> : <UserMinus />}
                           </UserAvatar>
 
                           <UserMain>
@@ -982,10 +970,10 @@ const ManageUser = ({ forceCredentialUpdate = false }: ManageUserProps) => {
 
                           {selectedUser?.id === user.id ? (
                             <SelectedIndicator>
-                              <FaCheck />
+                              <Check />
                             </SelectedIndicator>
                           ) : (
-                            <FaChevronRight />
+                            <CaretRight />
                           )}
                         </UserRow>
                       ))
@@ -1015,7 +1003,7 @@ const ManageUser = ({ forceCredentialUpdate = false }: ManageUserProps) => {
                     <EditorHeader>
                       <EditorUser>
                         <EditorAvatar $active>
-                          <RiUserAddFill />
+                          <UserPlus />
                         </EditorAvatar>
 
                         <EditorUserInfo>
@@ -1031,7 +1019,7 @@ const ManageUser = ({ forceCredentialUpdate = false }: ManageUserProps) => {
                       <Section>
                         <SectionHeader>
                           <SectionIcon>
-                            <FaUser />
+                            <User />
                           </SectionIcon>
 
                           <div>
@@ -1053,13 +1041,13 @@ const ManageUser = ({ forceCredentialUpdate = false }: ManageUserProps) => {
 
                     <EditorFooter>
                       <CancelButton type="button" onClick={handleCancelEdit}>
-                        {isMobile ? <FaChevronLeft /> : ""}
+                        {isMobile ? <CaretLeft /> : ""}
 
                         {isMobile ? "Volver" : "Cancelar"}
                       </CancelButton>
 
                       <SaveButton type="submit" form="create-user-form">
-                        <FaCheckCircle />
+                        <CheckCircle />
                         Crear usuario
                       </SaveButton>
                     </EditorFooter>
@@ -1086,7 +1074,7 @@ const ManageUser = ({ forceCredentialUpdate = false }: ManageUserProps) => {
                     <EditorHeader>
                       <EditorUser>
                         <EditorAvatar $active={status}>
-                          {status ? <FaUserEdit /> : <FaUserSlash />}
+                          {status ? <UserGear /> : <UserMinus />}
                         </EditorAvatar>
 
                         <EditorUserInfo>
@@ -1103,7 +1091,7 @@ const ManageUser = ({ forceCredentialUpdate = false }: ManageUserProps) => {
                       <Section>
                         <SectionHeader>
                           <SectionIcon>
-                            <FaUser />
+                            <User />
                           </SectionIcon>
 
                           <div>
@@ -1157,7 +1145,7 @@ const ManageUser = ({ forceCredentialUpdate = false }: ManageUserProps) => {
                       <Section>
                         <SectionHeader>
                           <SectionIcon $security>
-                            <FaShieldAlt />
+                            <ShieldCheck />
                           </SectionIcon>
 
                           <div>
@@ -1173,7 +1161,7 @@ const ManageUser = ({ forceCredentialUpdate = false }: ManageUserProps) => {
                         <SecurityCard>
                           <SecurityHeader>
                             <SecurityIcon>
-                              <FaLock />
+                              <Lock />
                             </SecurityIcon>
 
                             <SecurityText>
@@ -1201,7 +1189,7 @@ const ManageUser = ({ forceCredentialUpdate = false }: ManageUserProps) => {
                                 >
                                   <SecurityStepNumber>
                                     {codeSent || codeVerified ? (
-                                      <FaCheck />
+                                      <Check />
                                     ) : (
                                       "1"
                                     )}
@@ -1215,7 +1203,7 @@ const ManageUser = ({ forceCredentialUpdate = false }: ManageUserProps) => {
                                   $completed={codeVerified}
                                 >
                                   <SecurityStepNumber>
-                                    {codeVerified ? <FaCheck /> : "2"}
+                                    {codeVerified ? <Check /> : "2"}
                                   </SecurityStepNumber>
 
                                   <SecurityStepText>Verificar</SecurityStepText>
@@ -1239,7 +1227,7 @@ const ManageUser = ({ forceCredentialUpdate = false }: ManageUserProps) => {
                                   onClick={() => void handleSendCode()}
                                   disabled={isSending}
                                 >
-                                  <FaPaperPlane />
+                                  <PaperPlaneTilt />
 
                                   <span>
                                     {isSending
@@ -1247,7 +1235,7 @@ const ManageUser = ({ forceCredentialUpdate = false }: ManageUserProps) => {
                                       : "Enviar código de verificación"}
                                   </span>
 
-                                  {!isSending && <FaChevronRight />}
+                                  {!isSending && <CaretRight />}
                                 </SendCodeButton>
                               )}
 
@@ -1263,7 +1251,7 @@ const ManageUser = ({ forceCredentialUpdate = false }: ManageUserProps) => {
                                     </div>
 
                                     <CodeStatus>
-                                      <FaEnvelope />
+                                      <Envelope />
                                       Enviado
                                     </CodeStatus>
                                   </CodeHeader>
@@ -1303,7 +1291,7 @@ const ManageUser = ({ forceCredentialUpdate = false }: ManageUserProps) => {
                                     onClick={() => void handleVerifyCode()}
                                     disabled={isVerifying || code.length !== 6}
                                   >
-                                    <FaCheckCircle />
+                                    <CheckCircle />
 
                                     {isVerifying
                                       ? "Verificando..."
@@ -1315,7 +1303,7 @@ const ManageUser = ({ forceCredentialUpdate = false }: ManageUserProps) => {
                                     onClick={() => void handleSendCode()}
                                     disabled={isSending}
                                   >
-                                    <FaPaperPlane />
+                                    <PaperPlaneTilt />
                                     Reenviar código
                                   </ResendButton>
                                 </CodeArea>
@@ -1324,7 +1312,7 @@ const ManageUser = ({ forceCredentialUpdate = false }: ManageUserProps) => {
                               {codeVerified && (
                                 <>
                                   <SecuritySuccess>
-                                    <FaCheckCircle />
+                                    <CheckCircle />
 
                                     <div>
                                       <strong>Identidad verificada</strong>
@@ -1351,13 +1339,13 @@ const ManageUser = ({ forceCredentialUpdate = false }: ManageUserProps) => {
                                         />
 
                                         {showPassword ? (
-                                          <IoEyeSharp
+                                          <Eye
                                             onClick={() =>
                                               setShowPassword(false)
                                             }
                                           />
                                         ) : (
-                                          <FaEyeSlash
+                                          <EyeSlash
                                             onClick={() =>
                                               setShowPassword(true)
                                             }
@@ -1368,7 +1356,7 @@ const ManageUser = ({ forceCredentialUpdate = false }: ManageUserProps) => {
 
                                     <PasswordState>
                                       <PasswordStateIcon>
-                                        <FaLock />
+                                        <Lock />
                                       </PasswordStateIcon>
 
                                       <PasswordStateText>
@@ -1389,7 +1377,7 @@ const ManageUser = ({ forceCredentialUpdate = false }: ManageUserProps) => {
                                         isChanging || password.length < 6
                                       }
                                     >
-                                      <FaCheckCircle />
+                                      <CheckCircle />
 
                                       {isChanging
                                         ? "Actualizando..."
@@ -1406,7 +1394,7 @@ const ManageUser = ({ forceCredentialUpdate = false }: ManageUserProps) => {
                       <Section>
                         <SectionHeader>
                           <SectionIcon>
-                            {status ? <FaCheckCircle /> : <FaUserSlash />}
+                            {status ? <CheckCircle /> : <UserMinus />}
                           </SectionIcon>
 
                           <div>
@@ -1424,7 +1412,7 @@ const ManageUser = ({ forceCredentialUpdate = false }: ManageUserProps) => {
                           onClick={() => setStatus((current) => !current)}
                         >
                           <StatusIcon $active={status}>
-                            {status ? <FaCheckCircle /> : <FaUserSlash />}
+                            {status ? <CheckCircle /> : <UserMinus />}
                           </StatusIcon>
 
                           <StatusContent>
@@ -1440,7 +1428,7 @@ const ManageUser = ({ forceCredentialUpdate = false }: ManageUserProps) => {
                           </StatusContent>
 
                           <StatusArrow>
-                            <FaChevronRight />
+                            <CaretRight />
                           </StatusArrow>
                         </StatusCard>
                       </Section>
@@ -1452,7 +1440,7 @@ const ManageUser = ({ forceCredentialUpdate = false }: ManageUserProps) => {
                         onClick={handleCancelEdit}
                         disabled={saving}
                       >
-                        {isMobile ? <FaChevronLeft /> : ""}
+                        {isMobile ? <CaretLeft /> : ""}
 
                         {isMobile ? "Volver" : "Cancelar"}
                       </CancelButton>
@@ -1462,7 +1450,7 @@ const ManageUser = ({ forceCredentialUpdate = false }: ManageUserProps) => {
                         onClick={() => void handleSave()}
                         disabled={saving}
                       >
-                        <FaCheckCircle />
+                        <CheckCircle />
 
                         {saving ? "Guardando..." : "Guardar cambios"}
                       </SaveButton>
@@ -1482,7 +1470,7 @@ const ManageUser = ({ forceCredentialUpdate = false }: ManageUserProps) => {
                   >
                     <EmptyState>
                       <div>
-                        <FaUserEdit />
+                        <UserGear />
                       </div>
 
                       <strong>Seleccioná un usuario</strong>
@@ -1493,7 +1481,7 @@ const ManageUser = ({ forceCredentialUpdate = false }: ManageUserProps) => {
                       </span>
 
                       <button type="button" onClick={handleCreateUser}>
-                        <FaPlus />
+                        <Plus />
                         Crear nuevo usuario
                       </button>
                     </EmptyState>

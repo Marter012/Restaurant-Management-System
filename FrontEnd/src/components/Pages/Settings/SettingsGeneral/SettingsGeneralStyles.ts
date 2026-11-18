@@ -322,3 +322,23 @@ export const Loading = styled.div`
   color: var(--color-text-secondary);
   text-align: center;
 `;
+
+
+export const LogoPreviewRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+`;
+
+export const LogoPreviewImage = styled.img`
+  width: 64px;
+  height: 64px;
+  padding: 6px;
+  box-sizing: border-box;
+  object-fit: contain;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+`;

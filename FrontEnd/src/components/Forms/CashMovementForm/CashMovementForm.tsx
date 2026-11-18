@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import type {
   CashMovementFormProps,
   CashPaymentMethod,
+  CashMovementType,
 } from "../../../interfaces/CashMovements.ts";
 
 import type { AppDispatch } from "../../../store/store.ts";
@@ -27,6 +28,7 @@ interface CashMovementFormRefactorProps extends Omit<
 > {
   formId?: string;
   onSubmittingChange?: (submitting: boolean) => void;
+  allowTypeSelection?: boolean;
   onSubmit: (
     data: Parameters<CashMovementFormProps["onSubmit"]>[0],
   ) => void | Promise<void>;
@@ -39,10 +41,12 @@ const CashMovementForm = ({
   onSubmit,
   formId = "cash-movement-form",
   onSubmittingChange,
+  allowTypeSelection = false,
 }: CashMovementFormRefactorProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { showAlert } = useAlert();
 
+  const [movementType, setMovementType] = useState<CashMovementType>(type);
   const [methodPayment, setMethodPayment] = useState<CashPaymentMethod>("cash");
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
@@ -61,7 +65,7 @@ const CashMovementForm = ({
 
     const movementData = {
       cash_register_id: cashRegisterId,
-      type,
+      type: movementType,
       category: "manual" as const,
       amount: numericAmount,
       method_payment: methodPayment,
@@ -79,7 +83,7 @@ const CashMovementForm = ({
       showAlert(
         error instanceof Error && error.message
           ? error.message
-          : type === "inflow"
+          : movementType === "inflow"
             ? "No se pudo registrar el ingreso."
             : "No se pudo registrar el egreso.",
         "error",
@@ -112,7 +116,7 @@ const CashMovementForm = ({
       );
     } else {
       showAlert(
-        type === "inflow"
+        movementType === "inflow"
           ? "Ingreso registrado correctamente."
           : "Egreso registrado correctamente.",
         "success",
@@ -126,6 +130,20 @@ const CashMovementForm = ({
   return (
     <Form id={formId} onSubmit={handleSubmit}>
       <div className="containerInfo">
+        {allowTypeSelection && (
+          <FormGroup>
+            <Label>Tipo de movimiento</Label>
+            <Select
+              value={movementType}
+              onChange={(event) =>
+                setMovementType(event.target.value as CashMovementType)
+              }
+            >
+              <option value="inflow">Ingreso</option>
+              <option value="outflow">Egreso</option>
+            </Select>
+          </FormGroup>
+        )}
         <FormGroup>
           <Label>Método de pago</Label>
 

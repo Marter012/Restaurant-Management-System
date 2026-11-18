@@ -29,13 +29,9 @@ import {
   CashRegisterNoticeDetail,
 } from "./CashRegisterNoticeStyles.ts";
 
-import {
-  MdOutlineWarning,
-  MdOutlineCalendarToday,
-  MdOutlineAccessTime,
-} from "react-icons/md";
+import { Warning, CalendarBlank, Clock } from "@phosphor-icons/react";
 
-import { FaCashRegister, FaLock } from "react-icons/fa";
+import { CashRegister as CashRegisterIcon, Lock } from "@phosphor-icons/react";
 import ModalForm from "../../ModalForm/ModalForm.tsx";
 
 import { CashBlockedConfirmButton } from "./CashRegisterStyles.ts";
@@ -118,7 +114,7 @@ const CashRegister = () => {
       {activeTab === "today" && showBlockedNotice && (
         <CashRegisterNotice role="status" aria-live="polite">
           <CashRegisterNoticeIcon>
-            <MdOutlineWarning />
+            <Warning />
           </CashRegisterNoticeIcon>
 
           <CashRegisterNoticeContent>
@@ -132,14 +128,14 @@ const CashRegister = () => {
             {pendingCashRegister && (
               <CashRegisterNoticeDetails>
                 <CashRegisterNoticeDetail>
-                  <MdOutlineCalendarToday />
+                  <CalendarBlank />
                   <span>
                     <strong>Día:</strong> {formatDate(blockedCashDate)}
                   </span>
                 </CashRegisterNoticeDetail>
 
                 <CashRegisterNoticeDetail>
-                  <MdOutlineAccessTime />
+                  <Clock />
                   <span>
                     <strong>Turno:</strong>{" "}
                     {pendingCashRegister.shift === "morning"
@@ -152,7 +148,7 @@ const CashRegister = () => {
           </CashRegisterNoticeContent>
 
           <CashBlockedConfirmButton type="button" onClick={handleGoToOpenCash}>
-            <FaCashRegister />
+            <CashRegisterIcon />
             Ir a la caja abierta
           </CashBlockedConfirmButton>
         </CashRegisterNotice>
@@ -180,7 +176,7 @@ const CashRegister = () => {
               type="button"
               onClick={handleGoToOpenCash}
             >
-              <FaCashRegister />
+              <CashRegisterIcon />
               Ir a la caja abierta
             </CashBlockedConfirmButton>
           }
@@ -188,10 +184,10 @@ const CashRegister = () => {
           <CashBlockedContent>
             <CashBlockedIllustration>
               <div className="illustration-circle">
-                <FaCashRegister className="register-icon" />
+                <CashRegisterIcon className="register-icon" />
 
                 <div className="lock-icon">
-                  <FaLock />
+                  <Lock />
                 </div>
               </div>
             </CashBlockedIllustration>
@@ -204,13 +200,13 @@ const CashRegister = () => {
 
               <CashBlockedDetails>
                 <CashBlockedDetailRow>
-                  <MdOutlineCalendarToday />
+                  <CalendarBlank />
                   <strong>Día:</strong>
                   <span>{formatDate(blockedCashDate)}</span>
                 </CashBlockedDetailRow>
 
                 <CashBlockedDetailRow>
-                  <MdOutlineAccessTime />
+                  <Clock />
                   <strong>Turno:</strong>
 
                   <span>

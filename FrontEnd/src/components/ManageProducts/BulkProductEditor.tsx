@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { FaBoxes, FaSearch, FaSave, FaCheckCircle } from "react-icons/fa";
+import { Package, MagnifyingGlass, FloppyDisk, CheckCircle } from "@phosphor-icons/react";
 import { useDispatch } from "react-redux";
 
 import ModalForm from "../../components/ModalForm/ModalForm.tsx";
@@ -209,7 +209,7 @@ const BulkProductEditor = ({
       isOpen={isOpen}
       title="Actualización masiva"
       description="Elegí los productos y editá sus valores desde una única tabla."
-      icon={<FaBoxes />}
+      icon={<Package />}
       onClose={() => {
         if (!saving) onClose();
       }}
@@ -243,7 +243,7 @@ const BulkProductEditor = ({
               }
               onClick={saveChanges}
             >
-              <FaSave />
+              <FloppyDisk />
               {saving ? "Guardando..." : "Guardar cambios"}
             </BulkEditorButton>
           </div>
@@ -269,7 +269,7 @@ const BulkProductEditor = ({
           </label>
 
           <label className="search-control">
-            <FaSearch aria-hidden="true" />
+            <MagnifyingGlass aria-hidden="true" />
             <input
               type="search"
               value={search}
@@ -410,7 +410,7 @@ const BulkProductEditor = ({
         )}
 
         <div className="bulk-editor-hint">
-          <FaCheckCircle aria-hidden="true" />
+          <CheckCircle aria-hidden="true" />
           <span>
             Los cambios se aplican únicamente a los productos seleccionados
             cuando presionás “Guardar cambios”.

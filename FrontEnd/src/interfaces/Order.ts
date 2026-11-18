@@ -22,6 +22,8 @@ export interface PromotionSelection {
   quantity: number;
   product_name?: string;
   name?: string;
+  unit_price?: number;
+  subtotal?: number;
   ingredients?: string[];
   removed_ingredients?: string[];
 }
@@ -87,6 +89,7 @@ export interface IUpdateOrder {
   customer_name?: string;
   observations?: string;
   items?: ICreateOrderItem[];
+  extra_items?: { name: string; price: number; quantity: number }[];
   method_payment?: string;
   status_payment?: PaymentStatus;
   delivery_time?: string;

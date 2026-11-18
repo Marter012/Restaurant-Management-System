@@ -14,15 +14,12 @@ import {
   CategorySelect,
   ProductsToolbar,
   ProductQuantityControls,
+  PromotionCategoryCollage,
 } from "./ProductsForOrderStyles.ts";
 
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store.ts";
-
-import {
-  getProductFallbackImage,
-  getProductImage,
-} from "../Utils/productImage.ts";
+import { getProductFallbackImage, getProductImage } from "../Utils/productImage.ts";
 
 const ProductsForOrder = ({
   products,
@@ -338,22 +335,47 @@ const ProductsForOrder = ({
             })}
 
           {showPromotions &&
-            filteredPromotions.map((promotion) => (
+            filteredPromotions.map((promotion) => {
+              const promotionProducts = Array.from(
+                new Map(
+                  promotion.items
+                    .flatMap((group) => group.product_ids)
+                    .map((productId) => products.find((product) => product.id === productId))
+                    .filter((product): product is Product => Boolean(product))
+                    .map((product) => {
+                      const categoryKey = product.category?.trim()
+                        .normalize("NFD")
+                        .replace(/[\u0300-\u036f]/g, "")
+                        .toLocaleLowerCase("es") || `product-${product.id}`;
+                      return [categoryKey, product] as const;
+                    }),
+                ).values(),
+              );
+
+              return (
               <ProductCard key={`promotion-${promotion.id}`}>
                 <div className="product-header">
-                  <img
-                    className="product-image"
-                    src={promotion.image || "/images/Products.png"}
-                    alt={promotion.name}
-                    onError={(event) => {
-                      event.currentTarget.src =
-                        "/images/Products.png";
-                    }}
-                  />
-
-                  <h4 className="product-title">
-                    🎁 {promotion.name}
-                  </h4>
+                  {promotion.image ? (
+                    <img
+                      className="product-image"
+                      src={promotion.image}
+                      alt={promotion.name}
+                      onError={(event) => { event.currentTarget.src = "/images/Products.png"; }}
+                    />
+                  ) : (
+                    <PromotionCategoryCollage $count={promotionProducts.length} aria-label={`Categorías y productos incluidos en ${promotion.name}`}>
+                      {promotionProducts.length ? promotionProducts.slice(0, 4).map((product) => (
+                        <img
+                          key={product.id}
+                          src={getProductImage(product.image, product.category)}
+                          alt={product.name}
+                          title={product.category || product.name}
+                          onError={(event) => { event.currentTarget.src = getProductFallbackImage(product.category); }}
+                        />
+                      )) : <img src="/images/Products.png" alt="Productos de la promoción" />}
+                    </PromotionCategoryCollage>
+                  )}
+                  <h4 className="product-title">🎁 {promotion.name}</h4>
                 </div>
 
                 <div className="product-info">
@@ -374,7 +396,8 @@ const ProductsForOrder = ({
                   + Agregar promo
                 </button>
               </ProductCard>
-            ))}
+              );
+            })}
         </ProductGrid>
       </ProductsSection>
 

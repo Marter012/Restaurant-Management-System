@@ -19,8 +19,8 @@ import { login } from "../../../services/authService.ts";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../../../store/store.ts";
 import { loginUser } from "../../../store/slices/userSlice.ts";
-import { IoEyeSharp } from "react-icons/io5";
-import { FaEyeSlash } from "react-icons/fa";
+import { Eye } from "@phosphor-icons/react";
+import { EyeSlash } from "@phosphor-icons/react";
 import { useAlert } from "../../context/AlertContext.tsx";
 
 const Login = () => {
@@ -95,9 +95,9 @@ const Login = () => {
               autoComplete="current-password"
             />
             {showPassword ? (
-              <IoEyeSharp onClick={() => setShowPassword(false)} />
+              <Eye onClick={() => setShowPassword(false)} />
             ) : (
-              <FaEyeSlash onClick={() => setShowPassword(true)} />
+              <EyeSlash onClick={() => setShowPassword(true)} />
             )}
           </div>
 

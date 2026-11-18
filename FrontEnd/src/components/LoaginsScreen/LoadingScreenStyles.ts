@@ -1,4 +1,14 @@
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
+export const LoadingScreenLayout = styled.div`
+  min-height: 100dvh;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 14px;
+  min-height: 100dvh;
+  padding: 24px;
+`;
+import { keyframes } from "styled-components";
 
 const spin = keyframes`
   from {

@@ -31,3 +31,7 @@ export const updateCashMovementAPI = async (id: string, data: Partial<ICreateCas
   const response = await api.put(`/cashMovement/${id}`, data);
   return response.data;
 };
+
+export const deleteCashMovementAPI = async (id: string): Promise<void> => {
+  await api.delete(`/cashMovement/${id}`);
+};

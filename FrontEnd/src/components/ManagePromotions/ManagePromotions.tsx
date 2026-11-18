@@ -1,16 +1,7 @@
+import CardLoading from "../CardLoading/CardLoading.tsx";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  FaPlus,
-  FaSearch,
-  FaTimes,
-  FaPercent,
-  FaCalendarAlt,
-  FaEllipsisV,
-  FaCheckCircle,
-  FaClock,
-  FaTimesCircle,
-} from "react-icons/fa";
+import { Plus, MagnifyingGlass, X, Percent, Tag, CalendarBlank, DotsThreeVertical, CheckCircle, Clock, XCircle } from "@phosphor-icons/react";
 
 import ModalForm from "../../components/ModalForm/ModalForm";
 import type { AppDispatch, RootState } from "../../store/store";
@@ -47,6 +38,7 @@ import ModalPromotionDelete from "../Modals/ModalPromotion/ModalPromotionDelete.
 import { ActionButton, StatusButton } from "../Utils/ButtonStyles.ts";
 import { useAlert } from "../context/AlertContext.tsx";
 import { getAxiosErrorMessage } from "../Utils/ErrorAxios.tsx";
+import { getProductImage } from "../Utils/productImage.ts";
 
 type ModalMode = "options" | "create" | "edit" | "delete";
 type DeleteAction = "delete" | "status";
@@ -77,7 +69,7 @@ const formatDate = (value?: string) => {
 
 export const AddPromotion = ({ onClick }: { onClick: () => void }) => (
   <AddPromotionButton type="button" onClick={onClick}>
-    <FaPlus /> Nueva promoción
+    <Plus /> Nueva promoción
   </AddPromotionButton>
 );
 
@@ -112,7 +104,9 @@ const ManagePromotions = forwardRef<ManagePromotionRef, ManagePromotionProps>(
     const { promotions, loading, error } = useSelector(
       (state: RootState) => state.promotion,
     );
-    const products = useSelector((state: RootState) => state.products.products);
+    const products = useSelector(
+      (state: RootState) => state?.products.products,
+    );
 
     const [modalOpen, setModalOpen] = useState(false);
     const [modalMode, setModalMode] = useState<ModalMode>("options");
@@ -248,7 +242,7 @@ const ManagePromotions = forwardRef<ManagePromotionRef, ManagePromotionProps>(
       <ContainerManagePromotions>
         <Filter>
           <SearchControl className="promotion-search">
-            <FaSearch aria-hidden="true" />
+            <MagnifyingGlass aria-hidden="true" />
 
             <input
               value={promotionSearch}
@@ -264,7 +258,7 @@ const ManagePromotions = forwardRef<ManagePromotionRef, ManagePromotionProps>(
                 onClick={() => setPromotionSearch("")}
                 aria-label="Limpiar búsqueda"
               >
-                <FaTimes />
+                <X />
               </button>
             )}
           </SearchControl>
@@ -287,9 +281,7 @@ const ManagePromotions = forwardRef<ManagePromotionRef, ManagePromotionProps>(
           <AddPromotion onClick={() => openModal("create")} />
         </Filter>
 
-        {loading && (
-          <p className="promotions-feedback">Cargando promociones...</p>
-        )}
+        {loading && <CardLoading icon={<Tag />} text="Cargando promociones..." />}
         {error && <p className="promotions-feedback">{error}</p>}
 
         {!loading && !error && (
@@ -320,6 +312,30 @@ const ManagePromotions = forwardRef<ManagePromotionRef, ManagePromotionProps>(
                     : isExpired
                       ? "Finalizada"
                       : "Activa";
+                // Obtener una sola fotografía representativa por categoría.
+                const promotionProducts = Array.from(
+                  new Map(
+                    (promotion.items ?? [])
+                      .flatMap((item) => item.product_ids ?? [])
+                      .map((id) =>
+                        products.find((product) => product.id === id),
+                      )
+                      .filter(
+                        (product): product is NonNullable<typeof product> =>
+                          Boolean(product),
+                      )
+                      .map((product) => {
+                        const categoryKey =
+                          product.category
+                            ?.trim()
+                            .normalize("NFD")
+                            .replace(/[\u0300-\u036f]/g, "")
+                            .toLocaleLowerCase("es") || `product-${product.id}`;
+
+                        return [categoryKey, product] as const;
+                      }),
+                  ).values(),
+                );
 
                 return (
                   <PromotionCard
@@ -327,13 +343,43 @@ const ManagePromotions = forwardRef<ManagePromotionRef, ManagePromotionProps>(
                     onClick={() => openModal("options", promotion)}
                   >
                     <PromotionImage>
-                      <img
-                        src={promotion.image || "/images/Products.png"}
-                        alt={promotion.name}
-                        onError={(event) => {
-                          event.currentTarget.src = "/images/Products.png";
-                        }}
-                      />
+                      {promotion.image ? (
+                        <img
+                          src={promotion.image}
+                          alt={promotion.name}
+                          onError={(event) => {
+                            event.currentTarget.src = "/images/Products.png";
+                          }}
+                        />
+                      ) : (
+                        <div
+                          className={`promotion-product-collage promotion-product-collage--${
+                            promotionProducts.length > 4
+                              ? "many"
+                              : promotionProducts.length
+                          }`}
+                          aria-label={`Categorías y productos incluidos en ${promotion.name}`}
+                        >
+                          {promotionProducts.length ? (
+                            promotionProducts.map((product) => (
+                              <img
+                                key={product.id}
+                                src={getProductImage(
+                                  product.image,
+                                  product.category,
+                                )}
+                                alt={product.name}
+                                onError={(event) => {
+                                  event.currentTarget.src =
+                                    "/images/Products.png";
+                                }}
+                              />
+                            ))
+                          ) : (
+                            <img src="/images/Products.png" alt="Promoción" />
+                          )}
+                        </div>
+                      )}
                       <PromotionBadge
                         $status={
                           !promotion.status
@@ -346,13 +392,13 @@ const ManagePromotions = forwardRef<ManagePromotionRef, ManagePromotionProps>(
                         }
                       >
                         {!promotion.status ? (
-                          <FaTimesCircle />
+                          <XCircle />
                         ) : isScheduled ? (
-                          <FaClock />
+                          <Clock />
                         ) : isExpired ? (
-                          <FaTimesCircle />
+                          <XCircle />
                         ) : (
-                          <FaCheckCircle />
+                          <CheckCircle />
                         )}
                         {badgeLabel}
                       </PromotionBadge>
@@ -368,7 +414,7 @@ const ManagePromotions = forwardRef<ManagePromotionRef, ManagePromotionProps>(
                           );
                         }}
                       >
-                        <FaEllipsisV />
+                        <DotsThreeVertical />
                       </PromotionMenuButton>
                       {menuPromotionId === promotion.id && (
                         <div
@@ -410,7 +456,7 @@ const ManagePromotions = forwardRef<ManagePromotionRef, ManagePromotionProps>(
                           ${promotion.price.toLocaleString("es-AR")}
                         </strong>
                         <span>
-                          <FaCalendarAlt />{" "}
+                          <CalendarBlank />{" "}
                           {isScheduled
                             ? `Desde ${start}`
                             : isExpired
@@ -432,7 +478,7 @@ const ManagePromotions = forwardRef<ManagePromotionRef, ManagePromotionProps>(
           isOpen={modalOpen}
           title={getModalTitle()}
           description={getModalDescription()}
-          icon={<FaPercent />}
+          icon={<Percent />}
           size={modalMode === "delete" ? "compact" : "default"}
           onClose={closeModal}
           footerActions={

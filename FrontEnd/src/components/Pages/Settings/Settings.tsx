@@ -1,12 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import {
-  FaCashRegister,
-  FaCog,
-  FaPrint,
-  FaUsers,
-} from "react-icons/fa";
+import { CashRegister, Gear, Printer, Users } from "@phosphor-icons/react";
 
 import ManageUser from "../../ManageUsers/ManageUser.tsx";
 import HistoryCash from "../../HistoryCash/HistoryCash.tsx";
@@ -69,7 +64,7 @@ const Settings = () => {
             $active={activeSection === "general"}
             onClick={() => setActiveSection("general")}
           >
-            <FaCog /> <span>General</span>
+            <Gear /> <span>General</span>
           </SettingsTab>
           <SettingsTab
             id="settings-tab-users"
@@ -81,7 +76,7 @@ const Settings = () => {
             $active={activeSection === "users"}
             onClick={() => setActiveSection("users")}
           >
-            <FaUsers /> <span>Usuarios</span>
+            <Users /> <span>Usuarios</span>
           </SettingsTab>
           <SettingsTab
             id="settings-tab-printing"
@@ -93,7 +88,7 @@ const Settings = () => {
             $active={activeSection === "printing"}
             onClick={() => setActiveSection("printing")}
           >
-            <FaPrint /> <span>Impresión</span>
+            <Printer /> <span>Impresión</span>
           </SettingsTab>
           <SettingsTab
             id="settings-tab-cash"
@@ -105,7 +100,7 @@ const Settings = () => {
             $active={activeSection === "cash"}
             onClick={() => setActiveSection("cash")}
           >
-            <FaCashRegister /> <span>Cajas</span>
+            <CashRegister /> <span>Cajas</span>
           </SettingsTab>
         </SettingsTabs>
       )}

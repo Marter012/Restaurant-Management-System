@@ -9,54 +9,6 @@ export const NewOrderPageShell = styled.section`
   min-height: calc(100dvh - 150px);
 `;
 
-export const NewOrderPageActions = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-  gap: 12px;
-  width: 100%;
-  margin: 0 0 2px;
-
-  @media (max-width: 600px) {
-    flex-direction: column-reverse;
-    align-items: stretch;
-
-    > button {
-      width: 100%;
-    }
-  }
-`;
-
-export const BackToOrdersButton = styled.button`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 42px;
-  padding: 0 16px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
-  color: var(--color-text);
-  font: inherit;
-  font-weight: 750;
-  cursor: pointer;
-  transition:
-    background var(--transition-normal),
-    border-color var(--transition-normal),
-    transform var(--transition-normal);
-
-  &:hover {
-    border-color: var(--color-accent);
-    background: var(--color-surface-hover);
-    transform: translateY(-1px);
-  }
-
-  &:focus-visible {
-    outline: 3px solid var(--color-primary-soft);
-    outline-offset: 2px;
-  }
-`;
 
 export const NewOrderPageContent = styled.div`
   width: 100%;
@@ -64,41 +16,29 @@ export const NewOrderPageContent = styled.div`
   min-height: 0;
   height: auto;
   overflow: visible;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  background: var(--color-background);
+  box-sizing: border-box;
 
-  /*
-   * Selector Productos / Comanda visible en escritorio y móvil.
-   * Solo se muestra el panel cuya clase sea mobile-active.
-   * Se limita a Nueva comanda para no alterar el modal reutilizado.
-   */
+  /* Contenedor del formulario: no debe recortar el panel sticky. */
   > div {
+    display: flex;
+    flex-direction: column;
     width: 100%;
     height: auto;
+    min-width: 0;
     min-height: 0;
     overflow: visible;
-  }
-
-  nav {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 6px;
-    width: 100%;
-    margin: 0 0 12px;
-    padding: 6px;
     box-sizing: border-box;
-    border: 1px solid var(--color-border);
-    border-radius: 10px;
-    background: var(--color-surface-hover);
   }
 
+  /* Estructura móvil original. */
   main {
     display: block;
     width: 100%;
     height: auto;
+    min-width: 0;
     min-height: 0;
     overflow: visible;
+    box-sizing: border-box;
 
     > div {
       display: none;
@@ -107,6 +47,7 @@ export const NewOrderPageContent = styled.div`
       min-width: 0;
       min-height: 0;
       overflow: visible;
+      box-sizing: border-box;
     }
 
     > div.mobile-active {
@@ -118,10 +59,23 @@ export const NewOrderPageContent = styled.div`
     }
   }
 
-  @media (max-width: 900px) {
+
+  /* Tablet: selector para alternar entre catálogo y detalle. */
+  @media (min-width: 768px) and (max-width: 1023px) {
+    padding: 10px;
+  }
+
+  /* Móvil: una pestaña visible por vez, sin sticky ni scroll anidado. */
+  @media (max-width: 1023px) {
     height: auto;
     min-height: 0;
+    padding: 0;
     overflow: visible;
+
+    > div {
+      height: auto;
+      overflow: visible;
+    }
 
     main {
       display: block;
@@ -134,16 +88,17 @@ export const NewOrderPageContent = styled.div`
         min-height: 0;
         overflow: visible;
       }
+
+      > div.mobile-active {
+        display: block;
+      }
+
+      > div.mobile-hidden {
+        display: none;
+      }
     }
   }
 
-  @media (max-width: 500px) {
-    nav {
-      gap: 4px;
-      margin-bottom: 10px;
-      padding: 4px;
-    }
-  }
 `;
 
 export const NewOrderPageFooter = styled.footer`

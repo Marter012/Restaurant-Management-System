@@ -8,18 +8,22 @@ import type {
 } from "../../../interfaces/Order.ts";
 import type { Product } from "../../../interfaces/Product";
 import type { RootState } from "../../../store/store.ts";
-import { IoIosCloseCircleOutline } from "react-icons/io";
+import { CheckIcon, PlusCircleIcon, XCircleIcon } from "@phosphor-icons/react";
 import ModalForm from "../../ModalForm/ModalForm";
 import OrderConfigurationModals from "../../Modals/ModalOrder/OrderConfigurationModals/OrderConfigurationModals.tsx";
 import {
   CombinedPayments,
+  OrderHeader,
+  OrderSummaryColumn,
+  OrderOptionsColumn,
+  DetailsNav,
+  DeliveryTimeRow,
+  OrderFooter,
   CombinedPaymentsHeading,
   CustomerInput,
   ObservationField,
   ObservationTextarea,
-  DeliveryTimeRow,
   DataSectionHeading,
-  DetailsNav,
   Error,
   ExtraIngredientRemoveButton,
   ExtraIngredientTag,
@@ -38,13 +42,9 @@ import {
   OptionCard,
   OptionClear,
   OrderData,
-  OrderFooter,
-  OrderHeader,
   OrderItem,
   OrderItems,
-  OrderOptionsColumn,
   OrderSection,
-  OrderSummaryColumn,
   PaymentStatusSelect,
   PromotionRow,
   PromotionsDetails,
@@ -70,7 +70,7 @@ import {
 import TimePicker from "../../TimePicker/TimePicker.tsx";
 import { useAlert } from "../../context/AlertContext.tsx";
 import { ActionButton } from "../../Utils/ButtonStyles.ts";
-import { FaArrowDownWideShort } from "react-icons/fa6";
+import { SortDescending } from "@phosphor-icons/react";
 
 interface CreateOrderProps {
   nextOrderNumber: number;
@@ -328,18 +328,20 @@ const OrderCreateForm = ({
     <OrderSection>
       <OrderHeader>
         <div className="order-heading">
-          <h3>Detalles de la Comanda</h3>
+          <h3>Comanda</h3>
           <span>{orderNumberLabel ?? `N.º de Orden: ${nextOrderNumber}`}</span>
         </div>
-        <label htmlFor="new-order-customer">Cliente (opcional)</label>
-        <Field
-          as={CustomerInput}
-          id="new-order-customer"
-          name="customer_name"
-          placeholder="Nombre del cliente"
-          autoComplete="off"
-          data-capitalize-words="true"
-        />
+        <div className="customer-field">
+          <label htmlFor="new-order-customer">Cliente (opcional)</label>
+          <Field
+            as={CustomerInput}
+            id="new-order-customer"
+            name="customer_name"
+            placeholder="Nombre del cliente"
+            autoComplete="off"
+            data-capitalize-words="true"
+          />
+        </div>
         <ObservationField>
           <label htmlFor="new-order-observations">
             Comentarios u observaciones
@@ -562,6 +564,40 @@ const OrderCreateForm = ({
           )}
         </OrderItems>
       </OrderSummaryColumn>
+      <DetailsNav>
+        {optionCards.map((option) => (
+          <OptionCard
+            key={option.key}
+            className={option.configured ? "is-modified" : ""}
+          >
+            <button
+              type="button"
+              aria-label={option.ariaLabel}
+              onClick={option.onClick}
+            >
+              <div className="containerInfo">
+                <span>{option.label}</span>
+                <small>{option.status}</small>
+              </div>
+              <SpanTextOptionStatus aria-hidden="true">
+                {option.configured ? <CheckIcon /> : <PlusCircleIcon />}
+              </SpanTextOptionStatus>
+            </button>
+            {option.configured && (
+              <OptionClear
+                type="button"
+                className="button-delete"
+                aria-label={option.clearAriaLabel}
+                title={option.clearTitle}
+                onClick={option.onClear}
+              >
+                <XCircleIcon />
+              </OptionClear>
+            )}
+          </OptionCard>
+        ))}
+      </DetailsNav>
+
       <OrderOptionsColumn>
         <OrderData>
           <DataSection>
@@ -752,40 +788,6 @@ const OrderCreateForm = ({
         </OrderData>
       </OrderOptionsColumn>
 
-      {/* Opciones independientes: se generan desde una configuración única. */}
-      <DetailsNav aria-label="Opciones de la comanda">
-        {optionCards.map((option) => (
-          <OptionCard
-            key={option.key}
-            className={`optionCard ${option.configured ? "is-modified" : ""}`}
-          >
-            {option.configured && (
-              <OptionClear
-                className="button-delete"
-                aria-label={option.clearAriaLabel}
-                title={option.clearTitle}
-                onClick={option.onClear}
-              >
-                <IoIosCloseCircleOutline />
-              </OptionClear>
-            )}
-            <button
-              type="button"
-              className={option.configured ? "has-value" : ""}
-              aria-label={option.ariaLabel}
-              onClick={option.onClick}
-            >
-              <SpanTextOptionStatus className="checkMobile" aria-hidden="true">
-                {option.configured ? "✓" : "＋"}
-              </SpanTextOptionStatus>
-              <div className="containerInfo">
-                <span>{option.label}</span>
-                <small>{option.status}</small>
-              </div>
-            </button>
-          </OptionCard>
-        ))}
-      </DetailsNav>
       <DeliveryTimeRow>
         <label>
           <span aria-hidden="true">◷</span>
@@ -832,7 +834,7 @@ const OrderCreateForm = ({
                   onClick={() => setShowPromotions((previous) => !previous)}
                 >
                   <span aria-hidden="true">
-                    <FaArrowDownWideShort />
+                    <SortDescending />
                   </span>
                 </PromotionsToggle>
               )}

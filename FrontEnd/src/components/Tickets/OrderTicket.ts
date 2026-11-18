@@ -137,8 +137,15 @@ export const buildOrderTicket = (order: IOrder): string => {
 
     if (item.item_type === "promotion" && item.promotion_selections?.length) {
       item.promotion_selections.forEach((selection) => {
-        lines.push(`   • Producto x${selection.quantity}`);
+        const selectedQuantity = Number(selection.quantity) * Number(item.quantity);
+        lines.push(`   • ${selection.product_name || selection.name || "Producto"} x${selectedQuantity}`);
       });
+      const originalTotal = item.promotion_selections.reduce(
+        (sum, selection) => sum + Number(selection.unit_price ?? 0) * Number(selection.quantity),
+        0,
+      ) * Number(item.quantity);
+      const discount = Math.max(0, originalTotal - Number(item.subtotal ?? 0));
+      if (discount > 0) lines.push(`   Descuento promoción: ${formatMoney(discount)}`);
     }
   });
 

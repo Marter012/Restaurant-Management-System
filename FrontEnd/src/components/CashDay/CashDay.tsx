@@ -16,6 +16,7 @@ import {
 import {
   createCashMovementAPI,
   updateCashMovementAPI,
+  deleteCashMovementAPI,
   getCashMovementsAPI,
 } from "../../services/cashMovementService.ts";
 
@@ -33,10 +34,7 @@ import { getDateOnly, formatDate, getDateTime } from "../Utils/Formats.tsx";
 
 import { OpenCashContainer, OpenCashButton } from "./CashDayStyles.ts";
 
-import type {
-  CashMovementType,
-  ICashMovement,
-} from "../../interfaces/CashMovements.ts";
+import type { ICashMovement, CashMovementType, CashPaymentMethod } from "../../interfaces/CashMovements.ts";
 
 import { getAxiosErrorMessage } from "../Utils/ErrorAxios.tsx";
 import { useNavigate } from "react-router-dom";
@@ -44,6 +42,9 @@ import type { CashDayModalMode } from "../Modals/ModalCash/CashDayModals.tsx";
 import CashDashboardContent from "../DashBoardCashDay/CashDashboardContent.tsx";
 import CashDayModals from "../Modals/ModalCash/CashDayModals.tsx";
 import { useAlert } from "../context/AlertContext.tsx";
+import { getMe, type User } from "../../services/authService.ts";
+import ModalForm from "../ModalForm/ModalForm.tsx";
+import { Warning } from "@phosphor-icons/react";
 
 type ActiveTab = "today" | "history";
 
@@ -91,13 +92,23 @@ const CashDay = ({ setActiveTab, onBlockedByOpenCash }: CashDayProps) => {
   const [closingCashSubmitting, setClosingCashSubmitting] = useState(false);
   const [movementSubmitting, setMovementSubmitting] = useState(false);
 
-  const [movementType, setMovementType] = useState<CashMovementType>("inflow");
   const [editingMovement, setEditingMovement] = useState<ICashMovement | null>(
     null,
   );
   const [editMovementDescription, setEditMovementDescription] = useState("");
   const [editMovementAmount, setEditMovementAmount] = useState("");
+  const [editMovementType, setEditMovementType] = useState<CashMovementType>("outflow");
+  const [editMovementMethod, setEditMovementMethod] = useState<CashPaymentMethod>("cash");
   const [savingMovementEdit, setSavingMovementEdit] = useState(false);
+
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [showMovementPermissionWarning, setShowMovementPermissionWarning] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    void getMe().then((user) => { if (active) setCurrentUser(user); }).catch((error) => console.error("No se pudo verificar el usuario:", error));
+    return () => { active = false; };
+  }, []);
 
   const [selectedSale, setSelectedSale] = useState<
     (typeof orders)[number] | null
@@ -108,9 +119,7 @@ const CashDay = ({ setActiveTab, onBlockedByOpenCash }: CashDayProps) => {
     : closeCashModal
       ? "close"
       : movementModalOpen
-        ? movementType === "inflow"
-          ? "income"
-          : "expense"
+        ? "movement"
         : editingMovement
           ? "editMovement"
           : selectedSale
@@ -206,7 +215,7 @@ const CashDay = ({ setActiveTab, onBlockedByOpenCash }: CashDayProps) => {
 
   // En la tabla de movimientos solo se muestran registros manuales.
   const manualMovements = useMemo(
-    () => cashRegisterMovements.filter((movement) => !movement.order_id),
+    () => cashRegisterMovements.filter((movement) => !movement.order_id && movement.status !== false),
     [cashRegisterMovements],
   );
 
@@ -387,35 +396,29 @@ const CashDay = ({ setActiveTab, onBlockedByOpenCash }: CashDayProps) => {
      INGRESO / EGRESO MANUAL
   ========================================================= */
 
-  const handleOpenMovement = (type: CashMovementType) => {
+  const handleOpenMovement = () => {
     if (!canModifyCash) {
       showAlert(
-        `La caja no está disponible para registrar ${
-          type === "inflow" ? "ingresos" : "egresos"
-        }.`,
+        "La caja no está disponible para registrar movimientos.",
         "error",
       );
-
       return;
     }
 
-    setMovementType(type);
     setMovementModalOpen(true);
   };
 
-  const handleOpenIncome = () => {
-    handleOpenMovement("inflow");
-  };
-
-  const handleOpenExpense = () => {
-    handleOpenMovement("outflow");
-  };
-
   const handleOpenEditMovement = (movement: ICashMovement) => {
+    if (currentUser?.role !== "admin") {
+      setShowMovementPermissionWarning(true);
+      return;
+    }
     if (!canModifyCash) return;
     setEditingMovement(movement);
     setEditMovementDescription(movement.description ?? "");
     setEditMovementAmount(String(movement.amount));
+    setEditMovementType(movement.type);
+    setEditMovementMethod(movement.method_payment);
   };
 
   const handleSubmitEditMovement = async (
@@ -439,7 +442,7 @@ const CashDay = ({ setActiveTab, onBlockedByOpenCash }: CashDayProps) => {
 
     try {
       setSavingMovementEdit(true);
-      await updateCashMovementAPI(editingMovement.id, { description, amount });
+      await updateCashMovementAPI(editingMovement.id, { description, amount, type: editMovementType, method_payment: editMovementMethod, category: editingMovement.category, cash_register_id: editingMovement.cash_register_id, order_id: editingMovement.order_id, status: editingMovement.status });
       dispatch(setCashMovements(await getCashMovementsAPI()));
       setEditingMovement(null);
       showAlert("Movimiento actualizado correctamente", "success");
@@ -451,6 +454,20 @@ const CashDay = ({ setActiveTab, onBlockedByOpenCash }: CashDayProps) => {
     } finally {
       setSavingMovementEdit(false);
     }
+  };
+
+  const handleDeleteMovement = async () => {
+    if (!editingMovement || currentUser?.role !== "admin" || editingMovement.category !== "manual" || editingMovement.order_id) return;
+    if (!window.confirm("¿Eliminar este movimiento manual? Esta acción no se puede deshacer.")) return;
+    try {
+      setSavingMovementEdit(true);
+      await deleteCashMovementAPI(editingMovement.id);
+      dispatch(setCashMovements(await getCashMovementsAPI()));
+      setEditingMovement(null);
+      showAlert("Movimiento eliminado correctamente.", "success");
+    } catch (error) {
+      showAlert(getAxiosErrorMessage(error, "No se pudo eliminar el movimiento."), "error");
+    } finally { setSavingMovementEdit(false); }
   };
 
   /* =========================================================
@@ -611,8 +628,7 @@ const CashDay = ({ setActiveTab, onBlockedByOpenCash }: CashDayProps) => {
           totalQR={totalQR}
           totalDebit={totalDebit}
           previousClosedCash={previousClosedCash}
-          onOpenIncome={handleOpenIncome}
-          onOpenExpense={handleOpenExpense}
+          onOpenMovement={handleOpenMovement}
           onCloseCash={handleCloseCash}
           onSelectSale={setSelectedSale}
           onEditMovement={handleOpenEditMovement}
@@ -631,20 +647,23 @@ const CashDay = ({ setActiveTab, onBlockedByOpenCash }: CashDayProps) => {
         editingMovement={editingMovement}
         editDescription={editMovementDescription}
         editAmount={editMovementAmount}
+        editType={editMovementType}
+        editMethodPayment={editMovementMethod}
+        onEditType={setEditMovementType}
+        onEditMethodPayment={setEditMovementMethod}
+        onDeleteMovement={handleDeleteMovement}
         selectedSale={selectedSale}
         onClose={() => {
           if (modalMode === "open" && openingCashSubmitting) return;
           if (modalMode === "close" && closingCashSubmitting) return;
           if (
-            (modalMode === "income" || modalMode === "expense") &&
-            movementSubmitting
+            modalMode === "movement" && movementSubmitting
           )
             return;
           if (modalMode === "editMovement" && savingMovementEdit) return;
           if (modalMode === "open") setOpenCashModal(false);
           else if (modalMode === "close") setCloseCashModal(false);
-          else if (modalMode === "income" || modalMode === "expense")
-            setMovementModalOpen(false);
+          else if (modalMode === "movement") setMovementModalOpen(false);
           else if (modalMode === "editMovement") setEditingMovement(null);
           else if (modalMode === "sale") setSelectedSale(null);
         }}
@@ -664,6 +683,23 @@ const CashDay = ({ setActiveTab, onBlockedByOpenCash }: CashDayProps) => {
           navigate("/orders", { state: { orderId: String(orderId) } });
         }}
       />
+
+      <ModalForm
+        isOpen={showMovementPermissionWarning}
+        title="Permiso insuficiente"
+        description="Solo un administrador puede modificar movimientos de caja."
+        icon={<Warning />}
+        size="small"
+        onClose={() => setShowMovementPermissionWarning(false)}
+        footerActions={
+          <button type="button" onClick={() => setShowMovementPermissionWarning(false)}>
+            Entendido
+          </button>
+        }
+        showCancelButton={false}
+      >
+        <p>Podés consultar los movimientos, pero la edición está reservada al administrador.</p>
+      </ModalForm>
     </>
   );
 };

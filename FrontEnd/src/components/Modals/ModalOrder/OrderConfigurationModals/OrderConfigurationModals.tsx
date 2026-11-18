@@ -6,16 +6,15 @@ import {
   ModalField,
   ModalInput,
   AcceptButton,
+  DetailsPanel,
+  DataSection,
+  FieldsGrid,
+  StyledInputDateDisplay,
+  SmallTextDiscountHint,
+  FieldLabelExtraNameField,
 } from "./OrderConfigurationModalsStyles.ts";
 import type { OrderFormValues } from "../../../../interfaces/Order.ts";
-import {
-  DataSection,
-  DetailsPanel,
-  FieldLabelExtraNameField,
-  FieldsGrid,
-  SmallTextDiscountHint,
-  StyledInputDateDisplay,
-} from "../../../Forms/OrderForm/OrderFormStyles.ts";
+
 import TimePicker from "../../../TimePicker/TimePicker.tsx";
 
 type DetailsType = "delivery" | "discount" | "extra";

@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 
-import { MdOutlineMoreHoriz, MdPrint } from "react-icons/md";
-import { FaPlus, FaLayerGroup } from "react-icons/fa";
-import { FiSearch } from "react-icons/fi";
+
+import { DotsThree, Printer } from "@phosphor-icons/react";
+import { Plus, Stack } from "@phosphor-icons/react";
+import { MagnifyingGlass } from "@phosphor-icons/react";
 
 import ListTable from "../../components/Tables/ListTable.tsx";
 import ModalForm from "../../components/ModalForm/ModalForm.tsx";
@@ -11,7 +12,11 @@ import ModalForm from "../../components/ModalForm/ModalForm.tsx";
 import type { RootState } from "../../store/store.ts";
 import type { IOrder } from "../../interfaces/Order.ts";
 
-import { ContainerManageOrders, EmptyMessage, OrdersTableRow } from "./ManageOrderStyles.ts";
+import {
+  ContainerManageOrders,
+  EmptyMessage,
+  OrdersTableRow,
+} from "./ManageOrderStyles.ts";
 
 import { getDateOnly } from "../Utils/Formats.tsx";
 
@@ -383,7 +388,7 @@ const ManageOrder = ({
     <ContainerManageOrders>
       <div className="orders-filters">
         <label className="search-box">
-          <FiSearch />
+          <MagnifyingGlass />
 
           <input
             value={search}
@@ -415,7 +420,7 @@ const ManageOrder = ({
             type="button"
             onClick={onCreateOrder}
           >
-            <FaPlus />
+            <Plus />
             <span>Nueva comanda</span>
           </button>
         )}
@@ -474,7 +479,9 @@ const ManageOrder = ({
 
                 <span className="customer">
                   {order.customer_name || "Sin nombre"}
-                  {order.source === "online" && <small className="online-origin">● ONLINE</small>}
+                  {order.source === "online" && (
+                    <small className="online-origin">● ONLINE</small>
+                  )}
                 </span>
 
                 <div className="product-lines">
@@ -518,7 +525,7 @@ const ManageOrder = ({
                           onAddAdditionalOrder(order);
                         }}
                       >
-                        <FaLayerGroup />
+                        <Stack />
                       </ActionButton>
                     )}
 
@@ -531,7 +538,7 @@ const ManageOrder = ({
                       void handlePrint(order);
                     }}
                   >
-                    <MdPrint />
+                    <Printer />
                   </ActionButton>
 
                   {orderCanBeModified && (
@@ -543,7 +550,7 @@ const ManageOrder = ({
                         handleEdit(order);
                       }}
                     >
-                      <MdOutlineMoreHoriz />
+                      <DotsThree />
                     </ActionButton>
                   )}
                 </div>

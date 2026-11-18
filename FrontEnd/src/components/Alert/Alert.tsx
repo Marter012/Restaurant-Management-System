@@ -1,10 +1,6 @@
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import {
-  FaCheckCircle,
-  FaTimesCircle,
-  FaTimes,
-} from "react-icons/fa";
+import { CheckCircle, XCircle, X } from "@phosphor-icons/react";
 
 import {
   AlertContainer,
@@ -51,7 +47,7 @@ const Alert = ({
       role="alert"
     >
       <AlertIcon>
-        {type === "success" ? <FaCheckCircle /> : <FaTimesCircle />}
+        {type === "success" ? <CheckCircle /> : <XCircle />}
       </AlertIcon>
 
       <AlertMessage>{message}</AlertMessage>
@@ -61,7 +57,7 @@ const Alert = ({
         onClick={onClose}
         aria-label="Cerrar alerta"
       >
-        <FaTimes />
+        <X />
       </CloseButton>
     </AlertContainer>,
     document.body,

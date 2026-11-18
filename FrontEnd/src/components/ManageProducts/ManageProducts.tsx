@@ -1,22 +1,9 @@
+import CardLoading from "../CardLoading/CardLoading.tsx";
 import { forwardRef, useImperativeHandle, useState, useEffect } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
 
-import {
-  FaPlus,
-  FaBoxes,
-  FaSearch,
-  FaTimes,
-  FaTh,
-  FaHamburger,
-  FaPizzaSlice,
-  FaBeer,
-  FaIceCream,
-  FaUtensils,
-  FaEllipsisV,
-  FaCheckCircle,
-  FaExclamationCircle,
-} from "react-icons/fa";
+import { Plus, Package, MagnifyingGlass, X, SquaresFour, Hamburger, Pizza, BeerBottle, IceCream, ForkKnife, DotsThreeVertical, CheckCircle, WarningCircle } from "@phosphor-icons/react";
 
 import {
   ContainerManageProducts,
@@ -71,7 +58,7 @@ interface ManageProductsProps {
 export const AddProduct = ({ onClick }: { onClick: () => void }) => {
   return (
     <AddProductButton type="button" onClick={onClick}>
-      <FaPlus />
+      <Plus />
       Nuevo producto
     </AddProductButton>
   );
@@ -223,27 +210,27 @@ const ManageProducts = forwardRef<ManageProductsRef, ManageProductsProps>(
     const getCategoryIcon = (category: string) => {
       const value = category.toLocaleLowerCase("es");
 
-      if (value.includes("hamburg")) return <FaHamburger />;
+      if (value.includes("hamburg")) return <Hamburger />;
 
-      if (value.includes("pizza")) return <FaPizzaSlice />;
+      if (value.includes("pizza")) return <Pizza />;
 
       if (
         value.includes("bebida") ||
         value.includes("agua") ||
         value.includes("gaseosa")
       ) {
-        return <FaBeer />;
+        return <BeerBottle />;
       }
 
       if (value.includes("postre") || value.includes("dulce")) {
-        return <FaIceCream />;
+        return <IceCream />;
       }
 
       if (value.includes("guarn") || value.includes("adicional")) {
-        return <FaUtensils />;
+        return <ForkKnife />;
       }
 
-      return <FaUtensils />;
+      return <ForkKnife />;
     };
 
     const openModal = (mode: ModalMode, product?: Product) => {
@@ -417,7 +404,7 @@ const ManageProducts = forwardRef<ManageProductsRef, ManageProductsProps>(
 
         <Filter>
           <label className="product-search">
-            <FaSearch aria-hidden="true" />
+            <MagnifyingGlass aria-hidden="true" />
 
             <input
               type="text"
@@ -434,7 +421,7 @@ const ManageProducts = forwardRef<ManageProductsRef, ManageProductsProps>(
                 onClick={() => setProductSearch("")}
                 aria-label="Limpiar búsqueda"
               >
-                <FaTimes />
+                <X />
               </button>
             )}
           </label>
@@ -481,7 +468,7 @@ const ManageProducts = forwardRef<ManageProductsRef, ManageProductsProps>(
             className="new-product"
             onClick={() => openModal("create")}
           >
-            <FaPlus />
+            <Plus />
             Nuevo producto
           </button>
 
@@ -504,7 +491,7 @@ const ManageProducts = forwardRef<ManageProductsRef, ManageProductsProps>(
             className={selectedCategory === "Todas" ? "selected" : ""}
             onClick={() => setSelectedCategory("Todas")}
           >
-            <FaTh />
+            <SquaresFour />
 
             <span>Todos</span>
 
@@ -529,7 +516,9 @@ const ManageProducts = forwardRef<ManageProductsRef, ManageProductsProps>(
           ))}
         </div>
 
-        {loading && <p className="products-feedback">Cargando productos...</p>}
+        {loading && (
+          <CardLoading icon={<Package />} text="Cargando productos..." />
+        )}
 
         {error && <p className="products-feedback error">{error}</p>}
 
@@ -580,12 +569,12 @@ const ManageProducts = forwardRef<ManageProductsRef, ManageProductsProps>(
                       >
                         {product.quantity > 0 ? (
                           <>
-                            <FaCheckCircle />
+                            <CheckCircle />
                             Disponible
                           </>
                         ) : (
                           <>
-                            <FaExclamationCircle />
+                            <WarningCircle />
                             Sin stock
                           </>
                         )}
@@ -601,7 +590,7 @@ const ManageProducts = forwardRef<ManageProductsRef, ManageProductsProps>(
                           openModal("options", product);
                         }}
                       >
-                        <FaEllipsisV />
+                        <DotsThreeVertical />
                       </button>
                     </div>
 
@@ -620,7 +609,7 @@ const ManageProducts = forwardRef<ManageProductsRef, ManageProductsProps>(
                         </strong>
 
                         <span>
-                          <FaBoxes />
+                          <Package />
                           Stock: {product.quantity}
                         </span>
                       </div>
@@ -638,7 +627,7 @@ const ManageProducts = forwardRef<ManageProductsRef, ManageProductsProps>(
           isOpen={modalOpen}
           title={getModalTitle()}
           description={getModalDescription()}
-          icon={<FaBoxes />}
+          icon={<Package />}
           onClose={closeModal}
           size={modalMode === "delete" ? "compact" : "default"}
           footerActions={
@@ -658,7 +647,7 @@ const ManageProducts = forwardRef<ManageProductsRef, ManageProductsProps>(
                     type="button"
                     onClick={() => setModalMode("updateQuantity")}
                   >
-                    <FaBoxes />
+                    <Package />
                     stock
                   </ActionButton>
 
@@ -697,7 +686,7 @@ const ManageProducts = forwardRef<ManageProductsRef, ManageProductsProps>(
 
               {modalMode === "updateQuantity" && (
                 <ActionButton type="submit" form="manage-stock-form">
-                  <FaBoxes />
+                  <Package />
                   Actualizar
                 </ActionButton>
               )}

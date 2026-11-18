@@ -1,7 +1,8 @@
+import CardLoading from "../CardLoading/CardLoading.tsx";
 import { useEffect, useState, type FormEvent } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { FaLock, FaShieldAlt, FaCheckCircle } from "react-icons/fa";
+import { Lock, ShieldCheck, CheckCircle } from "@phosphor-icons/react";
 
 import type { AppDispatch } from "../../store/store.ts";
 import { clearUserCache, getMe } from "../../services/authService.ts";
@@ -144,7 +145,7 @@ const InitialAdminCredentials = () => {
       isOpen={!loading}
       title="Protegé tu cuenta administradora"
       description="Actualizá tus credenciales para habilitar el acceso al sistema."
-      icon={<FaShieldAlt />}
+      icon={<ShieldCheck />}
       onClose={() => {}}
       size="small"
       closeOnOverlayClick={false}
@@ -154,13 +155,13 @@ const InitialAdminCredentials = () => {
     >
       {loading ? (
         <InitialCredentialsLoading>
-          Cargando datos de la cuenta...
+          <CardLoading icon={<Lock />} text="Cargando datos de la cuenta..." />
         </InitialCredentialsLoading>
       ) : (
         <InitialCredentialsCard>
           <InitialCredentialsInfo>
             <InitialCredentialsInfoIcon>
-              <FaShieldAlt />
+              <ShieldCheck />
             </InitialCredentialsInfoIcon>
 
             <InitialCredentialsInfoText>
@@ -175,7 +176,7 @@ const InitialAdminCredentials = () => {
 
           {success && (
             <InitialCredentialsSuccess>
-              <FaCheckCircle />
+              <CheckCircle />
               <span>{success}</span>
             </InitialCredentialsSuccess>
           )}
@@ -237,7 +238,7 @@ const InitialAdminCredentials = () => {
               </InitialCredentialsGrid>
 
               <InitialCredentialsButton type="submit" disabled={saving}>
-                <FaLock />
+                <Lock />
                 {saving
                   ? "Actualizando credenciales..."
                   : "Actualizar credenciales"}

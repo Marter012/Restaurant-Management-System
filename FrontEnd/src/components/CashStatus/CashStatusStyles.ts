@@ -27,6 +27,8 @@ export const CashStatusContainer = styled.div`
   min-width: 0;
   color: var(--color-text);
   font-family: var(--font-family-base);
+  container-type: inline-size;
+  container-name: cash-status;
 `;
 
 export const CashHeader = styled.div`
@@ -91,6 +93,22 @@ export const CashHeader = styled.div`
     padding: 5px 7px;
     border-radius: 11px;
   }
+
+  @container cash-status (max-width: 92px) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "date" "shift" "status";
+    grid-template-rows: auto auto auto;
+    align-content: center;
+    justify-items: center;
+    gap: 9px;
+    width: 100%;
+    min-height: 188px;
+    padding: 10px 4px;
+    border-radius: 19px;
+    cursor: pointer;
+  }
+
 `;
 
 export const DateTimeGroup = styled.div`
@@ -266,6 +284,40 @@ export const DateButton = styled.button<{ $active?: boolean }>`
       display: none;
     }
   }
+
+  @container cash-status (max-width: 92px) {
+    display: flex;
+    grid-area: date;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 35px;
+    padding: 0;
+
+    .date-icon-wrap {
+      position: relative;
+      display: grid;
+      place-items: center;
+      flex: 0 0 35px;
+      width: 35px;
+      height: 35px;
+      border-radius: 11px;
+      background: var(--color-background);
+    }
+
+    .calendar-icon { display: none; }
+
+    .calendar-day-number {
+      display: block;
+      color: var(--color-primary);
+      font-size: 1.05rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .arrow { display: none; }
+  }
+
 `;
 
 export const DateInfo = styled.span`
@@ -351,6 +403,11 @@ export const DateInfo = styled.span`
       white-space: nowrap;
     }
   }
+
+  @container cash-status (max-width: 92px) {
+    display: none;
+  }
+
 `;
 
 export const TimeInfo = styled.div`
@@ -407,6 +464,22 @@ export const ShiftToggle = styled.div`
     padding: 2px;
     border-radius: 8px;
   }
+
+  @container cash-status (max-width: 92px) {
+    display: flex;
+    grid-area: shift;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    pointer-events: auto;
+  }
+
 `;
 
 export const ShiftChoice = styled.button<ShiftChoiceProps>`
@@ -503,6 +576,44 @@ export const ShiftChoice = styled.button<ShiftChoiceProps>`
       line-height: 1;
     }
   }
+
+  @container cash-status (max-width: 92px) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    min-width: 36px;
+    height: 36px;
+    min-height: 36px;
+    padding: 0;
+    border: 1px solid
+      ${({ $selected }) =>
+        $selected ? "var(--color-primary)" : "var(--color-border)"};
+    border-radius: 11px;
+    background: ${({ $selected }) =>
+      $selected ? "var(--color-primary)" : "var(--color-surface)"};
+    color: ${({ $selected }) =>
+      $selected ? "var(--color-surface)" : "var(--color-text-secondary)"};
+    font-size: 1rem;
+    cursor: pointer;
+    pointer-events: auto;
+    box-shadow: ${({ $selected }) =>
+      $selected ? "0 0 0 2px var(--color-primary-soft)" : "none"};
+
+    &:hover {
+      border-color: var(--color-primary);
+      transform: translateY(-1px);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+
+    > svg:first-child { font-size: 1rem; }
+    > span { display: none; }
+  }
+
 `;
 
 export const CashStateBadge = styled.div<{ $status: CashStatusType }>`
@@ -697,6 +808,39 @@ export const CashStateBadge = styled.div<{ $status: CashStatusType }>`
       margin: 0;
     }
   }
+
+  @container cash-status (max-width: 92px) {
+    display: flex;
+    grid-area: status;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 18px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+
+    .cash-icon, .cash-copy small, > span:last-child { display: none; }
+
+    .cash-copy {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      min-width: 0;
+    }
+
+    strong {
+      max-width: 100%;
+      overflow: hidden;
+      font-size: 0.58rem;
+      font-weight: 850;
+      line-height: 1.1;
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
 `;
 
 export const CashStatusOverlay = styled.div`
@@ -978,3 +1122,4 @@ export const OpenCashLink = styled.a`
   text-align: center;
   text-decoration: none;
 `;
+
