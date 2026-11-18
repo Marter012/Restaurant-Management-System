@@ -1,7 +1,64 @@
-import styled from "styled-components";
 import { Page } from "../../styles/AppStyles.ts";
-export const LoadingPage = styled(Page)`display:grid;place-items:center;min-height:100svh;padding:24px;`;
 import styled, { keyframes } from "styled-components";
-const spin=keyframes`to{transform:rotate(360deg)}`;
-const pulse=keyframes`0%,100%{opacity:.45;transform:scale(.92)}50%{opacity:1;transform:scale(1.08)}`;
-export const Loading = styled.div`position:relative;display:grid;place-items:center;align-content:center;gap:13px;min-height:100svh;padding:30px;color:var(--app-muted);text-align:center;background:radial-gradient(circle at 50% 42%,#fffdf9 0,#f5eadb 58%,#ead8c3 100%);&::before{content:"";width:54px;height:54px;border:4px solid #d9c6b1;border-top-color:var(--app-accent);border-radius:50%;animation:${spin} .9s linear infinite}.brand{color:var(--app-primary);font-size:1.15rem;font-weight:950;letter-spacing:-.03em}.message{font-size:.88rem}.dots{display:flex;gap:5px;margin-top:3px} .dots i{width:6px;height:6px;border-radius:50%;background:var(--app-accent);animation:${pulse} 1s ease-in-out infinite}.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}`;
+
+export const LoadingPage = styled(Page)`
+  display: grid;
+  place-items: center;
+  min-height: 100svh;
+  padding: 24px;
+`;
+const spin = keyframes`to{transform:rotate(360deg)}`;
+const pulse = keyframes`0%,100%{opacity:.45;transform:scale(.92)}50%{opacity:1;transform:scale(1.08)}`;
+export const Loading = styled.div`
+  position: relative;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 13px;
+  min-height: 100svh;
+  padding: 30px;
+  color: var(--app-muted);
+  text-align: center;
+  background: radial-gradient(
+    circle at 50% 42%,
+    #fffdf9 0,
+    #f5eadb 58%,
+    #ead8c3 100%
+  );
+  &::before {
+    content: "";
+    width: 54px;
+    height: 54px;
+    border: 4px solid #d9c6b1;
+    border-top-color: var(--app-accent);
+    border-radius: 50%;
+    animation: ${spin} 0.9s linear infinite;
+  }
+  .brand {
+    color: var(--app-primary);
+    font-size: 1.15rem;
+    font-weight: 950;
+    letter-spacing: -0.03em;
+  }
+  .message {
+    font-size: 0.88rem;
+  }
+  .dots {
+    display: flex;
+    gap: 5px;
+    margin-top: 3px;
+  }
+  .dots i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--app-accent);
+    animation: ${pulse} 1s ease-in-out infinite;
+  }
+  .dots i:nth-child(2) {
+    animation-delay: 0.15s;
+  }
+  .dots i:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+`;
