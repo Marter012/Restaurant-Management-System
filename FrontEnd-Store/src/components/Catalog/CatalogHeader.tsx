@@ -1,4 +1,4 @@
-import { FaSearch, FaUtensils } from "react-icons/fa";
+import { FaSearch, FaUtensils } from "../../utils/icons.ts";
 import { CatalogTop, SectionTitle, SectionSubtitle, SearchBox, TitleEyebrow } from "./CatalogStyles.ts";
 interface Props { search: string; onSearchChange: (value: string) => void; }
 export const CatalogHeader = ({ search, onSearchChange }: Props) => (

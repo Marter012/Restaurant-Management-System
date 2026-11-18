@@ -1,19 +1,74 @@
 import type { StoreProduct } from "../types/store.ts";
-export const CATEGORY_IMAGES: Record<string,string> = {
- hamburguesa:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=900&q=85",
- carne:"https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=900&q=85",
- carnes:"https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=900&q=85",
- sanguche:"https://images.unsplash.com/photo-1553909489-cd47e0ef937f?w=900&q=85",
- sandwich:"https://images.unsplash.com/photo-1553909489-cd47e0ef937f?w=900&q=85",
- sanguches:"https://images.unsplash.com/photo-1553909489-cd47e0ef937f?w=900&q=85",
- pizza:"https://images.unsplash.com/photo-1513104890138-7c749659a591?w=900&q=85",
- lomito:"https://images.unsplash.com/photo-1553909489-cd47e0ef937f?w=900&q=85",
- empanada:"https://images.pexels.com/photos/22764499/pexels-photo-22764499.jpeg?auto=compress&cs=tinysrgb&w=900",
- casera:"https://images.unsplash.com/photo-1547592180-85f173990554?w=900&q=85",
- adicional:"https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=900&q=85",
- papa:"https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=900&q=85",
- ensalada:"https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=900&q=85",
+import placeholderImage from "../assets/product-placeholder.svg";
+
+import polloImage from "../assets/categories/cat-pollo.jpg";
+import carneImage from "../assets/categories/cat-carne.jpg";
+import milanesaImage from "../assets/categories/cat-milanesa.jpg";
+import pastasImage from "../assets/categories/cat-pastas.jpg";
+import tartasImage from "../assets/categories/cat-tartas.jpg";
+import empanadasImage from "../assets/categories/cat-empanadas.jpg";
+import pizzaImage from "../assets/categories/cat-pizza.jpg";
+import guarnicionesImage from "../assets/categories/cat-guarniciones.jpg";
+import sandwichesImage from "../assets/categories/cat-sandwiches.jpg";
+import minutasImage from "../assets/categories/cat-minutas.jpg";
+import ensaladasImage from "../assets/categories/cat-ensaladas.jpg";
+import postresImage from "../assets/categories/cat-postres.jpg";
+import bebidasImage from "../assets/categories/cat-bebidas.jpg";
+import congeladosImage from "../assets/categories/cat-congelados.jpg";
+import panificadosImage from "../assets/categories/cat-panificados.jpg";
+
+export const CATEGORY_IMAGES: Record<string, string> = {
+  pollo: polloImage,
+  carne: carneImage,
+  carnes: carneImage,
+  milanesa: milanesaImage,
+  milanesas: milanesaImage,
+  pastas: pastasImage,
+  pasta: pastasImage,
+  tartas: tartasImage,
+  tarta: tartasImage,
+  empanadas: empanadasImage,
+  empanada: empanadasImage,
+  pizza: pizzaImage,
+  pizzas: pizzaImage,
+  guarnicion: guarnicionesImage,
+  guarniciones: guarnicionesImage,
+  sandwich: sandwichesImage,
+  sandwiches: sandwichesImage,
+  sanguche: sandwichesImage,
+  sanguches: sandwichesImage,
+  minuta: minutasImage,
+  minutas: minutasImage,
+  ensalada: ensaladasImage,
+  ensaladas: ensaladasImage,
+  postre: postresImage,
+  postres: postresImage,
+  bebida: bebidasImage,
+  bebidas: bebidasImage,
+  congelado: congeladosImage,
+  congelados: congeladosImage,
+  panificado: panificadosImage,
+  panificados: panificadosImage,
 };
-export const imageSource=(value?:string|null)=>value?.trim()||null;
-export const categoryImage=(category?:string)=>{const key=(category||"").toLocaleLowerCase("es");const match=Object.entries(CATEGORY_IMAGES).find(([term])=>key.includes(term));return match?.[1]||"https://images.unsplash.com/photo-1547592180-85f173990554?w=900&q=85";};
-export const productImage=(product:Pick<StoreProduct,"image"|"category">)=>imageSource(product.image)||categoryImage(product.category);
+
+const normalizeCategory = (category?: string) =>
+  (category || "")
+    .trim()
+    .toLocaleLowerCase("es")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+
+export const imageSource = (value?: string | null) => value?.trim() || null;
+
+export const categoryImage = (category?: string) => {
+  const normalized = normalizeCategory(category);
+  const match = Object.entries(CATEGORY_IMAGES).find(([term]) =>
+    normalized.includes(term),
+  );
+
+  return match?.[1] || placeholderImage;
+};
+
+export const productImage = (
+  product: Pick<StoreProduct, "image" | "category">,
+) => imageSource(product.image) || categoryImage(product.category);

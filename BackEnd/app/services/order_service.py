@@ -36,6 +36,7 @@ from app.schema.cash_movement_schema import (
 
 from app.utils.exceptions import NotFoundException
 from uuid import uuid4
+from collections import Counter
 from pymongo import ReturnDocument
 from pymongo.errors import DuplicateKeyError
 
@@ -998,7 +999,7 @@ class OrderService(BaseService):
 
     async def _get_cash_register(
         self,
-        cash_register_id: str
+        cash_register_id: str,
     ):
 
         cash_register = (
@@ -1014,20 +1015,11 @@ class OrderService(BaseService):
             )
 
         if not cash_register["status"]:
+            raise NotFoundException("La caja indicada está inactiva")
 
+        if cash_register["status_cash_register"] != "open":
             raise NotFoundException(
-                "La caja indicada está inactiva"
-            )
-
-        if (
-            cash_register["status_cash_register"]
-            != "open"
-        ):
-
-            raise NotFoundException(
-                "La caja indicada está cerrada. "
-                "No se pueden realizar movimientos "
-                "sobre una caja cerrada."
+                "La caja indicada está cerrada. No se pueden realizar movimientos sobre una caja cerrada."
             )
 
         return cash_register
@@ -1441,6 +1433,14 @@ class OrderService(BaseService):
 
         old_payment_status = old_order["status_payment"]
         new_payment_status = data.status_payment if data.status_payment is not None else old_payment_status
+        if (
+            old_order.get("source") == "online"
+            and new_payment_status == "cancelled"
+            and not old_order.get("online_refund_confirmed", False)
+        ):
+            raise NotFoundException(
+                "Los pedidos online pagados deben reembolsarse desde Pedidos online para devolver el dinero en Mercado Pago."
+            )
         stock_deducted = old_order.get("stock_deducted", True)
         explicitly_set = getattr(data, "model_fields_set", set())
 
@@ -1799,11 +1799,22 @@ class OrderService(BaseService):
                 "realizar el reembolso"
             )
 
-        cash_register = (
-            await self._get_cash_register(
-                selected_cash_register_id
-            )
+        cash_register = await self.cash_register_repository.get_by_id(
+            selected_cash_register_id
         )
+        if (
+            not cash_register
+            or not cash_register.get("status")
+            or cash_register.get("status_cash_register") != "open"
+        ):
+            active_register = await self.cash_register_repository.get_open_register()
+            if not active_register:
+                raise NotFoundException(
+                    "Abrí una caja para registrar el egreso del reembolso."
+                )
+            cash_register = await self._get_cash_register(
+                str(active_register.get("id") or active_register.get("_id"))
+            )
 
         order_id = (
             order.get("id")
@@ -1821,10 +1832,24 @@ class OrderService(BaseService):
             "amount": order["total_price"],
         }]
         # Cada medio original se reembolsa por separado para que los reportes
-        # de caja conserven la composición del pago.
+        # de caja conserven la composición del pago. La consulta previa hace
+        # idempotente el registro si hay que reintentar una sincronización.
+        existing_refunds = await self.cash_movement_service.repository.get_refunds_by_order_id(str(order_id))
+        existing_refund_counts = Counter(
+            (
+                movement.get("method_payment"),
+                round(float(movement.get("amount", 0) or 0), 2),
+            )
+            for movement in existing_refunds
+        )
         for payment in payments:
-            amount = float(payment.get("amount", 0) or 0)
+            amount = round(float(payment.get("amount", 0) or 0), 2)
             if amount <= 0:
+                continue
+            method_payment = payment.get("method_payment", order["method_payment"])
+            refund_key = (method_payment, amount)
+            if existing_refund_counts[refund_key] > 0:
+                existing_refund_counts[refund_key] -= 1
                 continue
             cash_movement = CashMovementCreate(
                 cash_register_id=str(cash_register["id"]),
@@ -1832,20 +1857,21 @@ class OrderService(BaseService):
                 type="outflow",
                 category="refund",
                 amount=amount,
-                method_payment=payment.get("method_payment", order["method_payment"]),
+                method_payment=method_payment,
                 description=f"Reembolso pedido #{self._order_reference(order)}",
                 date=DateUtils.now_argentina(),
                 status=True,
             )
             await self.cash_movement_service.create(cash_movement, current_user_id)
+            existing_refund_counts[refund_key] += 1
 
         # -----------------------------------------------------
         # DEVOLVER STOCK
         # -----------------------------------------------------
 
-        if order.get("stock_restored"):
-            return
-        await self._restore_order_stock(order)
+        if not order.get("stock_restored"):
+            await self._restore_order_stock(order)
+            await self.repository.update(str(order_id), {"stock_restored": True})
 
     # =========================================================
     # RESTAURAR STOCK
@@ -1861,13 +1887,26 @@ class OrderService(BaseService):
             return
 
         requirements = self._flatten_stock_requirements(order.get("items", []))
+        order_id = str(order.get("id") or order.get("_id"))
+        description = f"Devolución pedido #{self._order_reference(order)}"
         for product_id, quantity in requirements.items():
+            # Evita devolver dos veces el mismo producto si el proceso de
+            # cancelación se reintenta después de una interrupción parcial.
+            existing = await self.stock_movement_service.repository.collection.find_one({
+                "order_id": order_id,
+                "product_id": str(product_id),
+                "type": "inflow",
+                "description": description,
+                "status": True,
+            })
+            if existing:
+                continue
             movement = StockMovementCreate(
                 product_id=product_id,
                 type="inflow",
-                description=f"Devolución pedido #{self._order_reference(order)}",
+                description=description,
                 quantity=quantity,
-                order_id=str(order.get("id") or order.get("_id")),
+                order_id=order_id,
                 status=True,
             )
             await self.stock_movement_service.create(movement)

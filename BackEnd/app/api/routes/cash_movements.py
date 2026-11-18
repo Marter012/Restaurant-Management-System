@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, HTTPException, status
 
 from app.services.cash_movement_service import CashMovementService
 from app.schema.cash_movement_schema import (
@@ -67,6 +67,12 @@ async def update_cash_movement(
     request: Request,
     current_user = Depends(get_current_user),
 ):
+    if current_user.get("role") != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Solo un administrador puede modificar movimientos de caja",
+        )
+
     result = await service.update(cash_movement_id, data, current_user["sub"])
     await AuditService.record(current_user, "updated", "cash_movement", cash_movement_id, result.get("description"))
 
@@ -77,4 +83,30 @@ async def update_cash_movement(
         source_client_id=request.headers.get("X-Client-ID"),
     )
 
+    return result
+
+
+@router.delete(
+    "/{cash_movement_id}",
+    status_code=status.HTTP_200_OK,
+)
+async def delete_cash_movement(
+    cash_movement_id: str,
+    request: Request,
+    current_user = Depends(get_current_user),
+):
+    if current_user.get("role") != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Solo un administrador puede eliminar movimientos de caja",
+        )
+
+    result = await service.delete_manual(cash_movement_id, current_user["sub"])
+    await AuditService.record(current_user, "deleted", "cash_movement", cash_movement_id, result.get("description"))
+    await broadcast_change(
+        resource="cash_movement",
+        action="deleted",
+        data=result,
+        source_client_id=request.headers.get("X-Client-ID"),
+    )
     return result

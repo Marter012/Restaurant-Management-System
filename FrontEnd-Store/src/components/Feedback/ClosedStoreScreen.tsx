@@ -1,4 +1,4 @@
-import { FaUtensils } from "react-icons/fa";
+import { FaUtensils } from "../../utils/icons.ts";
 import type { StoreInfo } from "../../types/store.ts";
 import { Page } from "../../styles/AppStyles.ts";
 import { BrandMark } from "../Layout/StoreHeaderStyles.ts";

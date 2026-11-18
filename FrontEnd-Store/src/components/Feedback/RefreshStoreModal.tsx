@@ -1,4 +1,4 @@
-import { FaArrowsRotate, FaCircleInfo } from "react-icons/fa6";
+import { FaArrowsRotate, FaCircleInfo } from "../../utils/icons.ts";
 import styled from "styled-components";
 
 const Backdrop = styled.div`

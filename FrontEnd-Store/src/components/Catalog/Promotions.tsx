@@ -1,4 +1,4 @@
-import { FaTag, FaPercent } from "react-icons/fa";
+import { FaTag, FaPercent } from "../../utils/icons.ts";
 import type { StorePromotion } from "../../types/store.ts";
 import { PromotionSection, PromotionGrid, PromotionCard } from "./PromotionsStyles.ts";
 import { money } from "../../utils/money.ts";

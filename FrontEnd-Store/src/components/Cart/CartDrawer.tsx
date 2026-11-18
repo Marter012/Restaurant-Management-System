@@ -1,10 +1,4 @@
-import {
-  FaMinus,
-  FaPlus,
-  FaTimes,
-  FaShoppingBag,
-  FaUtensils,
-} from "react-icons/fa";
+import { FaMinus, FaPlus, FaTimes, FaShoppingBag, FaUtensils } from "../../utils/icons.ts";
 import type { CartItem } from "../../types/store.ts";
 import { money } from "../../utils/money.ts";
 import { productImage } from "../../utils/images.ts";

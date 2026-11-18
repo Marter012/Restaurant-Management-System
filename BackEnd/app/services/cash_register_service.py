@@ -360,6 +360,14 @@ class CashRegisterService(BaseService):
 
                 if is_sale:
 
+                    # Los reintegros están vinculados a la orden para mantener
+                    # trazabilidad, pero deben computarse como egresos de caja.
+                    if movement_type == "outflow" and movement.get("category") == "refund":
+                        manual_expense += amount
+                        if method_payment == "cash":
+                            manual_expense_cash += amount
+                        continue
+
                     # -------------------------------------------------
                     # SOLO LOS INFLOWS REPRESENTAN LA VENTA
                     # -------------------------------------------------

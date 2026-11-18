@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaBars, FaShoppingBag, FaTimes, FaUtensils } from "react-icons/fa";
+import { FaBars, FaShoppingBag, FaTimes, FaUtensils } from "../../utils/icons.ts";
 import type { StoreInfo } from "../../types/store.ts";
 import {
   Header,

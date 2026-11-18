@@ -26,7 +26,7 @@ from app.utils.serializers import serialize_mongo
 from app.websocket.events import broadcast_change
 from app.config.settings import settings
 from app.services.order_service import OrderService
-from app.schema.order_schema import OrderCreate
+from app.schema.order_schema import OrderCreate, OrderUpdate
 from app.repositories.cash_register_repository import CashRegisterRepository
 
 
@@ -169,6 +169,7 @@ class StoreCustomerCreate(BaseModel):
     first_name: str = Field(min_length=1, max_length=80)
     last_name: str = Field(min_length=1, max_length=80)
     phone: str = Field(min_length=6, max_length=30)
+    location: str = Field(default="", max_length=300)
 
 
 def _customer_token_hash(token: str) -> str:
@@ -206,11 +207,18 @@ async def access_store_customer(data: StoreCustomerCreate):
             "first_name": first_name,
             "last_name": last_name,
             "phone": phone,
+            "location": data.location.strip(),
             "created_at": now,
             "active": True,
         }
         inserted = await customers.insert_one(customer)
         customer["_id"] = inserted.inserted_id
+    elif data.location.strip():
+        await customers.update_one(
+            {"_id": customer["_id"]},
+            {"$set": {"location": data.location.strip()}},
+        )
+        customer["location"] = data.location.strip()
 
     token = secrets.token_urlsafe(36)
     expires_at = now + timedelta(minutes=10)
@@ -236,6 +244,7 @@ async def access_store_customer(data: StoreCustomerCreate):
         "first_name": customer.get("first_name", first_name),
         "last_name": customer.get("last_name", last_name),
         "phone": phone,
+        "location": customer.get("location", ""),
         "expires_in": 600,
     }
 
@@ -274,6 +283,7 @@ async def get_store_customer_me(request: Request):
         "first_name": customer.get("first_name", ""),
         "last_name": customer.get("last_name", ""),
         "phone": customer.get("phone", ""),
+        "location": customer.get("location", ""),
         "expires_at": customer.get("token_expires_at").isoformat() if customer.get("token_expires_at") else None,
     }
 
@@ -284,15 +294,49 @@ async def get_store_customer_orders(request: Request):
     if not customer:
         raise HTTPException(401, "Iniciá sesión nuevamente para consultar tus compras.")
     cursor = database["online_orders"].find(
-        {"customer_id": str(customer["_id"]), "payment_status": "approved"},
-        {"_id": 0, "order_number": 1, "created_at": 1, "total": 1, "items.name": 1, "items.quantity": 1},
+        {"customer_id": str(customer["_id"]), "payment_status": {"$in": ["approved", "refunded"]}},
+        {"_id": 0, "order_number": 1, "created_at": 1, "total": 1, "items.name": 1, "items.quantity": 1, "payment_status": 1, "status": 1, "refund_status": 1, "refund_requested_at": 1},
     ).sort("created_at", -1).limit(50)
     rows = []
     async for row in cursor:
         created = row.get("created_at")
         row["created_at"] = created.isoformat() if hasattr(created, "isoformat") else str(created or "")
+        requested_at = row.get("refund_requested_at")
+        row["refund_requested_at"] = requested_at.isoformat() if hasattr(requested_at, "isoformat") else None
         rows.append(row)
     return rows
+
+
+@router.post("/public/customers/me/orders/{order_number}/refund")
+async def request_store_order_refund(order_number: int, request: Request):
+    customer = await _get_customer_from_request(request)
+    if not customer:
+        raise HTTPException(401, "Iniciá sesión nuevamente para solicitar el reembolso.")
+
+    order = await database["online_orders"].find_one({
+        "customer_id": str(customer["_id"]),
+        "order_number": order_number,
+    })
+    if not order:
+        raise HTTPException(404, "No encontramos esa compra en tu cuenta.")
+    if order.get("payment_status") != "approved":
+        raise HTTPException(409, "Solo se puede solicitar el reembolso de una compra pagada y aprobada.")
+    if not order.get("payment_id") or not order.get("administrative_order_id"):
+        raise HTTPException(409, "La compra todavía no está vinculada a una comanda y no puede reembolsarse.")
+    if order.get("refund_status") in {"requested", "processing", "refunded", "refunded_needs_sync"}:
+        raise HTTPException(409, "Esta compra ya tiene una solicitud de reembolso en curso o procesada.")
+
+    now = DateUtils.now_argentina()
+    result = await database["online_orders"].update_one(
+        {"_id": order["_id"], "payment_status": "approved", "refund_status": {"$nin": ["requested", "processing", "refunded", "refunded_needs_sync"]}},
+        {"$set": {"refund_status": "requested", "refund_requested_at": now, "updated_at": now}},
+    )
+    if not result.modified_count:
+        raise HTTPException(409, "La solicitud ya fue registrada por otra operación.")
+
+    updated = await database["online_orders"].find_one({"_id": order["_id"]})
+    await broadcast_change("online_order", "refund_requested", _serialize_order(updated))
+    return {"message": "Solicitud de reembolso enviada al comercio.", "refund_status": "requested"}
 
 
 @router.get("/public/promotions")
@@ -498,6 +542,8 @@ async def create_online_order(data: OnlineOrderCreate, request: Request):
 
     inserted = await database["online_orders"].insert_one(order)
     order_id = str(inserted.inserted_id)
+    created_order = await database["online_orders"].find_one({"_id": inserted.inserted_id})
+    await broadcast_change("online_order", "created", _serialize_order(created_order), request.headers.get("X-Client-ID"))
 
     preference = {
         "items": [{
@@ -683,7 +729,7 @@ async def mercadopago_webhook(request: Request):
             # Reservar la conversión para hacer el webhook idempotente ante reintentos.
             reserved = await database["online_orders"].update_one(
                 {"_id": order["_id"], "administrative_order_id": {"$exists": False}, "conversion_state": {"$ne": "processing"}},
-                {"$set": {"conversion_state": "processing", **update_fields}},
+                {"$set": {"conversion_state": "processing", "conversion_started_at": DateUtils.now_argentina(), **update_fields}},
             )
             if reserved.modified_count:
                 try:
@@ -726,7 +772,23 @@ async def mercadopago_webhook(request: Request):
                     update_fields["administrative_order_id"] = latest["administrative_order_id"]
                     update_fields["status"] = latest.get("status", "paid")
                 else:
-                    return {"received": True, "matched": True, "conversion": "processing"}
+                    # Recuperación ante una caída entre crear la comanda y
+                    # guardar su ID en online_orders. La clave online_order_id
+                    # evita duplicar comandas al reintentar el webhook.
+                    recovered_admin_doc = await database["orders"].find_one(
+                        {"online_order_id": str(order["_id"])}
+                    )
+                    if recovered_admin_doc:
+                        recovered_admin = serialize_mongo(recovered_admin_doc)
+                        update_fields.update({
+                            "administrative_order_id": recovered_admin.get("id"),
+                            "administrative_order_number": recovered_admin.get("order_number"),
+                            "status": "paid",
+                            "conversion_state": "completed",
+                        })
+                        order["_converted_admin_order"] = recovered_admin
+                    else:
+                        return {"received": True, "matched": True, "conversion": "processing"}
 
     await database["online_orders"].update_one({"_id": order["_id"]}, {"$set": update_fields})
 
@@ -757,6 +819,279 @@ async def list_online_orders(status: str | None = None):
     return [_serialize_order(row) async for row in cursor]
 
 
+@router.post("/online-orders/{order_id}/retry-conversion", dependencies=[Depends(require_admin)])
+async def retry_online_order_conversion(
+    order_id: str,
+    request: Request,
+    current_user=Depends(get_current_user),
+):
+    if not ObjectId.is_valid(order_id):
+        raise HTTPException(404, "Pedido no encontrado.")
+    order = await database["online_orders"].find_one({"_id": ObjectId(order_id)})
+    if not order:
+        raise HTTPException(404, "Pedido no encontrado.")
+    if order.get("payment_status") != "approved":
+        raise HTTPException(409, "El pago todavía no está aprobado por Mercado Pago.")
+    if order.get("administrative_order_id"):
+        return _serialize_order(order)
+
+    register_id = str(order.get("cash_register_id") or "")
+    register = await cash_register_repository.get_by_id(register_id) if register_id else None
+    if not register or not register.get("status") or register.get("status_cash_register") != "open":
+        raise HTTPException(409, "Abrí la misma caja asociada al checkout para poder crear la comanda.")
+
+    # Recuperar una comanda que pudiera haberse creado antes de una caída.
+    existing_doc = await database["orders"].find_one({"online_order_id": str(order["_id"])})
+    if existing_doc:
+        admin_order = serialize_mongo(existing_doc)
+    else:
+        now = DateUtils.now_argentina()
+        reserved = await database["online_orders"].update_one(
+            {
+                "_id": order["_id"],
+                "administrative_order_id": {"$exists": False},
+                "$or": [
+                    {"conversion_state": {"$ne": "processing"}},
+                    {"conversion_started_at": {"$lte": now - timedelta(minutes=2)}},
+                    {"conversion_started_at": {"$exists": False}},
+                ],
+            },
+            {"$set": {"conversion_state": "processing", "conversion_started_at": now}},
+        )
+        if not reserved.modified_count:
+            latest = await database["online_orders"].find_one({"_id": order["_id"]})
+            if latest and latest.get("administrative_order_id"):
+                return _serialize_order(latest)
+            raise HTTPException(409, "La conversión del pedido ya está siendo procesada. Esperá unos segundos y actualizá.")
+
+        try:
+            order_items = [
+                {
+                    "item_type": "product",
+                    "product_id": item["product_id"],
+                    "quantity": item["quantity"],
+                    "store_discount_percentage": item.get("store_discount_percentage", 0),
+                    "garnish": item.get("garnish") or None,
+                    "removed_ingredients": item.get("removed_ingredients", []),
+                }
+                for item in order.get("items", [])
+            ]
+            admin_order = await order_service.create(
+                OrderCreate(
+                    order_number=0,
+                    customer_name=order.get("customer_name", "Cliente online"),
+                    items=order_items,
+                    method_payment="transfer",
+                    status_payment="paid",
+                    delivery_time=order.get("pickup_time") or "Lo antes posible",
+                    cash_register_id=register_id,
+                    payments=[{"method_payment": "transfer", "amount": float(order.get("total", 0))}],
+                    discount_type="amount" if float(sum(float(p.get("saving", 0)) for p in order.get("applied_promotions", []))) > 0 else None,
+                    discount_value=round(sum(float(p.get("saving", 0)) for p in order.get("applied_promotions", [])), 2),
+                    observation=(f"PEDIDO ONLINE #{order.get('order_number')} · {order.get('fulfillment', 'pickup')} · {order.get('phone', '')} · {order.get('address', '')} · {order.get('note', '')}")[:1000],
+                    source="online",
+                    online_order_id=str(order["_id"]),
+                    confirmed_out_of_stock=bool((await database["app_settings"].find_one({"_id": "operational"}) or {}).get("allow_out_of_stock", False)),
+                ),
+                str(current_user["sub"]),
+            )
+        except Exception as exc:
+            await database["online_orders"].update_one(
+                {"_id": order["_id"]},
+                {"$set": {"status": "paid_pending_cash", "conversion_state": "error", "conversion_error": str(exc)[:1000], "updated_at": DateUtils.now_argentina()}, "$unset": {"conversion_started_at": ""}},
+            )
+            raise HTTPException(409, f"No se pudo crear la comanda: {str(exc)[:400]}") from exc
+
+    await database["online_orders"].update_one(
+        {"_id": order["_id"]},
+        {"$set": {
+            "status": "paid",
+            "conversion_state": "completed",
+            "administrative_order_id": admin_order.get("id"),
+            "administrative_order_number": admin_order.get("order_number"),
+            "updated_at": DateUtils.now_argentina(),
+        }, "$unset": {"conversion_error": "", "conversion_started_at": ""}},
+    )
+    latest = await database["online_orders"].find_one({"_id": order["_id"]})
+    serialized = _serialize_order(latest)
+    await broadcast_change("online_order", "updated", serialized, request.headers.get("X-Client-ID"))
+    await broadcast_change("order", "created", admin_order, request.headers.get("X-Client-ID"))
+    return serialized
+
+
+@router.post("/online-orders/{order_id}/refund", dependencies=[Depends(require_admin)])
+async def process_online_order_refund(
+    order_id: str,
+    request: Request,
+    current_user=Depends(get_current_user),
+):
+    if not ObjectId.is_valid(order_id):
+        raise HTTPException(404, "Pedido no encontrado.")
+
+    order = await database["online_orders"].find_one({"_id": ObjectId(order_id)})
+    if not order:
+        raise HTTPException(404, "Pedido no encontrado.")
+    if order.get("refund_status") == "refunded":
+        return _serialize_order(order)
+    if order.get("refund_status") not in {"requested", "processing", "refunded_needs_sync"}:
+        raise HTTPException(409, "El cliente todavía no solicitó el reembolso de este pedido.")
+    if order.get("payment_status") not in {"approved", "refunded"}:
+        raise HTTPException(409, "El pago no está aprobado o ya fue reembolsado.")
+    if not order.get("administrative_order_id"):
+        raise HTTPException(409, "No existe una comanda administrativa vinculada a este pedido.")
+
+    original_register_id = str(order.get("cash_register_id") or "")
+    original_register = await cash_register_repository.get_by_id(original_register_id) if original_register_id else None
+    if not original_register or not original_register.get("status") or original_register.get("status_cash_register") != "open":
+        if not await cash_register_repository.get_open_register():
+            raise HTTPException(409, "Abrí una caja para registrar el egreso del reembolso antes de devolver el dinero.")
+
+    now = DateUtils.now_argentina()
+    refund_status = order.get("refund_status")
+    already_refunded_at_provider = refund_status == "refunded_needs_sync"
+
+    # Reservar el reembolso. Si quedó processing por una caída, se permite
+    # recuperar la operación después de dos minutos usando la misma clave MP.
+    if not already_refunded_at_provider:
+        if refund_status == "processing":
+            updated_at = order.get("updated_at")
+            if updated_at and updated_at > now - timedelta(minutes=2):
+                raise HTTPException(409, "El reembolso ya está siendo procesado. Esperá y actualizá el pedido.")
+            reservation_filter = {
+                "_id": order["_id"],
+                "refund_status": "processing",
+                "updated_at": updated_at,
+            }
+        else:
+            reservation_filter = {"_id": order["_id"], "refund_status": "requested"}
+
+        reserved = await database["online_orders"].update_one(
+            reservation_filter,
+            {"$set": {"refund_status": "processing", "updated_at": now}},
+        )
+        if not reserved.modified_count:
+            latest = await database["online_orders"].find_one({"_id": order["_id"]})
+            if latest and latest.get("refund_status") == "refunded":
+                return _serialize_order(latest)
+            raise HTTPException(409, "El reembolso está siendo procesado por otra operación.")
+
+        payment_id = order.get("payment_id")
+        token = settings.MERCADOPAGO_ACCESS_TOKEN.strip()
+        if not payment_id or not token:
+            await database["online_orders"].update_one(
+                {"_id": order["_id"], "refund_status": "processing"},
+                {"$set": {"refund_status": "requested", "updated_at": DateUtils.now_argentina()}},
+            )
+            raise HTTPException(503, "No se pudo validar el pago original para reembolsarlo.")
+
+        try:
+            async with httpx.AsyncClient(timeout=30) as client:
+                response = await client.post(
+                    f"https://api.mercadopago.com/v1/payments/{payment_id}/refund",
+                    headers={
+                        "Authorization": f"Bearer {token}",
+                        "X-Idempotency-Key": f"boutique-refund-{order_id}",
+                        "Content-Type": "application/json",
+                    },
+                    json={},
+                )
+            response.raise_for_status()
+            refund_data = response.json()
+            if refund_data.get("status") not in {"approved", "refunded", None}:
+                raise HTTPException(502, "Mercado Pago no confirmó el reembolso.")
+        except HTTPException:
+            await database["online_orders"].update_one(
+                {"_id": order["_id"], "refund_status": "processing"},
+                {"$set": {"refund_status": "requested", "updated_at": DateUtils.now_argentina()}},
+            )
+            raise
+        except Exception as exc:
+            await database["online_orders"].update_one(
+                {"_id": order["_id"], "refund_status": "processing"},
+                {"$set": {"refund_status": "requested", "refund_error": str(exc)[:500], "updated_at": DateUtils.now_argentina()}},
+            )
+            raise HTTPException(502, "Mercado Pago no pudo completar el reembolso. Podés volver a intentar.") from exc
+
+        await database["online_orders"].update_one(
+            {"_id": order["_id"], "refund_status": "processing"},
+            {"$set": {
+                "refund_status": "refunded_needs_sync",
+                "refund_provider_id": str(refund_data.get("id", "")),
+                "refund_provider_status": refund_data.get("status", "approved"),
+                "payment_status": "refunded",
+                "updated_at": DateUtils.now_argentina(),
+            }, "$unset": {"refund_error": ""}},
+        )
+
+    # Reservar por separado la sincronización contable/operativa para evitar
+    # duplicar movimientos de caja si dos administradores actúan a la vez.
+    current_sync = await database["online_orders"].find_one({"_id": order["_id"]})
+    sync_state = (current_sync or {}).get("refund_sync_state")
+    sync_started_at = (current_sync or {}).get("refund_sync_started_at")
+    if sync_state == "processing" and sync_started_at and sync_started_at > now - timedelta(minutes=2):
+        raise HTTPException(409, "El reintegro ya fue aceptado y se está sincronizando con la comanda.")
+
+    sync_filter = {
+        "_id": order["_id"],
+        "refund_status": "refunded_needs_sync",
+        "$or": [
+            {"refund_sync_state": {"$ne": "processing"}},
+            {"refund_sync_started_at": {"$lte": now - timedelta(minutes=2)}},
+            {"refund_sync_started_at": {"$exists": False}},
+        ],
+    }
+    sync_reserved = await database["online_orders"].update_one(
+        sync_filter,
+        {"$set": {"refund_sync_state": "processing", "refund_sync_started_at": now}},
+    )
+    if not sync_reserved.modified_count:
+        latest = await database["online_orders"].find_one({"_id": order["_id"]})
+        if latest and latest.get("refund_status") == "refunded":
+            return _serialize_order(latest)
+        raise HTTPException(409, "La sincronización del reembolso ya está siendo procesada.")
+
+    # Solo después de la confirmación de Mercado Pago se autoriza la
+    # cancelación de la comanda online. OrderService registra el egreso y stock.
+    await database["orders"].update_one(
+        {"_id": ObjectId(str(order.get("administrative_order_id")))},
+        {"$set": {"online_refund_confirmed": True}},
+    )
+    try:
+        await order_service.update(
+            str(order.get("administrative_order_id")),
+            OrderUpdate(status_payment="cancelled"),
+            str(current_user["sub"]),
+        )
+    except Exception as exc:
+        await database["online_orders"].update_one(
+            {"_id": order["_id"]},
+            {"$set": {
+                "refund_status": "refunded_needs_sync",
+                "refund_sync_state": "error",
+                "refund_sync_error": str(exc)[:500],
+                "updated_at": DateUtils.now_argentina(),
+            }, "$unset": {"refund_sync_started_at": ""}},
+        )
+        raise HTTPException(409, "El dinero fue devuelto por Mercado Pago, pero no se pudo cancelar la comanda. Reintentá la sincronización desde este pedido.") from exc
+
+    await database["online_orders"].update_one(
+        {"_id": order["_id"]},
+        {"$set": {
+            "refund_status": "refunded",
+            "refund_sync_state": "completed",
+            "payment_status": "refunded",
+            "status": "cancelled",
+            "refund_processed_at": DateUtils.now_argentina(),
+            "updated_at": DateUtils.now_argentina(),
+        }, "$unset": {"refund_sync_error": "", "refund_sync_started_at": ""}},
+    )
+    latest = await database["online_orders"].find_one({"_id": order["_id"]})
+    serialized = _serialize_order(latest)
+    await broadcast_change("online_order", "refunded", serialized, request.headers.get("X-Client-ID"))
+    await broadcast_change("order", "updated", {"id": order.get("administrative_order_id"), "status_payment": "cancelled"})
+    return serialized
+
+
 @router.patch(
     "/online-orders/{order_id}",
     dependencies=[Depends(require_admin)],
@@ -781,6 +1116,9 @@ async def update_online_order_status(
 
     if data.status == "paid" and current.get("payment_status") == "approved" and not current.get("administrative_order_id"):
         raise HTTPException(409, "El pago fue aprobado, pero todavía no se generó la comanda administrativa.")
+
+    if data.status == "cancelled" and current.get("payment_status") == "approved" and current.get("refund_status") != "refunded":
+        raise HTTPException(409, "Este pedido ya fue pagado. Para cancelarlo primero procesá el reembolso de Mercado Pago.")
 
     if data.status == "paid" and current.get("payment_status") != "approved":
         raise HTTPException(

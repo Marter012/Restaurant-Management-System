@@ -1,4 +1,4 @@
-import { FaStar } from "react-icons/fa";
+import { FaStar } from "../../utils/icons.ts";
 import type { StoreProduct } from "../../types/store.ts";
 import { ProductGrid } from "./ProductGrid.tsx";
 import { FeaturedWrap } from "./FeaturedSectionStyles.ts";

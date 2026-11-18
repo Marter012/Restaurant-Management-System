@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field, model_validator
 class EstablishmentSettingsUpdate(BaseModel):
     name: str = Field(min_length=1, max_length=120)
     phone_number: str | None = Field(default=None, max_length=30)
+    logo: str | None = Field(default=None, max_length=5_000_000)
 
 
 class CommercialSettingsUpdate(BaseModel):

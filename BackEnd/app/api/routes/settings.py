@@ -52,7 +52,8 @@ async def update_establishment(data: EstablishmentSettingsUpdate, request: Reque
     phone_number = (submitted_phone or "").strip()
     if phone_number and not phone_number.replace("+", "").replace(" ", "").replace("-", "").replace("(", "").replace(")", "").isdigit():
         raise HTTPException(status_code=422, detail="El teléfono debe contener únicamente números y símbolos telefónicos.")
-    result = {"name": name, "phone_number": phone_number}
+    submitted_logo = data.logo if "logo" in data.model_fields_set else current_establishment.get("logo")
+    result = {"name": name, "phone_number": phone_number, "logo": submitted_logo}
     await database["app_settings"].update_one({"_id": "establishment"}, {"$set": result}, upsert=True)
     await AuditService.record(current_user, "updated", "establishment_settings", "establishment", f"Nombre: {name}")
     await broadcast_change("settings", "establishment_updated", result, request.headers.get("X-Client-ID"))

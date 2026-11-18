@@ -1,4 +1,4 @@
-import { FaSearch } from "react-icons/fa";
+import { FaSearch } from "../../utils/icons.ts";
 import type { StoreProduct } from "../../types/store.ts";
 import { EmptyState } from "../../styles/AppStyles.ts";
 import { ProductCard } from "./ProductCard.tsx";

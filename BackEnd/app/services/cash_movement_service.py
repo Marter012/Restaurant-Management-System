@@ -43,7 +43,7 @@ class CashMovementService(
 
     async def _get_cash_register(
         self,
-        cash_register_id
+        cash_register_id,
     ):
 
         try:
@@ -65,19 +65,11 @@ class CashMovementService(
             )
 
         if not cash_register:
+            raise NotFoundException("No se encontró la caja correspondiente al ID")
 
+        if cash_register["status_cash_register"] != "open":
             raise NotFoundException(
-                "No se encontró la caja correspondiente al ID"
-            )
-
-        if (
-            cash_register["status_cash_register"]
-            != "open"
-        ):
-
-            raise NotFoundException(
-                "No se pueden registrar movimientos "
-                "en una caja cerrada"
+                "No se pueden registrar movimientos en una caja cerrada"
             )
 
         return cash_register
@@ -97,9 +89,7 @@ class CashMovementService(
         # -----------------------------------------------------
 
         cash_register = (
-            await self._get_cash_register(
-                data.cash_register_id
-            )
+            await self._get_cash_register(data.cash_register_id)
         )
 
         # -----------------------------------------------------
@@ -172,11 +162,9 @@ class CashMovementService(
 
             if (
                 order_cash_register_id
-                and
-                str(order_cash_register_id)
-                != str(data.cash_register_id)
+                and str(order_cash_register_id) != str(data.cash_register_id)
+                and data.category != "refund"
             ):
-
                 raise NotFoundException(
                     "La orden no pertenece a la caja seleccionada"
                 )
@@ -515,4 +503,21 @@ class CashMovementService(
                 "status": False,
                 "updated_by_user_id": str(current_user_id)
             }
+        )
+
+    # =====================================================
+    # ELIMINAR MOVIMIENTO MANUAL (BAJA LÓGICA)
+    # =====================================================
+
+    async def delete_manual(self, movement_id, current_user_id):
+        old = await self.repository.get_by_id(movement_id)
+        if old.get("category") != "manual" or old.get("order_id"):
+            from fastapi import HTTPException, status
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Solo se pueden eliminar movimientos manuales",
+            )
+        return await self.repository.update(
+            movement_id,
+            {"status": False, "updated_by_user_id": str(current_user_id)},
         )

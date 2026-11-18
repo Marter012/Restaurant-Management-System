@@ -1,4 +1,4 @@
-import { FaArrowLeft, FaCheckCircle, FaClock, FaTimes, FaWhatsapp, FaCreditCard } from "react-icons/fa";
+import { FaArrowLeft, FaCheckCircle, FaClock, FaTimes, FaWhatsapp, FaCreditCard } from "../../utils/icons.ts";
 import type { CheckoutData } from "../../types/store.ts";
 import { PAYMENT_METHODS } from "../../constants/store.ts";
 import { Dialog, DialogContent, DialogHeader, FieldGroup, FullWidthSecondaryButton, IconButton, Notice, NoticeIcon, Overlay, PrimaryButton, TotalRow } from "../../styles/AppStyles.ts";

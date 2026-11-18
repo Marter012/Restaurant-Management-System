@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaMinus, FaPlus } from "react-icons/fa";
+import { FaMinus, FaPlus } from "../../utils/icons.ts";
 import type { StoreProduct } from "../../types/store.ts";
 import { money } from "../../utils/money.ts";
 import { productImage, categoryImage } from "../../utils/images.ts";

@@ -86,6 +86,9 @@ app = FastAPI(
 # CORS CONFIGURATION
 # ==========================================
 
+# Dominios autorizados para los frontends publicados y desarrollo local.
+# STORE_FRONTEND_URL y FRONTEND_URL también pueden contener varios dominios
+# separados por comas (sin rutas ni endpoints de API).
 cors_origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
@@ -94,12 +97,19 @@ cors_origins = [
     "http://192.168.100.190:5173",
     "http://192.168.56.1:5173",
     "https://restaurant-management-system-phi-umber.vercel.app",
-    os.getenv("FRONTEND_URL", ""),
-    os.getenv("STORE_FRONTEND_URL", ""),
+    "https://store-online-eight.vercel.app",
 ]
 
+for env_name in ("FRONTEND_URL", "STORE_FRONTEND_URL"):
+    configured_origins = os.getenv(env_name, "")
+    cors_origins.extend(
+        origin.strip()
+        for origin in configured_origins.split(",")
+        if origin.strip()
+    )
+
 # Normalizar dominios y eliminar barras finales.
-cors_origins = list({
+cors_origins = sorted({
     origin.strip().rstrip("/")
     for origin in cors_origins
     if origin and origin.strip()

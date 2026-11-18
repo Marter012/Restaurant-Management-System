@@ -66,6 +66,21 @@ class CashMovementRepository(
             document
         )
 
+
+    async def get_refunds_by_order_id(
+        self,
+        order_id: str,
+    ):
+        cursor = self.collection.find(
+            {
+                "order_id": str(order_id),
+                "type": "outflow",
+                "category": "refund",
+                "status": True,
+            }
+        )
+        return [serialize_mongo(document) async for document in cursor]
+
     async def get_sale_by_order_id(
         self,
         order_id: str

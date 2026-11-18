@@ -1,4 +1,4 @@
-import { FaCheck, FaPlus, FaTimes, FaUtensils } from "react-icons/fa";
+import { FaCheck, FaPlus, FaTimes, FaUtensils } from "../../utils/icons.ts";
 import type { StoreProduct } from "../../types/store.ts";
 import { money } from "../../utils/money.ts";
 import { imageSource } from "../../utils/images.ts";

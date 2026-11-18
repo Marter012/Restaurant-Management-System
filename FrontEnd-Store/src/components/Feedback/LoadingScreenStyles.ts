@@ -1,3 +1,6 @@
+import styled from "styled-components";
+import { Page } from "../../styles/AppStyles.ts";
+export const LoadingPage = styled(Page)`display:grid;place-items:center;min-height:100svh;padding:24px;`;
 import styled, { keyframes } from "styled-components";
 const spin=keyframes`to{transform:rotate(360deg)}`;
 const pulse=keyframes`0%,100%{opacity:.45;transform:scale(.92)}50%{opacity:1;transform:scale(1.08)}`;

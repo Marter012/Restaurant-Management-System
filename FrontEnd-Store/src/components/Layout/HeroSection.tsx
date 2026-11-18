@@ -1,4 +1,4 @@
-import { FaArrowRight, FaCheckCircle, FaClock, FaLeaf } from "react-icons/fa";
+import { FaArrowRight, FaCheckCircle, FaClock, FaLeaf } from "../../utils/icons.ts";
 import type { StoreConfiguration } from "../../types/store.ts";
 import { Hero, HeroContent, Eyebrow, HeroTitle, HeroText, HeroDecoration, StoreStatusBadge, HeroActions, HeroLink, HeroHighlights } from "./HeroSectionStyles.ts";
 export const HeroSection = ({ config, salesAvailable = false }: { config?: StoreConfiguration; salesAvailable?: boolean }) => (

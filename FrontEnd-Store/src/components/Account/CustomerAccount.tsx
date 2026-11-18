@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { FaTimes, FaUserCircle, FaReceipt, FaSignOutAlt } from "react-icons/fa";
+import { FaTimes, FaUserCircle, FaReceipt, FaSignOutAlt } from "../../utils/icons.ts";
 import styled from "styled-components";
 import { accessCustomer, getCustomerOrders } from "../../services/publicApi.ts";
 import type { CustomerProfile } from "../../services/publicApi.ts";

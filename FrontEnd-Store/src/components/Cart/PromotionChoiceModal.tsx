@@ -1,4 +1,4 @@
-import { FaCheckCircle, FaGift, FaTag } from "react-icons/fa";
+import { FaCheckCircle, FaGift, FaTag } from "../../utils/icons.ts";
 import styled from "styled-components";
 import type { EligibleStorePromotion } from "../../utils/cart.ts";
 import { money } from "../../utils/money.ts";

@@ -6,7 +6,7 @@ from app.utils.serializers import serialize_mongo
 
 class SettingsService:
     collection = database["app_settings"]
-    DEFAULT_ESTABLISHMENT = {"_id": "establishment", "name": "Boutique de Sabores", "phone_number": ""}
+    DEFAULT_ESTABLISHMENT = {"_id": "establishment", "name": "Boutique de Sabores", "phone_number": "", "logo": None}
     DEFAULT_COMMERCIAL = {
         "_id": "commercial", "public_sales_enabled": False,
         "general_discount_enabled": False, "general_discount_percentage": 0
