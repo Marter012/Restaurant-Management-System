@@ -1,4 +1,4 @@
-import { FaCheck, FaPlus, FaTimes, FaUtensils } from "../../utils/icons.ts";
+import { Check, Plus, X, ForkKnife } from "../../utils/icons.ts";
 import type { StoreProduct } from "../../types/store.ts";
 import { money } from "../../utils/money.ts";
 import { imageSource } from "../../utils/images.ts";
@@ -78,7 +78,7 @@ export const ProductModal = ({
             <ModalTitle>Personalizá tu producto</ModalTitle>
           </div>
           <CloseButton type="button" onClick={onClose} aria-label="Cerrar">
-            <FaTimes />
+            <X />
           </CloseButton>
         </ModalHeader>
 
@@ -88,7 +88,7 @@ export const ProductModal = ({
               <DialogProductImage src={productImage} alt={product.name} />
             ) : (
               <ImageFallback aria-hidden="true">
-                <FaUtensils />
+                <ForkKnife />
               </ImageFallback>
             )}
 
@@ -121,7 +121,7 @@ export const ProductModal = ({
                       onChange={() => onGarnishChange(option)}
                     />
                     <OptionText>{option}</OptionText>
-                    {garnish === option && <FaCheck aria-hidden="true" />}
+                    {garnish === option && <Check aria-hidden="true" />}
                   </OptionRow>
                 ))}
               </OptionList>
@@ -180,7 +180,7 @@ export const ProductModal = ({
 
         <ModalFooter>
           <AddButton type="button" onClick={onAdd}>
-            <FaPlus />
+            <Plus />
             <span>Agregar al pedido</span>
             <strong>{money(product.final_price)}</strong>
           </AddButton>

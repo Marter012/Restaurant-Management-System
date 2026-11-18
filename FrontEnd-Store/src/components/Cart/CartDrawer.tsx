@@ -1,4 +1,4 @@
-import { FaMinus, FaPlus, FaTimes, FaShoppingBag, FaUtensils } from "../../utils/icons.ts";
+import { Minus, Plus, X, ShoppingBag, ForkKnife } from "../../utils/icons.ts";
 import type { CartItem } from "../../types/store.ts";
 import { money } from "../../utils/money.ts";
 import { productImage } from "../../utils/images.ts";
@@ -51,7 +51,7 @@ export const CartDrawer = ({
         <DialogHeader>
           <h3>Mi pedido ({cartCount})</h3>
           <IconButton type="button" onClick={onClose} aria-label="Cerrar">
-            <FaTimes />
+            <X />
           </IconButton>
         </DialogHeader>
         <CartItems>
@@ -62,7 +62,7 @@ export const CartDrawer = ({
                   <img src={productImage(item.product)} alt="" />
                 ) : (
                   <CartImagePlaceholder>
-                    <FaUtensils />
+                    <ForkKnife />
                   </CartImagePlaceholder>
                 )}
                 <div>
@@ -81,7 +81,7 @@ export const CartDrawer = ({
                       onClick={() => onChangeQuantity(item.key, -1)}
                       aria-label="Quitar uno"
                     >
-                      <FaMinus />
+                      <Minus />
                     </button>
                     <span>{item.quantity}</span>
                     <button
@@ -89,7 +89,7 @@ export const CartDrawer = ({
                       onClick={() => onChangeQuantity(item.key, 1)}
                       aria-label="Agregar uno"
                     >
-                      <FaPlus />
+                      <Plus />
                     </button>
                   </QuantityControl>
                 </div>
@@ -100,7 +100,7 @@ export const CartDrawer = ({
             ))
           ) : (
             <EmptyState>
-              <FaShoppingBag />
+              <ShoppingBag />
               <strong>Tu pedido está vacío</strong>
               <span>Elegí algo rico del menú para comenzar.</span>
               <SecondaryButton type="button" onClick={onClose}>

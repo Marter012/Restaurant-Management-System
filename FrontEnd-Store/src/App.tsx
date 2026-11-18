@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { StoreConfiguration } from "./types/store.ts";
 import { Page } from "./styles/AppStyles.ts"
 import { useStore } from "./hooks/useStore.ts";
@@ -6,6 +6,7 @@ import { useCart } from "./hooks/useCart.ts";
 import { useProductSelection } from "./hooks/useProductSelection.ts";
 import { useCheckout } from "./hooks/useCheckout.ts";
 import { HeroSection } from "./components/Layout/HeroSection.tsx";
+import { StoreHeader } from "./components/Layout/StoreHeader.tsx";
 import { StoreFooter } from "./components/Layout/StoreFooter.tsx";
 import { Catalog } from "./components/Catalog/Catalog.tsx";
 import { ProductModal } from "./components/Product/ProductModal.tsx";
@@ -64,7 +65,7 @@ const App = () => {
   const [toast, setToast] = useState<{message:string;kind:"success"|"error"}|null>(null);
   const [selectedPromotionId, setSelectedPromotionId] = useState<string | null>(null);
   const [promotionChoiceOpen, setPromotionChoiceOpen] = useState(false);
-  const notify = (message:string,kind:"success"|"error"="success") => { setToast({message,kind}); window.setTimeout(()=>setToast(null),4200); };
+  const notify = useCallback((message:string,kind:"success"|"error"="success") => { setToast({message,kind}); window.setTimeout(()=>setToast(null),4200); }, []);
   const [previewConfiguration, setPreviewConfiguration] = useState<StoreConfiguration | null>(null);
   const activeStore = store && previewConfiguration ? {
     ...store,
@@ -215,13 +216,14 @@ const App = () => {
 
   const saveCustomerBeforeCheckout = async () => {
     const {firstName,lastName,phone,location} = checkoutState.checkout;
-    if (!firstName.trim() || !lastName.trim() || phone.trim().length < 6 || !location.trim()) {
-      notify("Completá nombre, apellido, celular y ubicación antes de registrarte.","error");
+    if (!firstName.trim() || !lastName.trim() || phone.replace(/\\D/g, "").length < 6) {
+      notify("Completá nombre, apellido y un celular válido para crear tu cuenta.","error");
       return;
     }
     setSavingCustomer(true);
     try {
-      const result = await accessCustomer({first_name:firstName,last_name:lastName,phone,location});
+      // El endpoint de acceso del Backend recibe nombre, apellido y teléfono.
+      const result = await accessCustomer({first_name:firstName,last_name:lastName,phone});
       const profile = {first_name:result.first_name,last_name:result.last_name,phone:result.phone,location:result.location || location};
       saveCustomerSession(result.token,profile,result.expires_in);
       setCustomerSession(readCustomerSession());
@@ -279,13 +281,8 @@ const App = () => {
       checkoutState.setCheckoutError("Las compras están deshabilitadas hasta que el comercio abra una caja y habilite las ventas online.");
       return;
     }
-    if (
-      !checkoutState.checkout.customerName.trim() ||
-      !checkoutState.checkout.phone.trim()
-    ) {
-      checkoutState.setCheckoutError(
-        "Completá tu nombre y teléfono para continuar.",
-      );
+    if (!checkoutState.checkout.customerName.trim() || checkoutState.checkout.phone.trim().length < 8) {
+      checkoutState.setCheckoutError("Completá tu nombre y un teléfono válido (al menos 8 caracteres) para continuar.");
       return;
     }
     if (
@@ -345,6 +342,7 @@ const App = () => {
     <Page>
       {closedModalOpen && <ClosedStoreModal onClose={()=>setClosedModalOpen(false)}/>}
       {refreshRequired && <RefreshStoreModal onRefresh={()=>window.location.reload()}/>}
+      <StoreHeader store={activeStore} cartCount={cartCount} onOpenCart={() => setCartOpen(true)} onOpenAccount={() => setAccountOpen(true)} />
       <HeroSection config={activeStore?.configuration} salesAvailable={salesAvailable} />
       {activeStore?.configuration?.show_featured && (
         <FeaturedSection
@@ -371,7 +369,7 @@ const App = () => {
       <BottomNavigation onCart={()=>setCartOpen(true)} onAccount={()=>setAccountOpen(true)} cartCount={cartCount}/>
       {accountOpen && <CustomerAccount onClose={()=>setAccountOpen(false)} onToast={notify} onAuthenticated={onCustomerAuthenticated}/> }
       {loginPromptOpen && <SaveCustomerPrompt title="¿Querés iniciar sesión?" description="Si ingresás tus datos, los vamos a completar automáticamente al finalizar tu compra. También podés continuar como invitado." saveLabel="Iniciar sesión" skipLabel="Continuar como invitado" onSave={()=>{setLoginPromptOpen(false);setAccountOpen(true)}} onSkip={()=>{setLoginPromptOpen(false);openCheckout()}} onClose={()=>setLoginPromptOpen(false)}/>}
-      {savePromptOpen && <SaveCustomerPrompt busy={savingCustomer} onSave={saveCustomerBeforeCheckout} onSkip={()=>{setSavePromptOpen(false);const action=pendingCheckoutAction;setPendingCheckoutAction(null);checkoutState.updateCheckout("firstName","");checkoutState.updateCheckout("lastName","");checkoutState.updateCheckout("customerName","");checkoutState.updateCheckout("phone","");checkoutState.updateCheckout("email","");if(action==="pay")void payWithMercadoPago();if(action==="whatsapp")confirmWhatsApp()}} onClose={()=>{setSavePromptOpen(false);setPendingCheckoutAction(null)}}/>}
+      {savePromptOpen && <SaveCustomerPrompt busy={savingCustomer} onSave={saveCustomerBeforeCheckout} onSkip={()=>{setSavePromptOpen(false);const action=pendingCheckoutAction;setPendingCheckoutAction(null);if(action==="pay")void payWithMercadoPago();if(action==="whatsapp")confirmWhatsApp()}} onClose={()=>{setSavePromptOpen(false);setPendingCheckoutAction(null)}}/>}
       {toast && <StoreToast message={toast.message} kind={toast.kind} onClose={()=>setToast(null)}/> }
       {promotionChoiceOpen && eligiblePromotions.length > 1 && (
         <PromotionChoiceModal

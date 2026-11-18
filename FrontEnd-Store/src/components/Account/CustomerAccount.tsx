@@ -1,43 +1,216 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import { FaTimes, FaUserCircle, FaReceipt, FaSignOutAlt } from "../../utils/icons.ts";
-import styled from "styled-components";
-import { accessCustomer, getCustomerOrders } from "../../services/publicApi.ts";
-import type { CustomerProfile } from "../../services/publicApi.ts";
+import { ArrowsClockwise, Receipt, SignOut, UserCircle, WarningCircle, X } from "../../utils/icons.ts";
+import {
+  accessCustomer,
+  getCustomerOrders,
+  requestCustomerOrderRefund,
+  type CustomerOrder,
+  type CustomerProfile,
+} from "../../services/publicApi.ts";
 import { money } from "../../utils/money.ts";
-import { clearCustomerSession, readCustomerSession, saveCustomerSession } from "../../utils/customerSession.ts";
+import {
+  clearCustomerSession,
+  readCustomerSession,
+  saveCustomerSession,
+} from "../../utils/customerSession.ts";
+import {
+  Shade, Panel, Header, Body, Field, HelperText, Primary, AccountIntro, OrderList,
+  OrderCard, OrderTop, OrderMeta, ItemList, Status, RefundButton, Empty,
+  Logout, ConfirmShade, ConfirmCard,
+} from "./CustomerAccountStyles.ts";
 
-const Shade = styled.div`position:fixed;inset:0;z-index:130;display:grid;place-items:center;padding:16px;background:#14201988;backdrop-filter:blur(4px)`;
-const Panel = styled.section`width:min(100%,480px);max-height:85dvh;overflow:auto;border-radius:22px;background:#fffefa;padding:20px;box-shadow:0 24px 70px #0003;header{display:flex;justify-content:space-between;align-items:center}h2{margin:0;color:#182b25;font-size:1.2rem}header button{border:0;background:transparent;font-size:1.1rem}p{color:#788078;font-size:.84rem;line-height:1.5}label{display:grid;gap:5px;margin:11px 0;color:#39443b;font-size:.78rem;font-weight:800}input{height:43px;border:1px solid #e5dfd3;border-radius:11px;padding:0 12px;width:100%;box-sizing:border-box}button.primary{width:100%;height:45px;border:0;border-radius:12px;background:#182b25;color:white;font-weight:850}.order{padding:13px 0;border-bottom:1px solid #e5dfd3;display:flex;gap:10px;justify-content:space-between}.order small{display:block;color:#788078;margin-top:4px}.logout{border:0;background:transparent;color:#a33;font-weight:800;margin-top:12px}`;
-type Order={order_number:number;created_at:string;total:number;items:{name:string;quantity:number}[]};
-type Props={onClose:()=>void;onToast:(message:string,kind:"success"|"error")=>void;onAuthenticated?:(profile:CustomerProfile)=>void};
+type Props = {
+  onClose: () => void;
+  onToast: (message: string, kind: "success" | "error") => void;
+  onAuthenticated?: (profile: CustomerProfile) => void;
+};
 
-export function CustomerAccount({onClose,onToast,onAuthenticated}:Props){
-  const [session,setSession]=useState(readCustomerSession);
-  const [first,setFirst]=useState("");const [last,setLast]=useState("");const [phone,setPhone]=useState("");const [location,setLocation]=useState("");
-  const [orders,setOrders]=useState<Order[]>([]);const [busy,setBusy]=useState(false);
-  useEffect(()=>{
-    if(!session) return;
-    let active = true;
-    getCustomerOrders(session.token)
-      .then((rows)=>{ if(active) setOrders(rows); })
-      .catch((error: unknown)=>{
-        if(!active) return;
-        const status = axios.isAxiosError(error) ? error.response?.status : undefined;
-        if(status === 401){
-          clearCustomerSession();
-          setSession(null);
-          setOrders([]);
-          onToast("Tu sesión venció. Iniciá sesión nuevamente.","error");
-          return;
-        }
-        // Un fallo al consultar el historial no invalida una sesión autenticada.
-        onToast("No pudimos cargar tu historial. Tu sesión sigue activa; intentá actualizarlo.","error");
+function getApiError(error: unknown): string {
+  if (axios.isAxiosError(error)) {
+    const detail = error.response?.data?.detail;
+    if (typeof detail === "string") return detail;
+    if (typeof error.response?.data?.message === "string") return error.response.data.message;
+  }
+  return error instanceof Error ? error.message : "Ocurrió un error inesperado.";
+}
+
+function refundLabel(status?: string | null) {
+  if (status === "requested") return "Solicitud enviada · esperando al comercio";
+  if (status === "processing") return "Reembolso en proceso";
+  if (status === "refunded_needs_sync") return "Reembolso aceptado · sincronizando pedido";
+  if (status === "refunded") return "Dinero reembolsado";
+  return "Pago aprobado";
+}
+
+export function CustomerAccount({ onClose, onToast, onAuthenticated }: Props) {
+  const [session, setSession] = useState(readCustomerSession);
+  const [first, setFirst] = useState("");
+  const [last, setLast] = useState("");
+  const [phone, setPhone] = useState("");
+  const [orders, setOrders] = useState<CustomerOrder[]>([]);
+  const [busy, setBusy] = useState(false);
+  const [loadingOrders, setLoadingOrders] = useState(false);
+  const [refundOrder, setRefundOrder] = useState<number | null>(null);
+  const [pendingRefund, setPendingRefund] = useState<CustomerOrder | null>(null);
+
+  const loadOrders = useCallback(async (token: string) => {
+    setLoadingOrders(true);
+    try {
+      setOrders(await getCustomerOrders(token));
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        clearCustomerSession();
+        setSession(null);
+        setOrders([]);
+        onToast("Tu sesión venció. Iniciá sesión nuevamente.", "error");
+      } else {
+        onToast("No pudimos actualizar tu historial. Intentá nuevamente.", "error");
+      }
+    } finally {
+      setLoadingOrders(false);
+    }
+  }, [onToast]);
+
+  useEffect(() => {
+    if (session?.token) void loadOrders(session.token);
+  }, [session?.token, loadOrders]);
+
+  useEffect(() => {
+    if (!session) return;
+    const remaining = Math.max(0, session.expiresAt - Date.now());
+    const timer = window.setTimeout(() => {
+      clearCustomerSession();
+      setSession(null);
+      setOrders([]);
+      onToast("Tu sesión venció. Iniciá sesión nuevamente.", "error");
+    }, remaining);
+    return () => window.clearTimeout(timer);
+  }, [session?.expiresAt, onToast]);
+
+  const submit = async () => {
+    setBusy(true);
+    try {
+      const result = await accessCustomer({
+        first_name: first.trim(),
+        last_name: last.trim(),
+        phone: phone.trim(),
       });
-    return ()=>{ active = false; };
-  },[session?.token]);
-  useEffect(()=>{if(!session)return;const remaining=session.expiresAt-Date.now();const timer=window.setTimeout(()=>{clearCustomerSession();setSession(null);setOrders([]);onToast("Tu sesión se cerró después de 10 minutos.","error")},Math.max(0,remaining));return()=>window.clearTimeout(timer)},[session?.expiresAt]);
-  const submit=async()=>{setBusy(true);try{const profile={first_name:first.trim(),last_name:last.trim(),phone:phone.trim(),location:location.trim()};const result=await accessCustomer(profile);const customer={first_name:result.first_name,last_name:result.last_name,phone:result.phone,location:result.location || location.trim()};const next=saveCustomerSession(result.token,customer,result.expires_in);setSession(next);onAuthenticated?.(customer);onToast("Sesión iniciada correctamente.","success")}catch(e){onToast(e instanceof Error?e.message:"No pudimos iniciar tu sesión.","error")}finally{setBusy(false)}};
-  const logout=()=>{clearCustomerSession();setSession(null);setOrders([]);onToast("Cerraste sesión.","success")};
-  return <Shade onMouseDown={e=>{if(e.target===e.currentTarget)onClose()}}><Panel><header><h2><FaUserCircle/> Mi cuenta</h2><button onClick={onClose} aria-label="Cerrar"><FaTimes/></button></header>{!session?<><p>Ingresá tus datos para crear tu cuenta o recuperar tu sesión. Tu sesión dura 10 minutos.</p><label>Nombre<input value={first} onChange={e=>setFirst(e.target.value)} autoComplete="given-name"/></label><label>Apellido<input value={last} onChange={e=>setLast(e.target.value)} autoComplete="family-name"/></label><label>Celular<input value={phone} onChange={e=>setPhone(e.target.value)} autoComplete="tel" placeholder="Ej. 351..."/></label><label>Ubicación (localidad y barrio)<input value={location} onChange={e=>setLocation(e.target.value)} autoComplete="address-level2" maxLength={300} placeholder="Ej. Córdoba, barrio Centro"/></label><button className="primary" disabled={busy||!first.trim()||!last.trim()||phone.trim().length<6||!location.trim()} onClick={submit}>{busy?"Ingresando...":"Continuar"}</button></>:<><p>Hola, {session.customer.first_name}. Ubicación: {session.customer.location || "Sin informar"}. Estas son tus compras pagadas.</p>{orders.length?orders.map(o=><div className="order" key={o.order_number}><div><strong><FaReceipt/> Pedido #{o.order_number}</strong><small>{new Date(o.created_at).toLocaleString("es-AR")} · {o.items.map(i=>`${i.quantity} × ${i.name}`).join(", ")}</small></div><strong>{money(o.total)}</strong></div>):<p>Todavía no tenés compras pagadas registradas.</p>}<button className="logout" onClick={logout}><FaSignOutAlt/> Cerrar sesión</button></>}</Panel></Shade>
+      const customer: CustomerProfile = {
+        first_name: result.first_name,
+        last_name: result.last_name,
+        phone: result.phone,
+      };
+      const next = saveCustomerSession(result.token, customer, result.expires_in);
+      setSession(next);
+      onAuthenticated?.(customer);
+      onToast("Sesión iniciada. Buscamos tus compras anteriores asociadas a este celular.", "success");
+    } catch (error) {
+      onToast(getApiError(error), "error");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const submitRefund = async () => {
+    if (!pendingRefund || !session) return;
+    const order = pendingRefund;
+    setPendingRefund(null);
+    setRefundOrder(order.order_number);
+    try {
+      await requestCustomerOrderRefund(session.token, order.order_number);
+      onToast(`La solicitud de reembolso del pedido #${order.order_number} fue enviada al comercio.`, "success");
+      await loadOrders(session.token);
+    } catch (error) {
+      onToast(getApiError(error), "error");
+    } finally {
+      setRefundOrder(null);
+    }
+  };
+
+  const logout = () => {
+    clearCustomerSession();
+    setSession(null);
+    setOrders([]);
+    onToast("Cerraste sesión.", "success");
+  };
+
+  return (
+    <Shade onMouseDown={event => { if (event.target === event.currentTarget) onClose(); }}>
+      <Panel role="dialog" aria-modal="true" aria-labelledby="customer-account-title">
+        <Header>
+          <h2 id="customer-account-title"><UserCircle size={23} weight="duotone" /> Mi cuenta</h2>
+          <button type="button" onClick={onClose} aria-label="Cerrar"><X size={20} /></button>
+        </Header>
+        <Body>
+          {!session ? (
+            <>
+              <p>Ingresá tu nombre, apellido y celular. Si ya compraste como invitado con ese mismo número, vincularemos esas compras a tu cuenta automáticamente.</p>
+              <Field>Nombre<input value={first} onChange={event => setFirst(event.target.value)} autoComplete="given-name" maxLength={80} /></Field>
+              <Field>Apellido<input value={last} onChange={event => setLast(event.target.value)} autoComplete="family-name" maxLength={80} /></Field>
+              <Field>Celular<input value={phone} onChange={event => setPhone(event.target.value)} autoComplete="tel" inputMode="tel" placeholder="Ej. 351 123 4567" maxLength={30} /></Field>
+              <Primary type="button" disabled={busy || !first.trim() || !last.trim() || phone.replace(/\\D/g, "").length < 6} onClick={submit}>
+                {busy ? "Verificando tus datos…" : "Ingresar / crear cuenta"}
+              </Primary>
+              <HelperText>La cuenta se identifica por tu número de celular. No compartas el acceso desde dispositivos ajenos.</HelperText>
+            </>
+          ) : (
+            <>
+              <AccountIntro>
+                <p>Hola, <strong>{session.customer.first_name}</strong>. Tus compras pagadas y asociadas a este celular.</p>
+                <button type="button" onClick={() => void loadOrders(session.token)} disabled={loadingOrders}>
+                  <ArrowsClockwise size={16} /> Actualizar
+                </button>
+              </AccountIntro>
+              {loadingOrders && orders.length === 0 ? (
+                <Empty><ArrowsClockwise size={25} /><strong>Cargando tus compras</strong></Empty>
+              ) : orders.length ? (
+                <OrderList>
+                  {orders.map(order => {
+                    const refundStatus = order.refund_status || null;
+                    const canRequestRefund = order.payment_status === "approved"
+                      && ["paid", "preparing", "ready", "delivered"].includes(order.status)
+                      && !refundStatus;
+                    const tone = refundStatus === "refunded" ? "muted" : refundStatus ? "warning" : "success";
+                    return (
+                      <OrderCard key={order.order_number}>
+                        <OrderTop>
+                          <strong><Receipt size={17} /> Pedido #{order.order_number}</strong>
+                          <b>{money(order.total)}</b>
+                        </OrderTop>
+                        <OrderMeta>{new Date(order.created_at).toLocaleString("es-AR", { dateStyle: "medium", timeStyle: "short" })}</OrderMeta>
+                        <ItemList>{order.items.map((item, index) => <span key={`${order.order_number}-${index}`}>{item.quantity} × {item.name}</span>)}</ItemList>
+                        <Status $tone={tone}>{refundLabel(refundStatus)}</Status>
+                        {canRequestRefund && (
+                          <RefundButton type="button" disabled={refundOrder === order.order_number} onClick={() => setPendingRefund(order)}>
+                            <WarningCircle size={18} /> {refundOrder === order.order_number ? "Enviando solicitud…" : "Solicitar reembolso"}
+                          </RefundButton>
+                        )}
+                      </OrderCard>
+                    );
+                  })}
+                </OrderList>
+              ) : (
+                <Empty><Receipt size={28} /><strong>Todavía no hay compras asociadas</strong><span>Si realizaste compras como invitado, verificá que hayas ingresado el mismo celular usado al comprar.</span></Empty>
+              )}
+              <Logout type="button" onClick={logout}><SignOut size={18} /> Cerrar sesión</Logout>
+            </>
+          )}
+        </Body>
+      </Panel>
+      {pendingRefund && (
+        <ConfirmShade onMouseDown={event => { if (event.target === event.currentTarget) setPendingRefund(null); }}>
+          <ConfirmCard role="alertdialog" aria-modal="true" aria-labelledby="refund-confirm-title">
+            <div className="icon"><WarningCircle /></div>
+            <h3 id="refund-confirm-title">Solicitar reembolso</h3>
+            <p>Vas a enviar al comercio una solicitud para devolver el dinero del pedido #{pendingRefund.order_number}. El reembolso no se ejecuta automáticamente: el comercio debe revisarlo y procesarlo.</p>
+            <div className="actions">
+              <button className="cancel" type="button" onClick={() => setPendingRefund(null)}>Volver</button>
+              <button className="confirm" type="button" onClick={() => void submitRefund()}>Enviar solicitud</button>
+            </div>
+          </ConfirmCard>
+        </ConfirmShade>
+      )}
+    </Shade>
+  );
 }

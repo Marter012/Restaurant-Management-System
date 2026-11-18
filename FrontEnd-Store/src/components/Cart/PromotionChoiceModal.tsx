@@ -1,4 +1,4 @@
-import { FaCheckCircle, FaGift, FaTag } from "../../utils/icons.ts";
+import { CheckCircle, Gift, Tag } from "../../utils/icons.ts";
 import styled from "styled-components";
 import type { EligibleStorePromotion } from "../../utils/cart.ts";
 import { money } from "../../utils/money.ts";
@@ -9,13 +9,13 @@ const Panel = styled.section`width:min(100%,480px);max-height:85dvh;overflow:aut
 export function PromotionChoiceModal({ promotions, onChoose, onSkip }: { promotions: EligibleStorePromotion[]; onChoose: (id: string) => void; onSkip: () => void }) {
   return <Backdrop>
     <Panel role="dialog" aria-modal="true" aria-labelledby="promotion-choice-title">
-      <h2 id="promotion-choice-title"><FaGift /> ¡Tenés promociones disponibles!</h2>
+      <h2 id="promotion-choice-title"><Gift /> ¡Tenés promociones disponibles!</h2>
       <p className="intro">Tu carrito permite aplicar más de una promoción. Elegí cuál querés usar; te mostramos cuánto ahorrás con cada opción.</p>
       <div className="choices">
         {promotions.map(promo => <button className="choice" type="button" key={promo.id} onClick={() => onChoose(promo.id)}>
-          <span className="icon"><FaTag /></span>
+          <span className="icon"><Tag /></span>
           <span><span className="name">{promo.name}</span><span className="detail">Precio promocional: {money(promo.price)}</span></span>
-          <span className="saving"><FaCheckCircle /> −{money(promo.savings)}</span>
+          <span className="saving"><CheckCircle /> −{money(promo.savings)}</span>
         </button>)}
       </div>
       <button className="skip" type="button" onClick={onSkip}>Continuar sin promoción</button>

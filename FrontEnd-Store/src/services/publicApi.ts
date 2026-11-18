@@ -53,9 +53,34 @@ export async function createMercadoPagoOrder(cart: CartItem[], checkout: Checkou
   return data;
 }
 
-export interface CustomerProfile { first_name:string; last_name:string; phone:string; location?:string; }
+export interface CustomerProfile { first_name: string; last_name: string; phone: string; location?: string; }
 export interface CustomerSession extends CustomerProfile { token:string; expires_in:number; }
 export async function accessCustomer(payload:CustomerProfile):Promise<CustomerSession>{const {data}=await publicApi.post<CustomerSession>("/public/customers/access",payload);return data;}
 export async function getCustomerMe(token:string):Promise<CustomerProfile>{const {data}=await publicApi.get<CustomerProfile>("/public/customers/me",{headers:{Authorization:`Bearer ${token}`}});return data;}
 export async function registerCustomer(payload:CustomerProfile):Promise<CustomerSession>{return accessCustomer(payload);}
-export async function getCustomerOrders(token:string):Promise<Array<{order_number:number;created_at:string;total:number;items:{name:string;quantity:number}[]}>>{const {data}=await publicApi.get("/public/customers/me/orders",{headers:{Authorization:`Bearer ${token}`}});return Array.isArray(data)?data:[];}
+export interface CustomerOrder {
+  order_number: number;
+  created_at: string;
+  total: number;
+  items: { name: string; quantity: number }[];
+  payment_status: "approved" | "refunded" | string;
+  status: string;
+  refund_status?: "requested" | "processing" | "refunded_needs_sync" | "refunded" | string | null;
+  refund_requested_at?: string | null;
+}
+
+export async function getCustomerOrders(token: string): Promise<CustomerOrder[]> {
+  const { data } = await publicApi.get<CustomerOrder[]>("/public/customers/me/orders", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return Array.isArray(data) ? data : [];
+}
+
+export async function requestCustomerOrderRefund(token: string, orderNumber: number): Promise<{ message: string; refund_status: string }> {
+  const { data } = await publicApi.post<{ message: string; refund_status: string }>(
+    `/public/customers/me/orders/${encodeURIComponent(orderNumber)}/refund`,
+    {},
+    { headers: { Authorization: `Bearer ${token}` } },
+  );
+  return data;
+}

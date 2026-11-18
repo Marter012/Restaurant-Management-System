@@ -1,7 +1,7 @@
 import {
-  FaCheckCircle,
-  FaExclamationCircle,
-  FaTimes,
+  CheckCircle,
+  WarningCircle,
+  X,
 } from "../../utils/icons.ts";
 import styled from "styled-components";
 const Toast = styled.div<{ $kind: "success" | "error" }>`
@@ -57,10 +57,10 @@ export function StoreToast({
   if (!message) return null;
   return (
     <Toast role="status" aria-live="polite" $kind={kind}>
-      {kind === "success" ? <FaCheckCircle /> : <FaExclamationCircle />}
+      {kind === "success" ? <CheckCircle /> : <WarningCircle />}
       <span>{message}</span>
       <button onClick={onClose} aria-label="Cerrar aviso">
-        <FaTimes />
+        <X />
       </button>
     </Toast>
   );

@@ -1,4 +1,4 @@
-import { FaUtensils } from "../../utils/icons.ts";
+import { ForkKnife } from "../../utils/icons.ts";
 import type { StoreInfo } from "../../types/store.ts";
 import { Page } from "../../styles/AppStyles.ts";
 import { BrandMark } from "../Layout/StoreHeaderStyles.ts";
@@ -13,7 +13,7 @@ export const ClosedStoreScreen = ({ store, error, onRetry }: Props) => (
     <ClosedScreen>
       {!error && (
         <BrandMark>
-          <FaUtensils />
+          <ForkKnife />
         </BrandMark>
       )}
       <strong>{error ? "No pudimos cargar la tienda" : store?.name}</strong>

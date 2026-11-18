@@ -1,4 +1,4 @@
-import { FaClock, FaStore, FaCheck } from "../../utils/icons.ts";
+import { Clock, Storefront, Check } from "../../utils/icons.ts";
 import styled from "styled-components";
 const Backdrop = styled.div`
   position: fixed;
@@ -66,7 +66,7 @@ export function ClosedStoreModal({ onClose }: { onClose: () => void }) {
     <Backdrop>
       <Box role="dialog" aria-modal="true" aria-labelledby="closed-title">
         <div className="icon">
-          <FaClock />
+          <Clock />
         </div>
         <h2 id="closed-title">Ahora estamos cerrados</h2>
         <p>
@@ -74,10 +74,10 @@ export function ClosedStoreModal({ onClose }: { onClose: () => void }) {
           habilitarán cuando el local abra una caja.
         </p>
         <div className="tag">
-          <FaStore /> Catálogo disponible · Compras pausadas
+          <Storefront /> Catálogo disponible · Compras pausadas
         </div>
         <button onClick={onClose}>
-          <FaCheck /> Entendido, quiero mirar
+          <Check /> Entendido, quiero mirar
         </button>
       </Box>
     </Backdrop>

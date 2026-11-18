@@ -1,4 +1,4 @@
-import { FaSearch } from "../../utils/icons.ts";
+import { MagnifyingGlass } from "../../utils/icons.ts";
 import type { StoreProduct } from "../../types/store.ts";
 import { EmptyState } from "../../styles/AppStyles.ts";
 import { ProductCard } from "./ProductCard.tsx";
@@ -36,7 +36,7 @@ export const ProductGrid = ({
       })
     ) : (
       <EmptyState>
-        <FaSearch size={25} />
+        <MagnifyingGlass size={25} />
         <strong>No encontramos productos</strong>
         <span>Probá con otra búsqueda o categoría.</span>
       </EmptyState>

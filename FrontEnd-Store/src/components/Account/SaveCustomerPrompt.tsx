@@ -1,5 +1,39 @@
-import { FaUserCheck, FaTimes } from "../../utils/icons.ts";
-import styled from "styled-components";
-const Shade=styled.div`position:fixed;inset:0;z-index:145;display:grid;place-items:center;padding:16px;background:#14201999;backdrop-filter:blur(4px)`;
-const Card=styled.section`width:min(100%,390px);padding:24px;border-radius:22px;background:#fffefa;text-align:center;box-shadow:0 25px 70px #0003;color:#26352d;h3{margin:12px 0 8px}p{font-size:.88rem;line-height:1.5;color:#727b73}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}button{height:44px;border-radius:12px;font-weight:800;border:1px solid #deded5;background:white;color:#39443b}.yes{background:#263f34;color:white;border-color:#263f34}.close{position:absolute;transform:translate(155px,-9px);border:0;background:transparent}`;
-export function SaveCustomerPrompt({onSave,onSkip,onClose,busy=false,title="¿Querés registrarte?",description="Podemos guardar tus datos para completar tus próximas compras y mostrarte el historial. Si preferís, podés continuar como invitado.",saveLabel="Sí, registrarme",skipLabel="Ahora no"}:{onSave:()=>void;onSkip:()=>void;onClose:()=>void;busy?:boolean;title?:string;description?:string;saveLabel?:string;skipLabel?:string}){return <Shade onMouseDown={e=>{if(e.target===e.currentTarget)onClose()}}><Card role="dialog" aria-modal="true"><button className="close" onClick={onClose} aria-label="Cerrar"><FaTimes/></button><FaUserCheck size={30}/><h3>{title}</h3><p>{description}</p><div className="actions"><button onClick={onSkip}>{skipLabel}</button><button className="yes" disabled={busy} onClick={onSave}>{busy?"Procesando...":saveLabel}</button></div></Card></Shade>}
+import { UserCheck, X } from "../../utils/icons.ts";
+import { Shade, Card } from "./SaveCustomerPromptStyles.ts";
+
+type Props = {
+  onSave: () => void;
+  onSkip: () => void;
+  onClose: () => void;
+  busy?: boolean;
+  title?: string;
+  description?: string;
+  saveLabel?: string;
+  skipLabel?: string;
+};
+
+export function SaveCustomerPrompt({
+  onSave,
+  onSkip,
+  onClose,
+  busy = false,
+  title = "¿Querés registrarte?",
+  description = "Podemos crear tu cuenta con tu celular. También podés continuar como invitado y, si más adelante te registrás con el mismo número, vincularemos tus compras anteriores.",
+  saveLabel = "Sí, registrarme",
+  skipLabel = "Continuar como invitado",
+}: Props) {
+  return (
+    <Shade onMouseDown={event => { if (event.target === event.currentTarget) onClose(); }}>
+      <Card role="dialog" aria-modal="true" aria-labelledby="save-customer-title">
+        <button className="close" type="button" onClick={onClose} aria-label="Cerrar"><X /></button>
+        <UserCheck size={30} weight="duotone" />
+        <h3 id="save-customer-title">{title}</h3>
+        <p>{description}</p>
+        <div className="actions">
+          <button type="button" onClick={onSkip}>{skipLabel}</button>
+          <button className="yes" type="button" disabled={busy} onClick={onSave}>{busy ? "Procesando…" : saveLabel}</button>
+        </div>
+      </Card>
+    </Shade>
+  );
+}

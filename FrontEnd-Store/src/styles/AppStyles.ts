@@ -1,4 +1,4 @@
-import { FaArrowLeft } from "../utils/icons.ts";
+import { ArrowLeft } from "../utils/icons.ts";
 import styled from "styled-components";
 export const Page = styled.div`min-height:100vh;margin:0;color:var(--app-ink);padding-bottom:100px;background:linear-gradient(180deg,#f8f7f0 0%,var(--app-canvas) 48%,#ecefe5 100%);`;
 export const Overlay = styled.div`position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(35,20,12,.62);backdrop-filter:blur(6px);`;
@@ -15,6 +15,6 @@ export const TotalRow = styled.div`display:flex;justify-content:space-between;al
 export const Notice = styled.div`margin:12px 0;padding:13px 14px;border:1px solid #ead6b9;border-radius:13px;background:#fff7e9;color:#815321;font-size:.82rem;line-height:1.5;`;
 export const EmptyState = styled.div`grid-column:1/-1;display:grid;justify-items:center;align-content:center;gap:9px;min-height:240px;padding:30px;border:1px dashed var(--app-border);border-radius:20px;background:var(--app-surface);color:var(--app-muted);text-align:center;strong{color:var(--app-primary);font-size:1rem}`;
 export const FullWidthSecondaryButton = styled(SecondaryButton)`width:100%;margin-top:9px;`;
-export const ForwardArrowIcon = styled(FaArrowLeft)`transform:rotate(180deg);`;
+export const ForwardArrowIcon = styled(ArrowLeft)`transform:rotate(180deg);`;
 export const NoticeIcon = styled.span`display:inline-flex;align-items:center;gap:8px;`;
 export const StoreAvailabilityNotice = styled.div`width:min(1120px,calc(100% - 32px));margin:18px auto;padding:14px 18px;border:1px solid var(--app-border);border-radius:14px;background:var(--app-surface-strong);color:var(--app-ink);line-height:1.5;strong{display:block;margin-bottom:3px;color:var(--app-primary)}`;

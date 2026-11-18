@@ -1,4 +1,4 @@
-import { FaTag, FaPercent } from "../../utils/icons.ts";
+import { Tag, Percent } from "../../utils/icons.ts";
 import type { StorePromotion } from "../../types/store.ts";
 import { PromotionSection, PromotionGrid, PromotionCard } from "./PromotionsStyles.ts";
 import { money } from "../../utils/money.ts";
@@ -12,7 +12,7 @@ export const Promotions = ({ items }: { items: StorePromotion[] }) => {
   return (
     <PromotionSection id="promociones">
       <header>
-        <span><FaTag /> OFERTAS PARA VOS</span>
+        <span><Tag /> OFERTAS PARA VOS</span>
         <h2>Promociones vigentes</h2>
         <p>Conocé las propuestas especiales disponibles en nuestra tienda.</p>
       </header>
@@ -28,8 +28,8 @@ export const Promotions = ({ items }: { items: StorePromotion[] }) => {
                   event.currentTarget.src = GENERAL_FOOD_IMAGE;
                 }}
               />
-              <span className="promotion-mark"><FaPercent /> PROMO</span>
-              <span className="promotion-icon" aria-hidden="true"><FaTag /></span>
+              <span className="promotion-mark"><Percent /> PROMO</span>
+              <span className="promotion-icon" aria-hidden="true"><Tag /></span>
             </div>
             <div className="content">
               <h3>{promotion.name}</h3>

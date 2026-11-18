@@ -15,6 +15,20 @@ interface Props {
 
 type SortMode = "featured" | "price-asc" | "price-desc" | "name";
 
+const normalizeSearch = (value: string) =>
+  value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("es").trim();
+
+const collectSearchValues = (value: unknown): string[] => {
+  if (value === null || value === undefined) return [];
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") return [String(value)];
+  if (Array.isArray(value)) return value.flatMap(collectSearchValues);
+  if (typeof value === "object") {
+    return Object.entries(value as Record<string, unknown>)
+      .flatMap(([key, nested]) => [key, ...collectSearchValues(nested)]);
+  }
+  return [];
+};
+
 export const Catalog = ({ products, getProductQuantity, onSelectProduct, onIncrementProduct, onDecrementProduct }: Props) => {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("Todos");
@@ -24,10 +38,13 @@ export const Catalog = ({ products, getProductQuantity, onSelectProduct, onIncre
   const categories = useMemo(() => ["Todos", ...Array.from(new Set(products.map((product) => product.category || "Otros"))).sort((a, b) => a.localeCompare(b, "es", { sensitivity: "base" }))], [products]);
 
   const filteredProducts = useMemo(() => {
-    const query = search.trim().toLocaleLowerCase("es");
+    const terms = normalizeSearch(search).split(/\s+/).filter(Boolean);
     const result = products.filter((product) => {
-      const matchesCategory = category === "Todos" || product.category === category;
-      const matchesSearch = !query || `${product.name} ${product.description || ""} ${product.category}`.toLocaleLowerCase("es").includes(query);
+      const matchesCategory = category === "Todos" || (product.category || "Otros") === category;
+      // Indexa todos los valores del objeto producto: nombre, descripción, categoría,
+      // ingredientes, guarniciones, identificadores, etiquetas y campos futuros del API.
+      const searchableText = normalizeSearch(collectSearchValues(product).join(" "));
+      const matchesSearch = terms.length === 0 || terms.every((term) => searchableText.includes(term));
       return matchesCategory && matchesSearch && (!availableOnly || product.available);
     });
     return result.sort((a, b) => {

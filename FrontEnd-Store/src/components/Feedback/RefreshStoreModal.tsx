@@ -1,4 +1,4 @@
-import { FaArrowsRotate, FaCircleInfo } from "../../utils/icons.ts";
+import { ArrowsClockwise, Info } from "../../utils/icons.ts";
 import styled from "styled-components";
 
 const Backdrop = styled.div`
@@ -73,12 +73,12 @@ export function RefreshStoreModal({ onRefresh }: { onRefresh: () => void }) {
         aria-labelledby="refresh-store-title"
       >
         <div className="icon">
-          <FaArrowsRotate />
+          <ArrowsClockwise />
         </div>
         <h2 id="refresh-store-title">Actualizá la tienda</h2>
         <p>El comercio modificó la configuración de disponibilidad de stock.</p>
         <div className="hint">
-          <FaCircleInfo /> Para mostrar correctamente los productos y sus
+          <Info /> Para mostrar correctamente los productos y sus
           condiciones de compra, necesitás actualizar esta página.
         </div>
         <button type="button" onClick={onRefresh}>

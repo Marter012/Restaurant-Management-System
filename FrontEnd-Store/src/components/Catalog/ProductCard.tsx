@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaMinus, FaPlus } from "../../utils/icons.ts";
+import { Minus, Plus } from "../../utils/icons.ts";
 import type { StoreProduct } from "../../types/store.ts";
 import { money } from "../../utils/money.ts";
 import { productImage, categoryImage } from "../../utils/images.ts";
@@ -86,7 +86,7 @@ export const ProductCard = ({
               onClick={onDecrement}
               aria-label={`Quitar una unidad de ${product.name}`}
             >
-              <FaMinus />
+              <Minus />
             </QuantityButton>
             <QuantityValue aria-live="polite">{quantity}</QuantityValue>
             <QuantityButton
@@ -94,12 +94,12 @@ export const ProductCard = ({
               onClick={onIncrement}
               aria-label={`Agregar otra unidad de ${product.name}`}
             >
-              <FaPlus />
+              <Plus />
             </QuantityButton>
           </QuantityControl>
         ) : (
           <AddButton type="button" onClick={onSelect}>
-            <FaPlus />
+            <Plus />
             <span>Elegir producto</span>
           </AddButton>
         )}
