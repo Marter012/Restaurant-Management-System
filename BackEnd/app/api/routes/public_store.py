@@ -1,11 +1,15 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 
 from app.database.connection import database
 from app.services.product_service import ProductService
 from app.services.settings_service import SettingsService
+from app.services.sales_analytics_service import SalesAnalyticsService
+from app.services.promotion_service import PromotionService
 
 router = APIRouter(prefix="/public", tags=["Public Store"])
 products_service = ProductService()
+sales_analytics_service = SalesAnalyticsService()
+promotions_service = PromotionService()
 
 
 async def _effective_product(product: dict, commercial: dict, allow_out_of_stock: bool = False) -> dict:
@@ -76,16 +80,26 @@ async def get_public_products():
         and (allow_out_of_stock or int(product.get("quantity", 0) or 0) > 0)
     ]
     result = [await _effective_product(product, commercial, allow_out_of_stock) for product in visible]
+    highlight_mode = store_config.get("product_highlight_mode", "manual")
+    ranking_period = int(store_config.get("ranking_period_days", 30) or 0)
+    ranking_limit = int(store_config.get("ranking_limit", 8) or 8)
+    ranked_ids = set()
+    if highlight_mode == "best_selling":
+        ranking = await sales_analytics_service.product_ranking(ranking_period, ranking_limit)
+        ranked_ids = {row["id"] for row in ranking["items"]}
     discounts = store_config.get("product_discounts", {}) or {}
     general_store_discount = float(store_config.get("general_store_discount", 0) or 0)
     for product in result:
-        product["featured"] = product.get("id") in featured_ids
+        product["featured"] = (product.get("id") in ranked_ids) if highlight_mode == "best_selling" else (product.get("id") in featured_ids)
+        product["highlight_mode"] = highlight_mode
         store_discount = float(discounts.get(product["id"], general_store_discount) or 0)
         if store_discount > 0:
             product["effective_discount_percentage"] = min(store_discount, 100)
             product["discount_amount"] = round(product["price"] * store_discount / 100, 2)
             product["final_price"] = round(product["price"] - product["discount_amount"], 2)
             product["discount_source"] = "store"
+    if highlight_mode == "best_selling":
+        result.sort(key=lambda row: row.get("featured", False), reverse=True)
     return result
 
 
@@ -93,3 +107,28 @@ async def get_public_products():
 async def get_public_unavailable_ingredients():
     cursor = database["unavailable_ingredients"].find({"active": True}, {"_id": 0, "ingredient": 1})
     return [row.get("ingredient", "") async for row in cursor]
+
+
+@router.get("/analytics/products")
+async def get_public_product_ranking(period_days: int = Query(default=30, ge=0, le=3650), limit: int = Query(default=8, ge=1, le=50)):
+    ranking = await sales_analytics_service.product_ranking(period_days, limit)
+    config = await SettingsService.get_store_configuration()
+    commercial = await SettingsService.get_commercial()
+    operational = await database["app_settings"].find_one({"_id": "operational"}) or {}
+    allow_out_of_stock = bool(operational.get("allow_out_of_stock", False))
+    all_products = await products_service.get_all()
+    enabled_ids = set(config.get("enabled_product_ids", []))
+    visible_ids = {str(row.get("id")) for row in all_products if row.get("status", True) is True and (not config.get("catalog_restricted") or str(row.get("id")) in enabled_ids) and (allow_out_of_stock or int(row.get("quantity", 0) or 0) > 0)}
+    ranking["items"] = [row for row in ranking["items"] if row["id"] in visible_ids]
+    return ranking
+
+
+@router.get("/analytics/promotions")
+async def get_public_promotion_ranking(period_days: int = Query(default=30, ge=0, le=3650), limit: int = Query(default=8, ge=1, le=50)):
+    ranking = await sales_analytics_service.promotion_ranking(period_days, limit)
+    config = await SettingsService.get_store_configuration()
+    promotions = await promotions_service.get_all()
+    allowed_ids = set(config.get("enabled_promotion_ids", []))
+    visible_ids = {str(row.get("id")) for row in promotions if row.get("status", True) is True and (not config.get("promotion_selection_restricted") or str(row.get("id")) in allowed_ids)}
+    ranking["items"] = [row for row in ranking["items"] if row["id"] in visible_ids]
+    return ranking

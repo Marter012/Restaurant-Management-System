@@ -1,0 +1,8 @@
+class TwilioProvider:
+    """Adaptador reservado para integrar Twilio Verify en una futura etapa."""
+
+    async def send_code(self, phone: str) -> dict:
+        raise NotImplementedError("Twilio todavía no está configurado.")
+
+    async def verify_code(self, phone: str, code: str) -> dict:
+        raise NotImplementedError("La validación OTP todavía no está configurada.")

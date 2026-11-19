@@ -21,13 +21,12 @@ import { Promotions } from "./components/Catalog/Promotions.tsx";
 import { FeaturedSection } from "./components/Catalog/FeaturedSection.tsx";
 import { calculatePromotionTotal, getEligiblePromotions } from "./utils/cart.ts";
 import { PromotionChoiceModal } from "./components/Cart/PromotionChoiceModal.tsx";
-import { BottomNavigation } from "./components/Layout/BottomNavigation.tsx";
+import { BottomNavigation, type StoreView } from "./components/Layout/BottomNavigation.tsx";
 import { StoreToast } from "./components/Feedback/StoreToast.tsx";
 import { ClosedStoreModal } from "./components/Feedback/ClosedStoreModal.tsx";
 import { CustomerAccount } from "./components/Account/CustomerAccount.tsx";
 import { SaveCustomerPrompt } from "./components/Account/SaveCustomerPrompt.tsx";
-import { accessCustomer } from "./services/publicApi.ts";
-import { clearCustomerSession, readCustomerSession, saveCustomerSession } from "./utils/customerSession.ts";
+import { clearCustomerSession, readCustomerSession } from "./utils/customerSession.ts";
 import { RefreshStoreModal } from "./components/Feedback/RefreshStoreModal.tsx";
 
 const App = () => {
@@ -53,10 +52,15 @@ const App = () => {
   const [cartOpen, setCartOpen] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [paying, setPaying] = useState(false);
-  const [accountOpen, setAccountOpen] = useState(false);
+  const [activeView, setActiveView] = useState<StoreView>(() => {
+    const path = window.location.pathname.replace(/\/$/, "") || "/";
+    if (path === "/productos") return "products";
+    if (path === "/promociones") return "promotions";
+    if (path === "/cuenta") return "account";
+    return "home";
+  });
   const [loginPromptOpen, setLoginPromptOpen] = useState(false);
   const [savePromptOpen, setSavePromptOpen] = useState(false);
-  const [savingCustomer, setSavingCustomer] = useState(false);
   const [pendingCheckoutAction, setPendingCheckoutAction] = useState<"pay"|"whatsapp"|null>(null);
   const [customerSession, setCustomerSession] = useState(readCustomerSession);
   const [closedModalOpen, setClosedModalOpen] = useState(false);
@@ -72,6 +76,23 @@ const App = () => {
     name: previewConfiguration.store_title || store.name,
     configuration: previewConfiguration,
   } : store;
+
+  const navigate = useCallback((view: StoreView) => {
+    const paths: Record<StoreView, string> = { home: "/", products: "/productos", promotions: "/promociones", account: "/cuenta" };
+    const path = paths[view];
+    if (window.location.pathname !== path) window.history.pushState({ storeView: view }, "", path);
+    setActiveView(view);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
+  useEffect(() => {
+    const onPopState = () => {
+      const path = window.location.pathname.replace(/\/$/, "") || "/";
+      setActiveView(path === "/productos" ? "products" : path === "/promociones" ? "promotions" : path === "/cuenta" ? "account" : "home");
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
 
   useEffect(() => {
     if (!store) return;
@@ -117,7 +138,7 @@ const App = () => {
       const session = readCustomerSession();
       if (session) {
         setCustomerSession(session);
-        setAccountOpen(true);
+        navigate("account");
         notify("Pago aprobado. Estamos actualizando tu historial de compras.", "success");
       } else {
         notify("El pago fue procesado. Iniciá sesión en Mi cuenta para consultar tus compras.", "success");
@@ -197,7 +218,7 @@ const App = () => {
     // Iniciar sesión desde "Mi cuenta" no debe abrir un carrito vacío.
     // Solo continuamos al checkout automáticamente si el cliente ya eligió productos.
     if (cart.length > 0) {
-      setAccountOpen(false);
+      navigate("home");
       openCheckout();
     } else {
       notify("Sesión iniciada. Todavía no tenés productos en el carrito.", "success");
@@ -215,27 +236,9 @@ const App = () => {
   };
 
   const saveCustomerBeforeCheckout = async () => {
-    const {firstName,lastName,phone,location} = checkoutState.checkout;
-    if (!firstName.trim() || !lastName.trim() || phone.replace(/\\D/g, "").length < 6) {
-      notify("Completá nombre, apellido y un celular válido para crear tu cuenta.","error");
-      return;
-    }
-    setSavingCustomer(true);
-    try {
-      // El endpoint de acceso del Backend recibe nombre, apellido y teléfono.
-      const result = await accessCustomer({first_name:firstName,last_name:lastName,phone});
-      const profile = {first_name:result.first_name,last_name:result.last_name,phone:result.phone,location:result.location || location};
-      saveCustomerSession(result.token,profile,result.expires_in);
-      setCustomerSession(readCustomerSession());
-      setSavePromptOpen(false);
-      notify("Tus datos quedaron guardados. ¡Gracias!","success");
-      const action = pendingCheckoutAction;
-      setPendingCheckoutAction(null);
-      if (action === "pay") await payWithMercadoPago();
-      if (action === "whatsapp") confirmWhatsApp();
-    } catch (error) {
-      notify(error instanceof Error ? error.message : "No pudimos guardar tus datos.","error");
-    } finally { setSavingCustomer(false); }
+    setSavePromptOpen(false);
+    navigate("account");
+    notify("Ingresá tu número de teléfono para acceder o crear tu cuenta.", "success");
   };
 
   useEffect(() => {
@@ -281,8 +284,8 @@ const App = () => {
       checkoutState.setCheckoutError("Las compras están deshabilitadas hasta que el comercio abra una caja y habilite las ventas online.");
       return;
     }
-    if (!checkoutState.checkout.customerName.trim() || checkoutState.checkout.phone.trim().length < 8) {
-      checkoutState.setCheckoutError("Completá tu nombre y un teléfono válido (al menos 8 caracteres) para continuar.");
+    if (checkoutState.checkout.phone.replace(/\D/g, "").length < 8) {
+      checkoutState.setCheckoutError("Ingresá un teléfono válido (al menos 8 dígitos) para continuar.");
       return;
     }
     if (
@@ -342,34 +345,31 @@ const App = () => {
     <Page>
       {closedModalOpen && <ClosedStoreModal onClose={()=>setClosedModalOpen(false)}/>}
       {refreshRequired && <RefreshStoreModal onRefresh={()=>window.location.reload()}/>}
-      <StoreHeader store={activeStore} cartCount={cartCount} onOpenCart={() => setCartOpen(true)} onOpenAccount={() => setAccountOpen(true)} />
-      <HeroSection config={activeStore?.configuration} salesAvailable={salesAvailable} />
-      {activeStore?.configuration?.show_featured && (
-        <FeaturedSection
+      <StoreHeader store={activeStore} cartCount={cartCount} onOpenCart={() => setCartOpen(true)} onOpenAccount={() => navigate("account")} />
+      {activeView === "home" && <>
+        <HeroSection config={activeStore?.configuration} salesAvailable={salesAvailable} onBrowse={() => navigate("products")} />
+        {activeStore?.configuration?.show_featured && <FeaturedSection
           products={products.filter((product) => product.featured)}
           getProductQuantity={getProductQuantity}
           onSelectProduct={selection.openProduct}
           onIncrementProduct={incrementProduct}
           onDecrementProduct={decrementProduct}
-        />
-      )}
-      {activeStore?.configuration?.show_promotions && (
-        <Promotions
-          items={promotions.filter((item) => item.status !== false)}
-        />
-      )}
-      <Catalog
+        />}
+        {activeStore?.configuration?.show_promotions && <Promotions items={promotions.filter((item) => item.status !== false && item.featured).slice(0, 3)} />}
+      </>}
+      {activeView === "products" && <Catalog
         products={products}
         getProductQuantity={getProductQuantity}
         onSelectProduct={selection.openProduct}
         onIncrementProduct={incrementProduct}
         onDecrementProduct={decrementProduct}
-      />
-      <StoreFooter store={activeStore} />
-      <BottomNavigation onCart={()=>setCartOpen(true)} onAccount={()=>setAccountOpen(true)} cartCount={cartCount}/>
-      {accountOpen && <CustomerAccount onClose={()=>setAccountOpen(false)} onToast={notify} onAuthenticated={onCustomerAuthenticated}/> }
-      {loginPromptOpen && <SaveCustomerPrompt title="¿Querés iniciar sesión?" description="Si ingresás tus datos, los vamos a completar automáticamente al finalizar tu compra. También podés continuar como invitado." saveLabel="Iniciar sesión" skipLabel="Continuar como invitado" onSave={()=>{setLoginPromptOpen(false);setAccountOpen(true)}} onSkip={()=>{setLoginPromptOpen(false);openCheckout()}} onClose={()=>setLoginPromptOpen(false)}/>}
-      {savePromptOpen && <SaveCustomerPrompt busy={savingCustomer} onSave={saveCustomerBeforeCheckout} onSkip={()=>{setSavePromptOpen(false);const action=pendingCheckoutAction;setPendingCheckoutAction(null);if(action==="pay")void payWithMercadoPago();if(action==="whatsapp")confirmWhatsApp()}} onClose={()=>{setSavePromptOpen(false);setPendingCheckoutAction(null)}}/>}
+      />}
+      {activeView === "promotions" && <Promotions items={promotions.filter((item) => item.status !== false)} />}
+      {activeView === "account" && <CustomerAccount onToast={notify} onAuthenticated={onCustomerAuthenticated} />}
+      {activeView !== "account" && <StoreFooter store={activeStore} />}
+      <BottomNavigation onNavigate={navigate} onCart={() => setCartOpen(true)} activeView={activeView} cartCount={cartCount} />
+      {loginPromptOpen && <SaveCustomerPrompt title="¿Querés iniciar sesión?" description="Si ingresás tus datos, los vamos a completar automáticamente al finalizar tu compra. También podés continuar como invitado." saveLabel="Iniciar sesión" skipLabel="Continuar como invitado" onSave={()=>{setLoginPromptOpen(false);navigate("account")}} onSkip={()=>{setLoginPromptOpen(false);openCheckout()}} onClose={()=>setLoginPromptOpen(false)}/>}
+      {savePromptOpen && <SaveCustomerPrompt onSave={saveCustomerBeforeCheckout} onSkip={()=>{setSavePromptOpen(false);const action=pendingCheckoutAction;setPendingCheckoutAction(null);if(action==="pay")void payWithMercadoPago();if(action==="whatsapp")confirmWhatsApp()}} onClose={()=>{setSavePromptOpen(false);setPendingCheckoutAction(null)}}/>}
       {toast && <StoreToast message={toast.message} kind={toast.kind} onClose={()=>setToast(null)}/> }
       {promotionChoiceOpen && eligiblePromotions.length > 1 && (
         <PromotionChoiceModal

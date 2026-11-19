@@ -9,11 +9,11 @@
     "preview": "vite preview --host 0.0.0.0"
   },
   "dependencies": {
+    "@phosphor-icons/react": "^2.1.10",
     "axios": "^1.19.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "styled-components": "^6.5.3",
-    "@phosphor-icons/react": "^2.1.10"
+    "styled-components": "^6.5.3"
   },
   "devDependencies": {
     "@types/react": "^19.2.17",

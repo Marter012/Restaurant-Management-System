@@ -52,3 +52,6 @@ async def create_indexes():
     await database["store_customers"].create_index("phone", unique=True)
     await database["store_customers"].create_index("token_hash", unique=True)
     await database["online_orders"].create_index("customer_id")
+
+    # Asociación rápida de compras de invitado con cuentas registradas por teléfono.
+    await database["online_orders"].create_index("customer_phone_normalized")

@@ -1,73 +1,55 @@
-# Implementación — FrontEnd Store BoutiqueSabores
+# FrontEnd Store — navegación por secciones, cuenta e historial
 
-## Cambios entregados
+## Navegación
 
-### Identidad visual y navegación
-- Se incorporó el encabezado principal que estaba definido pero no se renderizaba desde `App`.
-- El encabezado muestra el logotipo configurado en Gestión y utiliza un ícono Phosphor de respaldo si la URL de la imagen falla.
-- La navegación se adapta a escritorio y móvil; se corrigió la duplicación de encabezados en pantallas pequeñas.
-- Se agregó acceso a Mi cuenta en el encabezado y se conserva el acceso inferior en móviles.
+La tienda usa renderización por secciones React con rutas visibles:
 
-### Catálogo y búsqueda
-- Filtro horizontal por todas las categorías recibidas desde el Backend.
-- Filtro de disponibilidad, orden y limpieza de filtros.
-- La búsqueda consulta todos los valores del objeto de producto entregado por el API, incluyendo nombre, descripción, categoría, ingredientes, guarniciones, identificadores y campos futuros.
-- Búsqueda sin distinguir mayúsculas ni acentos y con coincidencia de todos los términos ingresados.
+- `/` — Inicio.
+- `/productos` — Catálogo completo.
+- `/promociones` — Todas las promociones vigentes.
+- `/cuenta` — Cuenta del cliente.
 
-### Cuenta e historial
-- La cuenta usa el contrato real del Backend: `POST /public/customers/access`, con `first_name`, `last_name` y `phone`.
-- No se exige ubicación para crear o acceder a la cuenta porque el esquema del Backend no la requiere.
-- El historial usa `GET /public/customers/me/orders` con token Bearer.
-- La sesión respeta los 600 segundos informados por el Backend.
-- El acceso a cuenta informa que las compras invitadas anteriores se recuperan usando el mismo teléfono.
+La navegación inferior cambia la vista sin recargar la aplicación. Se conserva el botón superior derecho del carrito. Se agregó `vercel.json` para que las rutas internas carguen correctamente al abrirlas directamente o actualizar el navegador.
 
-### Compras como invitado
-- Se conserva la posibilidad de finalizar una compra sin cuenta.
-- Se corrigió el flujo de “Continuar como invitado”: ya no borra nombre, teléfono y datos del checkout antes de enviar el pago o abrir WhatsApp.
-- El Backend de la versión implementada asocia al iniciar sesión las órdenes invitadas cuyo teléfono normalizado coincide con el teléfono de la cuenta.
+## Inicio y destacados
 
-### Reembolsos
-- El historial muestra el botón para compras con pago aprobado y estados que indican que la comanda ya está vinculada (`paid`, `preparing`, `ready`, `delivered`).
-- El botón abre una confirmación propia del Store y envía `POST /public/customers/me/orders/{order_number}/refund` con el token Bearer.
-- La interfaz deja claro que el cliente solicita el reembolso; no se ejecuta el reintegro desde el navegador. Gestión recibe la solicitud y el administrador procesa el reembolso desde su flujo.
-- Se muestran los estados `requested`, `processing`, `refunded_needs_sync` y `refunded`.
+- Inicio muestra el banner configurado desde Gestión.
+- Productos destacados se alimentan de `featured` recibido en `GET /public/products`.
+- Inicio muestra como máximo tres promociones activas con `featured: true`.
+- `/promociones` muestra todas las promociones activas.
 
-### Iconografía y estructura
-- Todos los íconos del FrontEnd-Store utilizan exports nativos de `@phosphor-icons/react`.
-- Se eliminaron los alias `Fa*`, `Md*`, `Io*`, `Ri*`, `Fi*` y cualquier import de `react-icons`.
-- Los estilos de cuenta, confirmación de registro y navegación inferior se separaron a archivos `*Styles.ts`.
+El Backend complementario incorpora `featured_promotion_ids` en la configuración Store. La pantalla de Gestión debe guardar los IDs seleccionados en ese campo para que el comercio administre explícitamente las promociones destacadas. Como compatibilidad, si todavía no hay IDs en ese campo, el Backend usa `enabled_promotion_ids` como selección heredada.
 
-## Contrato de Backend verificado
+## Cuenta
 
-Esta implementación está alineada con las rutas presentes en la versión de Backend previamente entregada:
+- Cuenta es una página completa; ya no se renderiza como modal.
+- El inicio de sesión solicita únicamente el teléfono.
+- Si el teléfono ya existe, el Backend devuelve los datos guardados.
+- Si no existe, crea la cuenta con nombre y apellido vacíos.
+- La columna izquierda muestra teléfono, nombre y apellido (y dirección si existe).
+- La columna derecha muestra tarjetas de pedidos con fecha, total, método/proveedor de pago, estado del pago y modalidad.
+- Al seleccionar una tarjeta se abre un modal de detalle del pedido con productos, cantidades, guarniciones, ingredientes quitados, notas, envío/retiro, dirección, horario, promociones aplicadas y total.
+- Se conserva la solicitud de reembolso cuando el estado del pedido y del pago lo permiten.
+- No se utiliza OTP ni se requieren credenciales de Twilio.
 
-- `GET /public/store`
-- `GET /public/products`
-- `GET /public/unavailable-ingredients`
-- `GET /public/promotions`
-- `POST /public/online-orders`
-- `POST /public/customers/access`
-- `GET /public/customers/me/orders`
-- `POST /public/customers/me/orders/{order_number}/refund`
+## Historial
 
-El Backend de Gestión procesa la devolución real en `POST /online-orders/{order_id}/refund`. El Store no llama a esa ruta administrativa ni expone credenciales de Mercado Pago.
+El Frontend ahora presenta el error real devuelto por la API y permite reintentar la carga, en lugar de mostrar únicamente un mensaje genérico. El Backend complementario amplía el DTO del historial para devolver los datos requeridos por las tarjetas y el modal de detalle.
 
-## Configuración para Vercel
+También se corrigió en el repositorio del Backend el ordenamiento de pedidos históricos cuando `created_at` está mezclado entre valores `datetime` y cadenas ISO. Comparar directamente ambos tipos podía producir un `TypeError` y hacer fallar la carga completa del historial.
 
-Configurar la variable de entorno:
+## Instalación
 
-`VITE_API_URL=https://api-restaurant-management-system.onrender.com`
+1. Respaldar el FrontEnd-Store actual.
+2. Reemplazarlo por el contenido de este ZIP.
+3. Ejecutar `npm ci`.
+4. Configurar `VITE_API_URL` con la URL base del Backend, sin `/public` al final.
+5. Ejecutar `npm run build` y desplegar.
 
-Aplicarla a Production y Preview según corresponda y volver a desplegar. La URL debe ser la base del Backend, sin `/public` al final.
+## Variables
 
-No subir `.env` al repositorio. El ZIP incluye `.env.example`; crear el `.env` local a partir de ese ejemplo.
+No se necesitan variables de Twilio. Mantener únicamente las variables existentes del Store, por ejemplo `VITE_API_URL`.
 
-## Verificaciones
+## Verificación pendiente en el entorno del proyecto
 
-- `tsc -b`: ejecutado correctamente sin errores de TypeScript.
-- Escaneo de `src`: no quedan nombres de íconos con prefijos de React Icons ni imports de `react-icons`.
-- La compilación Vite no pudo completarse en este entorno de trabajo porque el `node_modules` incluido en el ZIP original no contiene el binding nativo opcional de Rolldown para Linux (`@rolldown/binding-linux-x64-gnu`). El `package-lock.json` sí declara ese paquete opcional. En Vercel debe realizarse una instalación limpia con `npm ci` para resolver las dependencias de la plataforma.
-
-## Importante sobre seguridad
-
-El contrato actual de cuenta del Backend identifica al cliente por nombre, apellido y teléfono y mantiene la sesión durante 10 minutos. No incluye verificación OTP. Para producción con historial de compras y solicitudes de reembolso, es recomendable incorporar verificación por SMS o WhatsApp en el Backend.
+Los archivos fuente se actualizaron. En este entorno no se pudo ejecutar `npm run build` porque el ZIP no incluye `node_modules` y la instalación de dependencias no terminó dentro del tiempo disponible. Ejecutar `npm ci` en el equipo local o en CI y luego `npm run build` antes del despliegue.

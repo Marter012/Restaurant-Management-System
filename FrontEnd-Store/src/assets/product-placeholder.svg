@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="600"
+     height="600"
+     viewBox="0 0 600 600"
+     role="img"
+     aria-labelledby="title description">
+  <title id="title">Imagen de producto no disponible</title>
+  <desc id="description">Imagen de reemplazo de Setsu para productos sin fotografía.</desc>
+
+  <rect width="600" height="600" fill="#F5E8D1"/>
+
+  <circle cx="300" cy="270" r="155" fill="#FFFFFF" opacity="0.58"/>
+  <circle cx="300" cy="270" r="118"
+          fill="none" stroke="#B7834E" stroke-width="5" opacity="0.72"/>
+
+  <path d="M300 190
+           C265 226 235 254 235 292
+           C235 330 264 358 300 358
+           C336 358 365 330 365 292
+           C365 254 335 226 300 190Z"
+        fill="#B7834E" opacity="0.22"/>
+
+  <path d="M300 225
+           C280 251 265 270 265 294
+           C265 316 280 332 300 332
+           C320 332 335 316 335 294
+           C335 270 320 251 300 225Z"
+        fill="#B7834E" opacity="0.58"/>
+
+  <text x="300" y="455"
+        text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="34"
+        font-weight="700"
+        letter-spacing="5"
+        fill="#4A2818">SETSU</text>
+
+  <text x="300" y="493"
+        text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="19"
+        fill="#8A715F">Imagen no disponible</text>
+</svg>

@@ -30,7 +30,7 @@ export async function getStorePromotions(): Promise<StorePromotion[]> {
 
 export async function createMercadoPagoOrder(cart: CartItem[], checkout: CheckoutData) {
   const payload = {
-    customer_name: checkout.customerName,
+    customer_name: checkout.customerName || "",
     phone: checkout.phone,
     email: checkout.email || null,
     fulfillment: checkout.fulfillment,
@@ -55,25 +55,46 @@ export async function createMercadoPagoOrder(cart: CartItem[], checkout: Checkou
 
 export interface CustomerProfile { first_name: string; last_name: string; phone: string; location?: string; }
 export interface CustomerSession extends CustomerProfile { token:string; expires_in:number; }
-export async function accessCustomer(payload:CustomerProfile):Promise<CustomerSession>{const {data}=await publicApi.post<CustomerSession>("/public/customers/access",payload);return data;}
+export async function accessCustomer(payload: { phone: string; first_name?: string; last_name?: string }): Promise<CustomerSession> {
+  const { data } = await publicApi.post<CustomerSession>("/public/customers/access", payload);
+  return data;
+}
 export async function getCustomerMe(token:string):Promise<CustomerProfile>{const {data}=await publicApi.get<CustomerProfile>("/public/customers/me",{headers:{Authorization:`Bearer ${token}`}});return data;}
-export async function registerCustomer(payload:CustomerProfile):Promise<CustomerSession>{return accessCustomer(payload);}
+export interface CustomerOrderItem {
+  name: string;
+  quantity: number;
+  unit_price?: number;
+  line_total?: number;
+  garnish?: string;
+  removed_ingredients?: string[];
+  note?: string;
+}
 export interface CustomerOrder {
   order_number: number;
   created_at: string;
   total: number;
-  items: { name: string; quantity: number }[];
+  items: CustomerOrderItem[];
   payment_status: "approved" | "refunded" | string;
+  payment_provider?: string;
+  payment_method?: string;
   status: string;
+  fulfillment?: "pickup" | "delivery" | string;
+  address?: string;
+  pickup_time?: string;
+  note?: string;
+  applied_promotions?: { promotion_id?: string; name: string; bundles?: number; saving?: number }[];
   refund_status?: "requested" | "processing" | "refunded_needs_sync" | "refunded" | string | null;
   refund_requested_at?: string | null;
 }
 
 export async function getCustomerOrders(token: string): Promise<CustomerOrder[]> {
-  const { data } = await publicApi.get<CustomerOrder[]>("/public/customers/me/orders", {
+  const { data } = await publicApi.get<CustomerOrder[] | { orders?: CustomerOrder[]; items?: CustomerOrder[] }>("/public/customers/me/orders", {
     headers: { Authorization: `Bearer ${token}` },
   });
-  return Array.isArray(data) ? data : [];
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data?.orders)) return data.orders;
+  if (Array.isArray(data?.items)) return data.items;
+  return [];
 }
 
 export async function requestCustomerOrderRefund(token: string, orderNumber: number): Promise<{ message: string; refund_status: string }> {

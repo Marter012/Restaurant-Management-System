@@ -1,90 +1,34 @@
-import styled from "styled-components";
-
-export const Shade = styled.div`
-  position: fixed; inset: 0; z-index: 160; display: grid; place-items: center;
-  padding: 16px; background: rgba(19, 30, 24, .62); backdrop-filter: blur(8px);
-`;
-export const Panel = styled.section`
-  width: min(100%, 560px); max-height: min(88dvh, 820px); overflow: hidden;
-  display: flex; flex-direction: column; color: #26352d; background: #fffefa;
-  border: 1px solid rgba(255,255,255,.7); border-radius: 24px;
-  box-shadow: 0 28px 90px rgba(0,0,0,.24);
-`;
-export const Header = styled.header`
-  display:flex; align-items:center; justify-content:space-between; gap:16px;
-  padding:22px 24px; border-bottom:1px solid #eee9df;
-  h2{display:flex;align-items:center;gap:10px;margin:0;font-size:1.18rem;letter-spacing:-.03em}
-  h2 svg{color:#a8794f}
-  button{display:grid;place-items:center;width:38px;height:38px;border:0;border-radius:12px;background:#f3f0e9;color:#39443b;cursor:pointer}
-`;
-export const Body = styled.div`
-  overflow:auto; padding:22px 24px 26px; overscroll-behavior:contain;
-  p{color:#788078;font-size:.9rem;line-height:1.6;margin:0 0 18px}
-  @media(max-width:520px){padding:18px}
-`;
-export const Field = styled.label`
-  display:grid;gap:7px;margin:14px 0;color:#39443b;font-size:.78rem;font-weight:800;
-  input{width:100%;height:48px;box-sizing:border-box;padding:0 14px;border:1px solid #e5dfd3;border-radius:13px;background:#fff;color:#26352d;font:inherit;font-size:.92rem;outline:none;transition:border-color .18s,box-shadow .18s}
-  input:focus{border-color:#a8794f;box-shadow:0 0 0 3px rgba(168,121,79,.13)}
-`;
-export const HelperText = styled.p`
-  margin-top: 13px !important;
-  font-size: .76rem !important;
-`;
-export const Primary = styled.button`
-  width:100%;height:48px;margin-top:10px;border:0;border-radius:13px;background:#263f34;color:white;font-weight:800;cursor:pointer;
-  &:disabled{opacity:.55;cursor:not-allowed}
-`;
-export const AccountIntro = styled.div`
-  display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;
-  p{margin:0}
-  button{display:flex;align-items:center;gap:7px;flex:none;border:1px solid #e8e1d5;border-radius:11px;background:#fff;padding:9px 11px;color:#435148;font-weight:750;cursor:pointer}
-`;
-export const OrderList = styled.div`display:grid;gap:12px`;
-export const OrderCard = styled.article`
-  padding:15px;border:1px solid #ece7dd;border-radius:16px;background:#fff;
-`;
-export const OrderTop = styled.div`
-  display:flex;justify-content:space-between;align-items:flex-start;gap:12px;
-  strong{display:flex;align-items:center;gap:7px;font-size:.92rem;color:#26352d}
-  b{font-size:.95rem;white-space:nowrap}
-`;
-export const OrderMeta = styled.p`
-  margin:7px 0 12px!important;font-size:.78rem!important;color:#858b83!important;
-`;
-export const ItemList = styled.div`
-  display:grid;gap:4px;margin:0 0 12px;color:#5e685f;font-size:.82rem;
-`;
-export const Status = styled.span<{ $tone:"success"|"warning"|"muted" }>`
-  display:inline-flex;align-items:center;padding:5px 9px;border-radius:999px;font-size:.7rem;font-weight:850;
-  color:${p=>p.$tone==="success"?"#276344":p.$tone==="warning"?"#8a5a18":"#68736a"};
-  background:${p=>p.$tone==="success"?"#e9f5ec":p.$tone==="warning"?"#fff3d9":"#f0f1ed"};
-`;
-export const RefundButton = styled.button`
-  display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:42px;
-  margin-top: 12px;
-  border:1px solid #ead8d0;border-radius:12px;background:#fff8f5;color:#9a4935;font-weight:800;cursor:pointer;
-  &:disabled{opacity:.6;cursor:wait}
-`;
-export const Empty = styled.div`
-  display:grid;justify-items:center;gap:8px;padding:30px 18px;border:1px dashed #ddd6c9;border-radius:16px;text-align:center;
-  color:#778078;svg{font-size:28px;color:#a8794f}strong{color:#36443a}
-`;
-export const Logout = styled.button`
-  display:flex;align-items:center;gap:8px;margin:20px auto 0;padding:10px;border:0;background:transparent;color:#9b5142;font-weight:800;cursor:pointer;
-`;
-export const ConfirmShade = styled.div`
-  position: fixed; inset: 0; z-index: 190; display: grid; place-items: center;
-  padding: 18px; background: rgba(13, 23, 18, .52); backdrop-filter: blur(5px);
-`;
-export const ConfirmCard = styled.section`
-  width: min(100%, 410px); padding: 24px; border-radius: 20px; background: #fffefa;
-  box-shadow: 0 24px 80px rgba(0,0,0,.25); text-align: center;
-  h3 { margin: 12px 0 8px; color: #26352d; font-size: 1.12rem; }
-  p { margin: 0; color: #788078; font-size: .87rem; line-height: 1.55; }
-  .icon { display: grid; place-items: center; width: 48px; height: 48px; margin: 0 auto; border-radius: 15px; background: #fff0e9; color: #a34f38; font-size: 25px; }
-  .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-  button { min-height: 45px; border-radius: 12px; font-weight: 800; cursor: pointer; }
-  .cancel { border: 1px solid #e5dfd3; background: white; color: #536056; }
-  .confirm { border: 1px solid #9a4935; background: #9a4935; color: white; }
-`;
+import styled, { keyframes } from "styled-components";
+const spin = keyframes`to{transform:rotate(360deg)}`;
+export const AccountPage = styled.main`width:min(1180px,calc(100% - 36px));margin:0 auto;padding:30px 0 60px;min-height:65vh;`;
+export const AccountHeading = styled.header`margin:0 0 26px;span{font-size:.72rem;font-weight:950;letter-spacing:.16em;color:var(--app-accent)}h1{margin:8px 0;color:var(--app-primary);font-size:clamp(1.8rem,4vw,2.6rem);letter-spacing:-.055em}p{margin:0;color:var(--app-muted);font-size:.95rem}`;
+export const AccountGrid = styled.div`display:grid;grid-template-columns:minmax(260px, .78fr) minmax(0,1.7fr);gap:22px;align-items:start;@media(max-width:760px){grid-template-columns:1fr}`;
+export const ProfileCard = styled.aside`padding:25px;border:1px solid var(--app-border);border-radius:22px;background:var(--app-surface);box-shadow:0 12px 35px rgba(45,38,24,.06);.eyebrow{display:block;margin-top:18px;color:var(--app-accent);font-size:.68rem;font-weight:950;letter-spacing:.14em}h2{margin:7px 0 20px;color:var(--app-primary);font-size:1.45rem}.profile-note{margin:18px 0 0;color:var(--app-muted);font-size:.78rem;line-height:1.5}`;
+export const ProfileAvatar = styled.div`display:grid;place-items:center;width:66px;height:66px;border-radius:20px;background:color-mix(in srgb,var(--app-accent) 15%,white);color:var(--app-primary)`;
+export const ProfileDetails = styled.div`display:grid;gap:0;border-top:1px solid var(--app-border)`;
+export const ProfileRow = styled.div`display:grid;gap:5px;padding:13px 0;border-bottom:1px solid var(--app-border);span{font-size:.72rem;color:var(--app-muted)}strong{font-size:.9rem;color:var(--app-ink);overflow-wrap:anywhere}`;
+export const OrdersPanel = styled.section`min-width:0;padding:23px;border:1px solid var(--app-border);border-radius:22px;background:var(--app-surface);box-shadow:0 12px 35px rgba(45,38,24,.06)`;
+export const OrdersHeader = styled.header`display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:19px;>div>span{font-size:.68rem;font-weight:950;letter-spacing:.15em;color:var(--app-accent)}h2{margin:5px 0;color:var(--app-primary);font-size:1.45rem}p{margin:0;color:var(--app-muted);font-size:.82rem;line-height:1.5}button{display:flex;align-items:center;gap:7px;flex:none;padding:9px 11px;border:1px solid var(--app-border);border-radius:11px;background:var(--app-surface);color:var(--app-primary);font-weight:800;cursor:pointer}button:disabled{opacity:.55}.spin{animation:${spin} 1s linear infinite}@media(max-width:480px){flex-direction:column}`;
+export const LoginPanel = styled.section`width:min(100%,470px);margin:28px auto 55px;padding:30px;border:1px solid var(--app-border);border-radius:24px;background:var(--app-surface);box-shadow:0 18px 50px rgba(45,38,24,.08);.login-icon{display:grid;place-items:center;width:60px;height:60px;border-radius:18px;background:color-mix(in srgb,var(--app-accent) 15%,white);color:var(--app-primary)}h2{margin:17px 0 8px;color:var(--app-primary);font-size:1.45rem}p{margin:0;color:var(--app-muted);font-size:.9rem;line-height:1.6}small{display:block;margin-top:15px;color:var(--app-muted);font-size:.73rem;line-height:1.5}`;
+export const LoginField = styled.label`display:grid;gap:8px;margin:22px 0 12px;color:var(--app-primary);font-size:.8rem;font-weight:900;input{width:100%;height:51px;box-sizing:border-box;padding:0 14px;border:1px solid var(--app-border);border-radius:13px;background:#fff;color:var(--app-ink);font:inherit;font-size:.95rem;outline:none}input:focus{border-color:var(--app-accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--app-accent) 17%,transparent)}`;
+export const LoginButton = styled.button`width:100%;min-height:50px;border:0;border-radius:13px;background:var(--app-primary);color:white;font-weight:900;cursor:pointer;&:disabled{opacity:.5;cursor:not-allowed}`;
+export const OrderCards = styled.div`display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;@media(max-width:620px){grid-template-columns:1fr}`;
+export const OrderMiniCard = styled.button`display:grid;gap:12px;width:100%;padding:16px;text-align:left;border:1px solid var(--app-border);border-radius:16px;background:#fff;color:var(--app-ink);cursor:pointer;transition:transform .18s,border-color .18s,box-shadow .18s;&:hover{transform:translateY(-2px);border-color:var(--app-accent);box-shadow:0 9px 24px rgba(45,38,24,.08)}`;
+export const OrderMiniTop = styled.div`display:grid;gap:6px;>div{display:flex;justify-content:space-between;gap:10px;align-items:center}.order-number{font-size:.7rem;font-weight:950;letter-spacing:.08em;color:var(--app-accent)}strong{color:var(--app-primary);font-size:1.12rem}.date{color:var(--app-muted);font-size:.74rem}`;
+export const OrderBadges = styled.div`display:flex;flex-wrap:wrap;gap:6px`;
+export const Badge = styled.span<{$kind:"success"|"warning"|"muted"|"neutral"}>`display:inline-flex;align-items:center;gap:5px;padding:6px 8px;border-radius:999px;font-size:.68rem;font-weight:850;color:${p=>p.$kind==="success"?"#246443":p.$kind==="warning"?"#895c16":p.$kind==="muted"?"#6e756f":"#58645b"};background:${p=>p.$kind==="success"?"#e8f4eb":p.$kind==="warning"?"#fff2d8":p.$kind==="muted"?"#eff0ed":"#f1f2ee"}`;
+export const OrderMiniMeta = styled.div`display:flex;flex-wrap:wrap;gap:12px;color:var(--app-muted);font-size:.75rem;span{display:flex;align-items:center;gap:5px}`;
+export const EmptyOrders = styled.div`display:grid;justify-items:center;gap:9px;min-height:210px;align-content:center;padding:25px;border:1px dashed var(--app-border);border-radius:16px;text-align:center;color:var(--app-muted);svg{color:var(--app-accent)}strong{color:var(--app-primary)}span{max-width:440px;font-size:.82rem;line-height:1.5}button{padding:9px 15px;border:0;border-radius:10px;background:var(--app-primary);color:white;font-weight:800;cursor:pointer}`;
+export const InlineError = styled.p`color:#a04435;font-size:.8rem`;
+export const Logout = styled.button`display:flex;align-items:center;gap:8px;margin:22px 0 0;padding:10px 0;border:0;background:transparent;color:#a04435;font-weight:850;cursor:pointer`;
+export const DetailShade = styled.div`position:fixed;inset:0;z-index:190;display:grid;place-items:center;padding:18px;background:rgba(18,26,21,.62);backdrop-filter:blur(7px)`;
+export const DetailModal = styled.section`width:min(100%,680px);max-height:min(90dvh,850px);overflow:auto;border:1px solid #ffffffb8;border-radius:22px;background:var(--app-surface);box-shadow:0 25px 80px rgba(0,0,0,.28)`;
+export const DetailHeader = styled.header`position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:19px 22px;border-bottom:1px solid var(--app-border);background:var(--app-surface);span{font-size:.65rem;font-weight:950;letter-spacing:.14em;color:var(--app-accent)}h2{margin:5px 0 0;color:var(--app-primary);font-size:1.25rem}button{display:grid;place-items:center;width:38px;height:38px;border:1px solid var(--app-border);border-radius:50%;background:white;color:var(--app-primary);cursor:pointer}`;
+export const DetailContent = styled.div`padding:21px 22px 25px;h3{display:flex;align-items:center;gap:8px;margin:22px 0 12px;color:var(--app-primary);font-size:1rem}.total{display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding-top:16px;border-top:1px solid var(--app-border);color:var(--app-muted);strong{font-size:1.35rem;color:var(--app-primary)}}.refund-state{padding:10px;border-radius:10px;background:#fff2d8;color:#875914;font-size:.82rem}.refund-state{margin:12px 0 0}`;
+export const DetailGrid = styled.div`display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;@media(max-width:480px){grid-template-columns:1fr}`;
+export const DetailBlock = styled.div`display:grid;gap:5px;padding:12px;border:1px solid var(--app-border);border-radius:12px;background:#fff;span{font-size:.7rem;color:var(--app-muted)}strong{font-size:.84rem;color:var(--app-ink);overflow-wrap:anywhere}`;
+export const DetailItems = styled.div`display:grid;gap:0;border:1px solid var(--app-border);border-radius:13px;background:#fff`;
+export const DetailItem = styled.div`display:flex;justify-content:space-between;gap:12px;padding:13px;border-bottom:1px solid var(--app-border);&:last-child{border-bottom:0}div{display:grid;gap:4px}strong{font-size:.85rem;color:var(--app-ink)}span{font-size:.74rem;color:var(--app-muted)}b{white-space:nowrap;color:var(--app-primary);font-size:.85rem}`;
+export const DetailActions = styled.div`display:flex;gap:10px`;
+export const ActionButton = styled.button`padding:10px 14px;border:1px solid var(--app-border);border-radius:11px;background:white;color:var(--app-primary);font-weight:800`;
+export const RefundButton = styled.button`width:100%;min-height:46px;margin-top:12px;border:1px solid #ead8d0;border-radius:12px;background:#fff8f5;color:#9a4935;font-weight:850;cursor:pointer;&:disabled{opacity:.6;cursor:wait}`;

@@ -189,6 +189,85 @@ class CashRegisterService(BaseService):
         requested_status = data.status_cash_register
 
         # -----------------------------------------------------
+        # UNA CAJA CERRADA SOLO ADMITE CORRECCIONES DE:
+        # TURNO, EFECTIVO DE APERTURA Y EFECTIVO CONTADO.
+        # Fecha, fechas horarias y estado permanecen inmutables.
+        # -----------------------------------------------------
+
+        if current_status == "close":
+
+            if current_user_role != "admin":
+                raise NotFoundException(
+                    "Solo un administrador puede modificar una caja cerrada."
+                )
+
+            if requested_status is not None and requested_status != "close":
+                raise NotFoundException(
+                    "El estado de una caja cerrada no puede modificarse ni reabrirse."
+                )
+
+            if data.opening_amount is not None and data.opening_amount < 0:
+                raise NotFoundException(
+                    "El monto de apertura no puede ser negativo."
+                )
+
+            if data.closing_amount is not None and data.closing_amount < 0:
+                raise NotFoundException(
+                    "El efectivo de cierre no puede ser negativo."
+                )
+
+            update_data = data.model_dump(
+                exclude_none=True,
+                exclude_unset=True
+            )
+
+            # Nunca modificar estado, fecha, opened_at ni closed_at.
+            update_data.pop("status_cash_register", None)
+
+            new_shift = update_data.get("shift", cash_register.get("shift"))
+            if new_shift not in ["morning", "night"]:
+                raise NotFoundException(
+                    "Turno no válido. Use: morning o night"
+                )
+
+            if new_shift != cash_register.get("shift"):
+                existing = await self.repository.get_by_date_and_shift(
+                    cash_register.get("date"),
+                    new_shift
+                )
+                if existing and str(existing.get("id")) != str(cash_register_id):
+                    raise NotFoundException(
+                        f"Ya existe una caja registrada para el día "
+                        f"{cash_register.get('date')} del turno {new_shift}."
+                    )
+
+            # Recalcular SIEMPRE el resumen con los valores vigentes,
+            # aunque solo se haya modificado uno de los dos importes.
+            opening_amount = update_data.get(
+                "opening_amount",
+                cash_register.get("opening_amount", 0)
+            ) or 0
+            closing_amount = update_data.get(
+                "closing_amount",
+                cash_register.get("closing_amount")
+            )
+
+            if closing_amount is None:
+                raise NotFoundException(
+                    "La caja cerrada no tiene un efectivo contado de cierre válido."
+                )
+
+            summary = await self._calculate_cash_register_summary(
+                cash_register_id,
+                opening_amount,
+                closing_amount
+            )
+            update_data.update(summary)
+            update_data["updated_by_user_id"] = str(current_user_id)
+
+            return await self.repository.update(cash_register_id, update_data)
+
+        # -----------------------------------------------------
         # NO PERMITIR REABRIR
         # -----------------------------------------------------
 
@@ -295,276 +374,26 @@ class CashRegisterService(BaseService):
                 )
 
             # -------------------------------------------------
-            # OBTENER MOVIMIENTOS DE LA CAJA
+            # RECALCULAR EL RESUMEN FINANCIERO
             # -------------------------------------------------
 
-            movements = (
-                await self.cash_movement_repository
-                .get_by_cash_register_id(
-                    cash_register_id
-                )
-            )
-
-            # =================================================
-            # VARIABLES DEL RESUMEN
-            # =================================================
-
-            sales_total = 0
-
-            sales_cash = 0
-
-            sales_transfer = 0
-
-            sales_qr = 0
-
-            sales_debit_card = 0
-
-            manual_income = 0
-
-            manual_expense = 0
-
-            manual_income_cash = 0
-
-            manual_expense_cash = 0
-
-            # =================================================
-            # RECORRER MOVIMIENTOS
-            # =================================================
-
-            for movement in movements:
-
-                amount = movement.get(
-                    "amount",
-                    0
-                ) or 0
-
-                movement_type = movement.get(
-                    "type"
-                )
-
-                method_payment = movement.get(
-                    "method_payment"
-                )
-
-                order_id = movement.get(
-                    "order_id"
-                )
-
-                # =================================================
-                # VENTA / COMANDA
-                #
-                # Una venta se identifica por tener order_id.
-                # =================================================
-
-                is_sale = bool(order_id)
-
-                if is_sale:
-
-                    # Los reintegros están vinculados a la orden para mantener
-                    # trazabilidad, pero deben computarse como egresos de caja.
-                    if movement_type == "outflow" and movement.get("category") == "refund":
-                        manual_expense += amount
-                        if method_payment == "cash":
-                            manual_expense_cash += amount
-                        continue
-
-                    # -------------------------------------------------
-                    # SOLO LOS INFLOWS REPRESENTAN LA VENTA
-                    # -------------------------------------------------
-
-                    if movement_type != "inflow":
-                        continue
-
-                    sales_total += amount
-
-                    # -------------------------------------------------
-                    # VENTA EN EFECTIVO
-                    # -------------------------------------------------
-
-                    if method_payment == "cash":
-
-                        sales_cash += amount
-
-                    # -------------------------------------------------
-                    # VENTA POR TRANSFERENCIA
-                    # -------------------------------------------------
-
-                    elif method_payment == "transfer":
-
-                        sales_transfer += amount
-
-                    # -------------------------------------------------
-                    # VENTA POR QR
-                    # -------------------------------------------------
-
-                    elif method_payment == "qr":
-
-                        sales_qr += amount
-
-                    # -------------------------------------------------
-                    # VENTA POR DÉBITO
-                    # -------------------------------------------------
-
-                    elif method_payment == "debit_card":
-
-                        sales_debit_card += amount
-
-                    continue
-
-                # =================================================
-                # MOVIMIENTO MANUAL
-                #
-                # No tiene order_id.
-                # =================================================
-
-                if movement_type == "inflow":
-
-                    # -------------------------------------------------
-                    # TOTAL GENERAL DE INGRESOS MANUALES
-                    # -------------------------------------------------
-
-                    manual_income += amount
-
-                    # -------------------------------------------------
-                    # INGRESO MANUAL EN EFECTIVO
-                    # -------------------------------------------------
-
-                    if method_payment == "cash":
-
-                        manual_income_cash += amount
-
-                elif movement_type == "outflow":
-
-                    # -------------------------------------------------
-                    # TOTAL GENERAL DE EGRESOS MANUALES
-                    # -------------------------------------------------
-
-                    manual_expense += amount
-
-                    # -------------------------------------------------
-                    # EGRESO MANUAL EN EFECTIVO
-                    # -------------------------------------------------
-
-                    if method_payment == "cash":
-
-                        manual_expense_cash += amount
-
-            # =====================================================
-            # EFECTIVO ESPERADO
-            #
-            # SOLO DINERO FÍSICO:
-            #
-            # apertura
-            # + ventas en efectivo
-            # + ingresos manuales en efectivo
-            # - egresos manuales en efectivo
-            #
-            # Transferencia, QR y débito NO afectan el efectivo.
-            # =====================================================
-
-            opening_amount = cash_register.get(
-                "opening_amount",
-                0
-            ) or 0
-
-            expected_amount = (
-                opening_amount
-                + sales_cash
-                + manual_income_cash
-                - manual_expense_cash
-            )
-
-            # =====================================================
-            # DIFERENCIA
-            #
-            # Lo contado físicamente
-            # menos lo que debería haber.
-            # =====================================================
-
-            difference = (
+            opening_amount = cash_register.get("opening_amount", 0) or 0
+            summary = await self._calculate_cash_register_summary(
+                cash_register_id,
+                opening_amount,
                 closing_amount
-                - expected_amount
             )
-
-            # =====================================================
-            # GUARDAR RESUMEN DE VENTAS
-            # =====================================================
-
-            update_data["sales_total"] = (
-                sales_total
-            )
-
-            update_data["sales_cash"] = (
-                sales_cash
-            )
-
-            update_data["sales_transfer"] = (
-                sales_transfer
-            )
-
-            update_data["sales_qr"] = (
-                sales_qr
-            )
-
-            update_data["sales_debit_card"] = (
-                sales_debit_card
-            )
-
-            # =====================================================
-            # GUARDAR RESUMEN DE MOVIMIENTOS MANUALES
-            # =====================================================
-
-            update_data["manual_income"] = (
-                manual_income
-            )
-
-            update_data["manual_expense"] = (
-                manual_expense
-            )
-
-            # =====================================================
-            # GUARDAR SOLO LOS MOVIMIENTOS MANUALES
-            # QUE AFECTARON EL EFECTIVO
-            # =====================================================
-
-            update_data["manual_income_cash"] = (
-                manual_income_cash
-            )
-
-            update_data["manual_expense_cash"] = (
-                manual_expense_cash
-            )
-
-            # =====================================================
-            # GUARDAR EFECTIVO ESPERADO
-            # =====================================================
-
-            update_data["expected_amount"] = (
-                expected_amount
-            )
-
-            # =====================================================
-            # GUARDAR DIFERENCIA
-            # =====================================================
-
-            update_data["difference"] = (
-                difference
-            )
+            update_data.update(summary)
 
             # =====================================================
             # FECHA DE CIERRE
             # =====================================================
 
-            if "closed_at" not in update_data:
-
-                update_data["closed_at"] = (
-                    DateUtils.now_argentina()
-                )
-
-            # Registrar quién realizó el cierre.
-            update_data["closed_by_user_id"] = str(
-                current_user_id
-            )
+            # La fecha de cierre se fija solo en el primer cierre.
+            # En correcciones posteriores nunca se recalcula ni modifica.
+            if current_status == "open":
+                update_data["closed_at"] = DateUtils.now_argentina()
+                update_data["closed_by_user_id"] = str(current_user_id)
 
         # =====================================================
         # CAMBIAR UNA CAJA ABIERTA
@@ -623,3 +452,74 @@ class CashRegisterService(BaseService):
             cash_register_id,
             update_data
         )
+
+    async def _calculate_cash_register_summary(
+        self,
+        cash_register_id,
+        opening_amount,
+        closing_amount
+    ):
+        """Recalcula el resumen financiero a partir de los movimientos actuales."""
+        movements = await self.cash_movement_repository.get_by_cash_register_id(
+            cash_register_id
+        )
+
+        totals = {
+            "sales_total": 0,
+            "sales_cash": 0,
+            "sales_transfer": 0,
+            "sales_qr": 0,
+            "sales_debit_card": 0,
+            "manual_income": 0,
+            "manual_expense": 0,
+            "manual_income_cash": 0,
+            "manual_expense_cash": 0,
+        }
+
+        for movement in movements:
+            amount = movement.get("amount", 0) or 0
+            movement_type = movement.get("type")
+            method_payment = movement.get("method_payment")
+            is_sale = bool(movement.get("order_id"))
+
+            if is_sale:
+                if movement_type == "outflow" and movement.get("category") == "refund":
+                    totals["manual_expense"] += amount
+                    if method_payment == "cash":
+                        totals["manual_expense_cash"] += amount
+                    continue
+
+                if movement_type != "inflow":
+                    continue
+
+                totals["sales_total"] += amount
+                payment_key = {
+                    "cash": "sales_cash",
+                    "transfer": "sales_transfer",
+                    "qr": "sales_qr",
+                    "debit_card": "sales_debit_card",
+                }.get(method_payment)
+                if payment_key:
+                    totals[payment_key] += amount
+                continue
+
+            if movement_type == "inflow":
+                totals["manual_income"] += amount
+                if method_payment == "cash":
+                    totals["manual_income_cash"] += amount
+            elif movement_type == "outflow":
+                totals["manual_expense"] += amount
+                if method_payment == "cash":
+                    totals["manual_expense_cash"] += amount
+
+        expected_amount = (
+            opening_amount
+            + totals["sales_cash"]
+            + totals["manual_income_cash"]
+            - totals["manual_expense_cash"]
+        )
+
+        totals["expected_amount"] = expected_amount
+        totals["difference"] = closing_amount - expected_amount
+        return totals
+

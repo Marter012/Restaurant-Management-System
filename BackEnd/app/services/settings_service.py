@@ -40,6 +40,10 @@ class SettingsService:
         },
         "show_promotions": True,
         "show_featured": True,
+        "product_highlight_mode": "manual",
+        "promotion_highlight_mode": "manual",
+        "ranking_period_days": 30,
+        "ranking_limit": 8,
         "delivery_enabled": False,
         "pickup_enabled": True,
     }

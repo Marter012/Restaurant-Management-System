@@ -1,10 +1,8 @@
 from contextlib import asynccontextmanager
 import asyncio
-import os
 
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
-from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes import (
     products,
@@ -22,6 +20,7 @@ from app.api.routes import (
 )
 
 from app.utils.handlers import validation_exception_handler
+from app.middleware.cors import configure_cors
 
 from app.websocket.router import router as websocket_router
 
@@ -82,46 +81,8 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# ==========================================
-# CORS CONFIGURATION
-# ==========================================
-
-# Dominios autorizados para los frontends publicados y desarrollo local.
-# STORE_FRONTEND_URL y FRONTEND_URL también pueden contener varios dominios
-# separados por comas (sin rutas ni endpoints de API).
-cors_origins = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "http://localhost:5174",
-    "http://127.0.0.1:5174",
-    "http://192.168.100.190:5173",
-    "http://192.168.56.1:5173",
-    "https://restaurant-management-system-phi-umber.vercel.app",
-    "https://store-online-eight.vercel.app",
-]
-
-for env_name in ("FRONTEND_URL", "STORE_FRONTEND_URL"):
-    configured_origins = os.getenv(env_name, "")
-    cors_origins.extend(
-        origin.strip()
-        for origin in configured_origins.split(",")
-        if origin.strip()
-    )
-
-# Normalizar dominios y eliminar barras finales.
-cors_origins = sorted({
-    origin.strip().rstrip("/")
-    for origin in cors_origins
-    if origin and origin.strip()
-})
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=cors_origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# Middleware HTTP centralizado.
+configure_cors(app)
 
 app.add_exception_handler(
     RequestValidationError,

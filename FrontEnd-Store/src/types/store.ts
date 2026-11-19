@@ -6,13 +6,13 @@ export interface StoreConfiguration {
   store_title?: string;
   tagline: string; hero_title: string; hero_description: string;
   hero_image: string | null; logo_url: string | null;
-  featured_product_ids: string[]; enabled_product_ids: string[]; catalog_restricted: boolean; enabled_promotion_ids: string[]; product_discounts: Record<string, number>; general_store_discount: number; theme: StoreTheme;
+  featured_product_ids: string[]; enabled_product_ids: string[]; catalog_restricted: boolean; enabled_promotion_ids: string[]; featured_promotion_ids?: string[]; product_discounts: Record<string, number>; general_store_discount: number; theme: StoreTheme;
   show_promotions: boolean; show_featured: boolean;
   delivery_enabled: boolean; pickup_enabled: boolean;
 }
 export interface StorePromotion {
   id: string; name: string; description: string; image?: string | null;
-  price: number; status: boolean; items?: {name:string;quantity:number;product_ids:string[]}[];
+  price: number; status: boolean; featured?: boolean; highlight_mode?: string; items?: {name:string;quantity:number;product_ids:string[]}[];
 }
 export interface StoreInfo {
   name: string;

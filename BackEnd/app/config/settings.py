@@ -30,5 +30,8 @@ class Settings(BaseSettings):
     STORE_FRONTEND_URL: str = "http://localhost:5174"
     PUBLIC_API_URL: str = ""
 
+    # OTP queda preparado para una futura activación. No se utiliza en el flujo actual.
+    OTP_PROVIDER: str = "disabled"
+
 
 settings = Settings()

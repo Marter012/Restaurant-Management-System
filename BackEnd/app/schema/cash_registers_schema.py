@@ -33,19 +33,18 @@ class CashRegisterCreate(BaseModel):
 
 class CashRegisterUpdate(BaseModel):
 
+    # Campos editables. La fecha, apertura temporal, cierre temporal y
+    # estado administrativo no se modifican mediante este endpoint.
     shift: CashRegisterShift | None = None
-
-    opened_at: datetime | None = None
 
     opening_amount: float | None = None
 
-    closed_at: datetime | None = None
-
     closing_amount: float | None = None
 
+    # Se utiliza únicamente para cerrar una caja que está abierta.
+    # Una caja cerrada no puede cambiar nuevamente su estado.
     status_cash_register: CashRegisterStatus | None = None
 
-    status: bool | None = None
 class CashRegisterResponse(
     CashRegisterCreate,
     MongoModel
