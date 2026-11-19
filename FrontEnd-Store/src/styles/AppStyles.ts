@@ -1,6 +1,6 @@
 import { ArrowLeft } from "../utils/icons.ts";
 import styled from "styled-components";
-export const Page = styled.div`min-height:100vh;margin:0;color:var(--app-ink);padding-bottom:100px;background:linear-gradient(180deg,#f8f7f0 0%,var(--app-canvas) 48%,#ecefe5 100%);`;
+export const Page = styled.div`box-sizing:border-box;min-height:100vh;min-height:100svh;margin:0;color:var(--app-ink);padding:0 0 calc(88px + env(safe-area-inset-bottom));background:linear-gradient(180deg,#f8f7f0 0%,var(--app-canvas) 48%,#ecefe5 100%);&>*{box-sizing:border-box;}`;
 export const Overlay = styled.div`position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(35,20,12,.62);backdrop-filter:blur(6px);`;
 export const Dialog = styled.div`width:min(100%,600px);max-height:min(92dvh,900px);overflow:auto;border:1px solid #ffffffb8;border-radius:25px;background:var(--app-surface);box-shadow:0 28px 90px rgba(35,20,12,.3);@media(max-width:600px){align-self:flex-end;width:100%;max-height:95dvh;border-radius:24px 24px 0 0;}`;
 export const DialogHeader = styled.div`position:sticky;top:0;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:15px;padding:19px 22px;border-bottom:1px solid var(--app-border);background:var(--app-surface);h3{margin:0;color:var(--app-primary);font-size:1.2rem;font-weight:950;letter-spacing:-.035em}`;

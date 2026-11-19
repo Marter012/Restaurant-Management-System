@@ -133,12 +133,22 @@ class StoreCustomerService:
         if not customer:
             return None
         expires_at = customer.get("token_expires_at")
-        if not expires_at or expires_at <= DateUtils.now_argentina():
-            await self.repository.customers.update_one(
-                {"_id": customer["_id"]},
-                {"$unset": {"token_hash": "", "token_expires_at": ""}},
+        if not expires_at:
+            raise HTTPException(
+                status_code=401,
+                detail="La sesión del cliente ha expirado."
             )
-            return None
+
+        if expires_at.tzinfo is None:
+            expires_at = expires_at.replace(
+                tzinfo=DateUtils.now_argentina().tzinfo
+            )
+
+        if expires_at <= DateUtils.now_argentina():
+            raise HTTPException(
+                status_code=401,
+                detail="La sesión del cliente ha expirado."
+            )
         return customer
 
     async def me(self, request: Request) -> dict:

@@ -1,26 +1,50 @@
-# Organización del FrontEnd-Store
+# FrontEnd Store — estructura refactorizada
 
-El proyecto mantiene la estructura por componentes, hooks, servicios, utilidades y estilos. La implementación actual incorpora la cuenta de cliente, historial, solicitud de reembolso, búsqueda ampliada y navegación responsive.
+La refactorización reorganiza la capa visual sin reemplazar los flujos de negocio ni los contratos HTTP existentes.
 
-## Estructura
+## Estructura principal
 
-- `components/`: componentes visuales por dominio (Account, Cart, Catalog, Checkout, Feedback, Layout y Product).
-- `components/*/*Styles.ts`: estilos encapsulados en styled-components separados del JSX.
-- `hooks/`: estado y lógica reutilizable del catálogo, carrito, checkout y datos de tienda.
-- `services/publicApi.ts`: comunicación HTTP con los endpoints públicos del Backend.
-- `types/`: contratos TypeScript del Store.
-- `utils/`: iconos Phosphor, sesión de cliente, imágenes, carrito, dinero y WhatsApp.
-- `styles/`: estilos globales y primitivas visuales compartidas.
-- `constants/`: claves de almacenamiento y constantes del checkout.
+- `src/main.tsx`: punto de entrada de React; monta estilos globales y `App`.
+- `src/App.tsx`: orquestación del estado de tienda, carrito, checkout, sesión, pagos y acciones.
+- `src/components/Page/`: contenedor raíz compartido por todas las vistas. `Page.tsx` decide qué vista mostrar (Inicio, Productos, Promociones o Cuenta) y `Page.styles.ts` centraliza el contenedor visual común.
+- `src/components/<Componente>/`: cada componente visual vive en su propia carpeta. Cuando corresponde, incluye `<Componente>.tsx` y `<Componente>.styles.ts`.
+- `src/hooks/`: estado y lógica reutilizable de tienda, carrito, selección, checkout y navegación.
+- `src/services/`: comunicación con el backend. `publicApi.ts` conserva los endpoints públicos.
+- `src/styles/`: estilos globales y primitivas compartidas (modales, botones, campos, avisos, etc.).
+- `src/types/`: contratos TypeScript.
+- `src/utils/` y `src/constants/`: funciones auxiliares y constantes.
 
-## Instalación y actualización
+## Convenciones
 
-1. Hacer una copia de seguridad de la carpeta `FrontEnd-Store`.
-2. Reemplazar su contenido con este ZIP.
-3. No copiar `node_modules`; ejecutar `npm ci`.
-4. Crear `.env` desde `.env.example` y definir `VITE_API_URL`.
-5. Ejecutar `npm run build` antes de publicar.
+1. Los componentes visuales se mantienen pequeños y separados por responsabilidad.
+2. Los estilos propios se ubican en el archivo `.styles.ts` de su componente.
+3. Los estilos reutilizables/globales permanecen en `src/styles/`.
+4. Cada carpeta de componente contiene como máximo tres archivos; la mayoría contiene el TSX y su archivo de estilos.
+5. Las vistas se centralizan en `Page`; para cambiar el contenedor común de las pestañas se modifica `Page.styles.ts`.
+6. La lógica de negocio, hooks, utilidades y endpoints no se trasladan a los componentes de presentación.
 
-Se conserva la clave `CART_STORAGE_KEY` para mantener el carrito local existente. Las compras por WhatsApp continúan siendo un canal independiente; los pagos con Mercado Pago y la vinculación de órdenes se gestionan desde el Backend.
+## Endpoints públicos conservados
 
-Para los contratos de cuenta y reembolsos, consultar `IMPLEMENTACION_FRONTEND_STORE.md`.
+`src/services/publicApi.ts` mantiene las rutas y métodos originales:
+
+- `GET /public/store`
+- `GET /public/products`
+- `GET /public/unavailable-ingredients`
+- `GET /public/promotions`
+- `POST /public/online-orders`
+- `POST /public/customers/access`
+- `GET /public/customers/me`
+- `PUT /public/customers/me`
+- `GET /public/customers/me/orders`
+- `POST /public/customers/me/orders/{order_number}/refund`
+
+No se cambió el payload de pedidos, autenticación, historial ni solicitudes de reembolso.
+
+## Instalación y validación
+
+1. Crear `.env` a partir de `.env.example` y configurar `VITE_API_URL`.
+2. Ejecutar `npm ci`.
+3. Ejecutar `npm run dev`.
+4. Antes de publicar, ejecutar `npm run build`.
+
+El chequeo de TypeScript (`tsc -b`) se ejecutó correctamente tras la reorganización. En el entorno de preparación, Vite no pudo ejecutarse porque el `node_modules` incluido en el ZIP original carecía del binding nativo opcional de Rolldown; por eso se recomienda instalar dependencias limpias con `npm ci` y no reutilizar `node_modules`.

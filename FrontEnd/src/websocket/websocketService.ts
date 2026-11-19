@@ -471,12 +471,27 @@ const connectWebSocket = () => {
 
         if (event.type === "DATA_CHANGED") {
           if (currentDispatch) scheduleRefresh(currentDispatch);
+          if (event.resource === "online_order") {
+            window.dispatchEvent(
+              new CustomEvent("online-order-refresh", {
+                detail: { action: event.action, data: event.data },
+              }),
+            );
+            if (event.action === "created" || event.action === "refund_requested") {
+              window.dispatchEvent(
+                new CustomEvent("online-order-notification", {
+                  detail: { action: event.action, data: event.data },
+                }),
+              );
+            }
+          }
           if (
-            event.resource === "online_order" &&
-            (event.action === "created" || event.action === "refund_requested")
+            event.resource === "order" &&
+            event.action === "created" &&
+            (event.data as { source?: string } | undefined)?.source === "online"
           ) {
             window.dispatchEvent(
-              new CustomEvent("online-order-notification", {
+              new CustomEvent("online-comanda-notification", {
                 detail: { action: event.action, data: event.data },
               }),
             );

@@ -1,18 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import { ArrowsClockwise, Receipt, SignOut, UserCircle, WarningCircle, X, Clock, CreditCard, Basket } from "../../utils/icons.ts";
-import { accessCustomer, getCustomerOrders, requestCustomerOrderRefund, type CustomerOrder, type CustomerProfile } from "../../services/publicApi.ts";
+import { ArrowsClockwise, Receipt, SignOut, UserCircle, WarningCircle, X, Clock, CreditCard, Basket, Check } from "../../utils/icons.ts";
+import { accessCustomer, getCustomerOrders, requestCustomerOrderRefund, updateCustomerMe, type CustomerOrder, type CustomerProfile } from "../../services/publicApi.ts";
 import { money } from "../../utils/money.ts";
 import { clearCustomerSession, readCustomerSession, saveCustomerSession } from "../../utils/customerSession.ts";
 import {
-  AccountPage, AccountHeading, AccountGrid, ProfileCard, ProfileAvatar, ProfileDetails, ProfileRow,
+  AccountPage, AccountHeading, AccountGrid, ProfileCard, ProfileAvatar,
   OrdersPanel, OrdersHeader, LoginPanel, LoginField, LoginButton, OrderCards, OrderMiniCard,
   OrderMiniTop, OrderBadges, Badge, OrderMiniMeta, EmptyOrders, Logout,
   DetailShade, DetailModal, DetailHeader, DetailContent, DetailGrid, DetailBlock, DetailItems,
-  DetailItem, RefundButton,
+  DetailItem, RefundButton, ProfileEditFields, SaveProfileButton,
 } from "./CustomerAccountStyles.ts";
 
-type Props = { onToast: (message: string, kind: "success" | "error") => void; onAuthenticated?: (profile: CustomerProfile) => void; };
+type Props = { storeName: string; onToast: (message: string, kind: "success" | "error") => void; onAuthenticated?: (profile: CustomerProfile) => void; };
 
 function getApiError(error: unknown): string {
   if (axios.isAxiosError(error)) {
@@ -33,7 +33,7 @@ const fulfillmentLabel = (value?: string) => value === "delivery" ? "Envío a do
 const refundLabels: Record<string, string> = { requested: "Reembolso solicitado", processing: "Reembolso en proceso", refunded_needs_sync: "Reembolso aprobado", refunded: "Reembolsado" };
 const refundLabel = (status?: string | null) => refundLabels[status || ""] || "";
 
-export function CustomerAccount({ onToast, onAuthenticated }: Props) {
+export function CustomerAccount({ storeName, onToast, onAuthenticated }: Props) {
   const [session, setSession] = useState(readCustomerSession);
   const [phone, setPhone] = useState("");
   const [orders, setOrders] = useState<CustomerOrder[]>([]);
@@ -42,6 +42,8 @@ export function CustomerAccount({ onToast, onAuthenticated }: Props) {
   const [ordersError, setOrdersError] = useState("");
   const [selectedOrder, setSelectedOrder] = useState<CustomerOrder | null>(null);
   const [refundOrder, setRefundOrder] = useState<number | null>(null);
+  const [profileDraft, setProfileDraft] = useState({ first_name: "", last_name: "", location: "" });
+  const [savingProfile, setSavingProfile] = useState(false);
 
   const loadOrders = useCallback(async (token: string) => {
     setLoadingOrders(true); setOrdersError("");
@@ -93,9 +95,27 @@ export function CustomerAccount({ onToast, onAuthenticated }: Props) {
   };
 
   const profile = session?.customer;
+  useEffect(() => {
+    if (profile) setProfileDraft({ first_name: profile.first_name || "", last_name: profile.last_name || "", location: profile.location || "" });
+  }, [profile?.first_name, profile?.last_name, profile?.location, profile?.phone]);
+  const profileChanged = Boolean(profile) && (profileDraft.first_name !== (profile?.first_name || "") || profileDraft.last_name !== (profile?.last_name || "") || profileDraft.location !== (profile?.location || ""));
+  const saveProfile = async () => {
+    if (!session || !profileChanged) return;
+    setSavingProfile(true);
+    try {
+      const updated = await updateCustomerMe(session.token, profileDraft);
+      const normalized: CustomerProfile = { first_name: updated.first_name || profileDraft.first_name, last_name: updated.last_name || profileDraft.last_name, phone: updated.phone || session.customer.phone, location: updated.location || "" };
+      const remainingSeconds = Math.max(1, Math.floor((session.expiresAt - Date.now()) / 1000));
+      const refreshed = saveCustomerSession(session.token, normalized, remainingSeconds);
+      setSession(refreshed);
+      onAuthenticated?.(normalized);
+      onToast("Tus datos se actualizaron correctamente.", "success");
+    } catch (error) { onToast(getApiError(error), "error"); }
+    finally { setSavingProfile(false); }
+  };
   return (
     <AccountPage>
-      <AccountHeading><span>MI CUENTA</span><h1>Tu espacio en Setsu</h1><p>Consultá tus datos y revisá el estado de tus pedidos.</p></AccountHeading>
+      <AccountHeading><span>MI CUENTA</span><h1>Tu espacio en {storeName}</h1><p>Consultá tus datos y revisá el estado de tus pedidos.</p></AccountHeading>
       {!session ? (
         <LoginPanel>
           <div className="login-icon"><UserCircle size={34} weight="duotone" /></div>
@@ -113,12 +133,13 @@ export function CustomerAccount({ onToast, onAuthenticated }: Props) {
             <ProfileAvatar><UserCircle size={42} weight="duotone" /></ProfileAvatar>
             <span className="eyebrow">DATOS DEL CLIENTE</span>
             <h2>{[profile?.first_name, profile?.last_name].filter(Boolean).join(" ") || "Cliente"}</h2>
-            <ProfileDetails>
-              <ProfileRow><span>Teléfono</span><strong>{profile?.phone || "No disponible"}</strong></ProfileRow>
-              <ProfileRow><span>Nombre</span><strong>{profile?.first_name || "Sin completar"}</strong></ProfileRow>
-              <ProfileRow><span>Apellido</span><strong>{profile?.last_name || "Sin completar"}</strong></ProfileRow>
-              {profile?.location && <ProfileRow><span>Dirección</span><strong>{profile.location}</strong></ProfileRow>}
-            </ProfileDetails>
+            <ProfileEditFields>
+              <label>Teléfono<input value={profile?.phone || ""} disabled readOnly /><span className="hint">El teléfono identifica la cuenta y no se puede modificar desde el Store.</span></label>
+              <label>Nombre<input value={profileDraft.first_name} onChange={event => setProfileDraft(current => ({ ...current, first_name: event.target.value }))} maxLength={80} placeholder="Tu nombre" /></label>
+              <label>Apellido<input value={profileDraft.last_name} onChange={event => setProfileDraft(current => ({ ...current, last_name: event.target.value }))} maxLength={80} placeholder="Tu apellido" /></label>
+              <label>Dirección<input value={profileDraft.location} onChange={event => setProfileDraft(current => ({ ...current, location: event.target.value }))} maxLength={300} placeholder="Tu dirección (opcional)" /></label>
+            </ProfileEditFields>
+            {profileChanged && <SaveProfileButton type="button" onClick={() => void saveProfile()} disabled={savingProfile}><Check size={17}/>{savingProfile ? "Guardando datos…" : "Guardar datos"}</SaveProfileButton>}
             <p className="profile-note">Tus compras se asocian al número de teléfono de esta cuenta.</p>
             <Logout type="button" onClick={logout}><SignOut size={18} /> Cerrar sesión</Logout>
           </ProfileCard>

@@ -1,33 +1,18 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { StoreConfiguration } from "./types/store.ts";
-import { Page } from "./styles/AppStyles.ts"
+import type { StoreConfiguration, StorePromotion } from "./types/store.ts";
 import { useStore } from "./hooks/useStore.ts";
 import { useCart } from "./hooks/useCart.ts";
 import { useProductSelection } from "./hooks/useProductSelection.ts";
 import { useCheckout } from "./hooks/useCheckout.ts";
-import { HeroSection } from "./components/Layout/HeroSection.tsx";
-import { StoreHeader } from "./components/Layout/StoreHeader.tsx";
-import { StoreFooter } from "./components/Layout/StoreFooter.tsx";
-import { Catalog } from "./components/Catalog/Catalog.tsx";
-import { ProductModal } from "./components/Product/ProductModal.tsx";
-import { CartDrawer } from "./components/Cart/CartDrawer.tsx";
-import { CheckoutModal } from "./components/Checkout/CheckoutModal.tsx";
-import { LoadingScreen } from "./components/Feedback/LoadingScreen.tsx";
-import { ClosedStoreScreen } from "./components/Feedback/ClosedStoreScreen.tsx";
-import { money } from "./utils/money.ts";
+import { LoadingScreen } from "./components/LoadingScreen/LoadingScreen.tsx";
+import { ClosedStoreScreen } from "./components/ClosedStoreScreen/ClosedStoreScreen.tsx";
 import { buildWhatsAppUrl } from "./utils/whatsapp.ts";
 import { createMercadoPagoOrder, getStoreInfo } from "./services/publicApi.ts";
-import { Promotions } from "./components/Catalog/Promotions.tsx";
-import { FeaturedSection } from "./components/Catalog/FeaturedSection.tsx";
 import { calculatePromotionTotal, getEligiblePromotions } from "./utils/cart.ts";
-import { PromotionChoiceModal } from "./components/Cart/PromotionChoiceModal.tsx";
-import { BottomNavigation, type StoreView } from "./components/Layout/BottomNavigation.tsx";
-import { StoreToast } from "./components/Feedback/StoreToast.tsx";
-import { ClosedStoreModal } from "./components/Feedback/ClosedStoreModal.tsx";
-import { CustomerAccount } from "./components/Account/CustomerAccount.tsx";
-import { SaveCustomerPrompt } from "./components/Account/SaveCustomerPrompt.tsx";
 import { clearCustomerSession, readCustomerSession } from "./utils/customerSession.ts";
-import { RefreshStoreModal } from "./components/Feedback/RefreshStoreModal.tsx";
+import { Page } from "./components/Page/Page.tsx";
+import { StoreOverlays } from "./components/StoreOverlays/StoreOverlays.tsx";
+import { useStoreNavigation } from "./hooks/useStoreNavigation.ts";
 
 const App = () => {
   const {
@@ -52,47 +37,44 @@ const App = () => {
   const [cartOpen, setCartOpen] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [paying, setPaying] = useState(false);
-  const [activeView, setActiveView] = useState<StoreView>(() => {
-    const path = window.location.pathname.replace(/\/$/, "") || "/";
-    if (path === "/productos") return "products";
-    if (path === "/promociones") return "promotions";
-    if (path === "/cuenta") return "account";
-    return "home";
-  });
+  const { activeView, navigate } = useStoreNavigation();
   const [loginPromptOpen, setLoginPromptOpen] = useState(false);
   const [savePromptOpen, setSavePromptOpen] = useState(false);
-  const [pendingCheckoutAction, setPendingCheckoutAction] = useState<"pay"|"whatsapp"|null>(null);
+  const [pendingCheckoutAction, setPendingCheckoutAction] = useState<
+    "pay" | "whatsapp" | null
+  >(null);
   const [customerSession, setCustomerSession] = useState(readCustomerSession);
   const [closedModalOpen, setClosedModalOpen] = useState(false);
   const [refreshRequired, setRefreshRequired] = useState(false);
   const operationalVersionRef = useRef<string | null>(null);
-  const [toast, setToast] = useState<{message:string;kind:"success"|"error"}|null>(null);
-  const [selectedPromotionId, setSelectedPromotionId] = useState<string | null>(null);
+  const [toast, setToast] = useState<{
+    message: string;
+    kind: "success" | "error";
+  } | null>(null);
+  const [selectedPromotionId, setSelectedPromotionId] = useState<string | null>(
+    null,
+  );
   const [promotionChoiceOpen, setPromotionChoiceOpen] = useState(false);
-  const notify = useCallback((message:string,kind:"success"|"error"="success") => { setToast({message,kind}); window.setTimeout(()=>setToast(null),4200); }, []);
-  const [previewConfiguration, setPreviewConfiguration] = useState<StoreConfiguration | null>(null);
-  const activeStore = store && previewConfiguration ? {
-    ...store,
-    name: previewConfiguration.store_title || store.name,
-    configuration: previewConfiguration,
-  } : store;
-
-  const navigate = useCallback((view: StoreView) => {
-    const paths: Record<StoreView, string> = { home: "/", products: "/productos", promotions: "/promociones", account: "/cuenta" };
-    const path = paths[view];
-    if (window.location.pathname !== path) window.history.pushState({ storeView: view }, "", path);
-    setActiveView(view);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
-
-  useEffect(() => {
-    const onPopState = () => {
-      const path = window.location.pathname.replace(/\/$/, "") || "/";
-      setActiveView(path === "/productos" ? "products" : path === "/promociones" ? "promotions" : path === "/cuenta" ? "account" : "home");
-    };
-    window.addEventListener("popstate", onPopState);
-    return () => window.removeEventListener("popstate", onPopState);
-  }, []);
+  const [promotionToConfigure, setPromotionToConfigure] = useState<
+    StorePromotion | null
+  >(null);
+  const notify = useCallback(
+    (message: string, kind: "success" | "error" = "success") => {
+      setToast({ message, kind });
+      window.setTimeout(() => setToast(null), 4200);
+    },
+    [],
+  );
+  const [previewConfiguration, setPreviewConfiguration] =
+    useState<StoreConfiguration | null>(null);
+  const activeStore =
+    store && previewConfiguration
+      ? {
+          ...store,
+          name: previewConfiguration.store_title || store.name,
+          configuration: previewConfiguration,
+        }
+      : store;
 
   useEffect(() => {
     if (!store) return;
@@ -114,13 +96,20 @@ const App = () => {
       }
     };
     const interval = window.setInterval(checkOperationalConfiguration, 5000);
-    return () => { active = false; window.clearInterval(interval); };
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+    };
   }, [store?.operational_updated_at]);
 
   useEffect(() => {
     const receivePreview = (event: MessageEvent) => {
       if (event.source !== window.parent || window.parent === window) return;
-      if (event.data?.type !== "STORE_PREVIEW_CONFIG" || !event.data.configuration) return;
+      if (
+        event.data?.type !== "STORE_PREVIEW_CONFIG" ||
+        !event.data.configuration
+      )
+        return;
       setPreviewConfiguration(event.data.configuration as StoreConfiguration);
     };
     window.addEventListener("message", receivePreview);
@@ -139,12 +128,21 @@ const App = () => {
       if (session) {
         setCustomerSession(session);
         navigate("account");
-        notify("Pago aprobado. Estamos actualizando tu historial de compras.", "success");
+        notify(
+          "Pago aprobado. Estamos actualizando tu historial de compras.",
+          "success",
+        );
       } else {
-        notify("El pago fue procesado. Iniciá sesión en Mi cuenta para consultar tus compras.", "success");
+        notify(
+          "El pago fue procesado. Iniciá sesión en Mi cuenta para consultar tus compras.",
+          "success",
+        );
       }
     } else if (paymentResult === "pending") {
-      notify("Tu pago está pendiente de confirmación de Mercado Pago.", "error");
+      notify(
+        "Tu pago está pendiente de confirmación de Mercado Pago.",
+        "error",
+      );
     } else if (paymentResult === "failure") {
       notify("El pago no se completó. Podés volver a intentarlo.", "error");
     }
@@ -152,7 +150,11 @@ const App = () => {
     params.delete("payment");
     params.delete("order");
     const query = params.toString();
-    window.history.replaceState({}, document.title, `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`);
+    window.history.replaceState(
+      {},
+      document.title,
+      `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`,
+    );
   }, []);
 
   const addSelectedProduct = () => {
@@ -164,34 +166,63 @@ const App = () => {
       selection.itemNote,
     );
     selection.resetSelection();
-    notify(`${selection.selectedProduct.name} agregado al carrito.`,"success");
+    notify(`${selection.selectedProduct.name} agregado al carrito.`, "success");
     setCartOpen(true);
   };
 
-  const eligiblePromotions = getEligiblePromotions(cart, promotions.filter(item => item.status !== false));
-  const salesAvailable = Boolean(activeStore?.public_sales_enabled && activeStore?.cash_register_open);
-  const cartSignature = cart.map(item => `${item.product.id}:${item.quantity}`).join("|");
-  const eligibilitySignature = eligiblePromotions.map(item => item.id).join("|");
+  const eligiblePromotions = getEligiblePromotions(
+    cart,
+    promotions.filter((item) => item.status !== false),
+  );
+  const salesAvailable = Boolean(
+    activeStore?.public_sales_enabled && activeStore?.cash_register_open,
+  );
+  const cartSignature = cart
+    .map((item) => `${item.product.id}:${item.quantity}`)
+    .join("|");
+  const eligibilitySignature = eligiblePromotions
+    .map((item) => item.id)
+    .join("|");
   useEffect(() => {
     setSelectedPromotionId(null);
     setPromotionChoiceOpen(eligiblePromotions.length > 1);
-    if (eligiblePromotions.length === 1) setSelectedPromotionId(eligiblePromotions[0].id);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (eligiblePromotions.length === 1)
+      setSelectedPromotionId(eligiblePromotions[0].id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cartSignature, eligibilitySignature]);
-  const cartSubtotalBeforeDiscount = cart.reduce((sum, item) => sum + item.quantity * item.product.price, 0);
+  const cartSubtotalBeforeDiscount = cart.reduce(
+    (sum, item) => sum + item.quantity * item.product.price,
+    0,
+  );
   const pricing = calculatePromotionTotal(
     cart,
-    promotions.filter(item => item.status !== false),
-    eligiblePromotions.length > 1 ? (selectedPromotionId ? [selectedPromotionId] : []) : undefined,
+    promotions.filter((item) => item.status !== false),
+    eligiblePromotions.length > 1
+      ? selectedPromotionId
+        ? [selectedPromotionId]
+        : []
+      : undefined,
   );
-  useEffect(()=>{ if(activeStore && !salesAvailable && !sessionStorage.getItem("store_closed_notice_seen")){setClosedModalOpen(true);sessionStorage.setItem("store_closed_notice_seen","1");}},[activeStore,salesAvailable]);
+  useEffect(() => {
+    if (activeStore) setClosedModalOpen(true);
+  }, [Boolean(activeStore)]);
 
-  const setCheckoutFields = (profile: {first_name:string;last_name:string;phone:string}) => {
+  const setCheckoutFields = (profile: {
+    first_name: string;
+    last_name: string;
+    phone: string;
+  }) => {
     checkoutState.updateCheckout("firstName", profile.first_name);
     checkoutState.updateCheckout("lastName", profile.last_name);
-    checkoutState.updateCheckout("customerName", `${profile.first_name} ${profile.last_name}`.trim());
+    checkoutState.updateCheckout(
+      "customerName",
+      `${profile.first_name} ${profile.last_name}`.trim(),
+    );
     checkoutState.updateCheckout("phone", profile.phone);
-    checkoutState.updateCheckout("location", "location" in profile ? String(profile.location || "") : "");
+    checkoutState.updateCheckout(
+      "location",
+      "location" in profile ? String(profile.location || "") : "",
+    );
   };
 
   const openCheckout = () => {
@@ -201,7 +232,13 @@ const App = () => {
   };
 
   const startCheckout = () => {
-    if (!salesAvailable) { notify("Las compras se habilitarán cuando el local abra una caja.","error"); return; }
+    if (!salesAvailable) {
+      notify(
+        "Las compras se habilitarán cuando el local abra una caja.",
+        "error",
+      );
+      return;
+    }
     if (!cart.length) return;
     if (!readCustomerSession()) {
       setLoginPromptOpen(true);
@@ -211,7 +248,11 @@ const App = () => {
     openCheckout();
   };
 
-  const onCustomerAuthenticated = (profile: {first_name:string;last_name:string;phone:string}) => {
+  const onCustomerAuthenticated = (profile: {
+    first_name: string;
+    last_name: string;
+    phone: string;
+  }) => {
     setCheckoutFields(profile);
     setCustomerSession(readCustomerSession());
     setLoginPromptOpen(false);
@@ -221,11 +262,14 @@ const App = () => {
       navigate("home");
       openCheckout();
     } else {
-      notify("Sesión iniciada. Todavía no tenés productos en el carrito.", "success");
+      notify(
+        "Sesión iniciada. Todavía no tenés productos en el carrito.",
+        "success",
+      );
     }
   };
 
-  const requestCheckoutAction = (action: "pay"|"whatsapp") => {
+  const requestCheckoutAction = (action: "pay" | "whatsapp") => {
     if (!readCustomerSession()) {
       setPendingCheckoutAction(action);
       setSavePromptOpen(true);
@@ -238,23 +282,31 @@ const App = () => {
   const saveCustomerBeforeCheckout = async () => {
     setSavePromptOpen(false);
     navigate("account");
-    notify("Ingresá tu número de teléfono para acceder o crear tu cuenta.", "success");
+    notify(
+      "Ingresá tu número de teléfono para acceder o crear tu cuenta.",
+      "success",
+    );
   };
 
   useEffect(() => {
     if (!customerSession) return;
     const remaining = customerSession.expiresAt - Date.now();
-    if (remaining <= 0) { clearCustomerSession(); setCustomerSession(null); return; }
+    if (remaining <= 0) {
+      clearCustomerSession();
+      setCustomerSession(null);
+      return;
+    }
     setCheckoutFields(customerSession.customer);
     const timer = window.setTimeout(() => {
-      clearCustomerSession(); setCustomerSession(null);
-      checkoutState.updateCheckout("firstName","");
-      checkoutState.updateCheckout("lastName","");
-      checkoutState.updateCheckout("customerName","");
-      checkoutState.updateCheckout("phone","");
-      checkoutState.updateCheckout("location","");
-      checkoutState.updateCheckout("email","");
-      notify("Tu sesión se cerró después de 10 minutos.","error");
+      clearCustomerSession();
+      setCustomerSession(null);
+      checkoutState.updateCheckout("firstName", "");
+      checkoutState.updateCheckout("lastName", "");
+      checkoutState.updateCheckout("customerName", "");
+      checkoutState.updateCheckout("phone", "");
+      checkoutState.updateCheckout("location", "");
+      checkoutState.updateCheckout("email", "");
+      notify("Tu sesión se cerró después de 10 minutos.", "error");
     }, remaining);
     return () => window.clearTimeout(timer);
   }, [customerSession?.expiresAt]);
@@ -281,11 +333,15 @@ const App = () => {
 
   const payWithMercadoPago = async () => {
     if (!salesAvailable) {
-      checkoutState.setCheckoutError("Las compras están deshabilitadas hasta que el comercio abra una caja y habilite las ventas online.");
+      checkoutState.setCheckoutError(
+        "Las compras están deshabilitadas hasta que el comercio abra una caja y habilite las ventas online.",
+      );
       return;
     }
     if (checkoutState.checkout.phone.replace(/\D/g, "").length < 8) {
-      checkoutState.setCheckoutError("Ingresá un teléfono válido (al menos 8 dígitos) para continuar.");
+      checkoutState.setCheckoutError(
+        "Ingresá un teléfono válido (al menos 8 dígitos) para continuar.",
+      );
       return;
     }
     if (
@@ -301,13 +357,17 @@ const App = () => {
       const result = await createMercadoPagoOrder(cart, checkoutState.checkout);
       if (!result.checkout_url)
         throw new Error("No se recibió el enlace de pago.");
-      notify("Te estamos llevando a Mercado Pago.","success");
+      notify("Te estamos llevando a Mercado Pago.", "success");
       window.location.assign(result.checkout_url);
     } catch (err: unknown) {
-      const apiMessage = (err as { response?: { data?: { detail?: string } }; message?: string })?.response?.data?.detail;
-      const message = typeof apiMessage === "string"
-        ? apiMessage
-        : (err as { message?: string })?.message || "No pudimos conectar con el servidor.";
+      const apiMessage = (
+        err as { response?: { data?: { detail?: string } }; message?: string }
+      )?.response?.data?.detail;
+      const message =
+        typeof apiMessage === "string"
+          ? apiMessage
+          : (err as { message?: string })?.message ||
+            "No pudimos conectar con el servidor.";
       checkoutState.setCheckoutError(message);
       notify(message, "error");
       setPaying(false);
@@ -316,7 +376,9 @@ const App = () => {
 
   const confirmWhatsApp = () => {
     if (!salesAvailable) {
-      checkoutState.setCheckoutError("La tienda está en modo de vista previa. Las ventas se habilitarán cuando el comercio abra una caja.");
+      checkoutState.setCheckoutError(
+        "La tienda está en modo de vista previa. Las ventas se habilitarán cuando el comercio abra una caja.",
+      );
       return;
     }
     const result = buildWhatsAppUrl(
@@ -329,7 +391,10 @@ const App = () => {
       checkoutState.setCheckoutError(result.error);
       return;
     }
-    if (result.url) { notify("Abriendo WhatsApp con tu pedido.","success"); window.location.assign(result.url); }
+    if (result.url) {
+      notify("Abriendo WhatsApp con tu pedido.", "success");
+      window.location.assign(result.url);
+    }
   };
 
   if (loading) return <LoadingScreen />;
@@ -341,86 +406,116 @@ const App = () => {
         onRetry={() => window.location.reload()}
       />
     );
+
   return (
-    <Page>
-      {closedModalOpen && <ClosedStoreModal onClose={()=>setClosedModalOpen(false)}/>}
-      {refreshRequired && <RefreshStoreModal onRefresh={()=>window.location.reload()}/>}
-      <StoreHeader store={activeStore} cartCount={cartCount} onOpenCart={() => setCartOpen(true)} onOpenAccount={() => navigate("account")} />
-      {activeView === "home" && <>
-        <HeroSection config={activeStore?.configuration} salesAvailable={salesAvailable} onBrowse={() => navigate("products")} />
-        {activeStore?.configuration?.show_featured && <FeaturedSection
-          products={products.filter((product) => product.featured)}
-          getProductQuantity={getProductQuantity}
-          onSelectProduct={selection.openProduct}
-          onIncrementProduct={incrementProduct}
-          onDecrementProduct={decrementProduct}
-        />}
-        {activeStore?.configuration?.show_promotions && <Promotions items={promotions.filter((item) => item.status !== false && item.featured).slice(0, 3)} />}
-      </>}
-      {activeView === "products" && <Catalog
+      <Page
+        store={activeStore}
         products={products}
-        getProductQuantity={getProductQuantity}
-        onSelectProduct={selection.openProduct}
-        onIncrementProduct={incrementProduct}
-        onDecrementProduct={decrementProduct}
-      />}
-      {activeView === "promotions" && <Promotions items={promotions.filter((item) => item.status !== false)} />}
-      {activeView === "account" && <CustomerAccount onToast={notify} onAuthenticated={onCustomerAuthenticated} />}
-      {activeView !== "account" && <StoreFooter store={activeStore} />}
-      <BottomNavigation onNavigate={navigate} onCart={() => setCartOpen(true)} activeView={activeView} cartCount={cartCount} />
-      {loginPromptOpen && <SaveCustomerPrompt title="¿Querés iniciar sesión?" description="Si ingresás tus datos, los vamos a completar automáticamente al finalizar tu compra. También podés continuar como invitado." saveLabel="Iniciar sesión" skipLabel="Continuar como invitado" onSave={()=>{setLoginPromptOpen(false);navigate("account")}} onSkip={()=>{setLoginPromptOpen(false);openCheckout()}} onClose={()=>setLoginPromptOpen(false)}/>}
-      {savePromptOpen && <SaveCustomerPrompt onSave={saveCustomerBeforeCheckout} onSkip={()=>{setSavePromptOpen(false);const action=pendingCheckoutAction;setPendingCheckoutAction(null);if(action==="pay")void payWithMercadoPago();if(action==="whatsapp")confirmWhatsApp()}} onClose={()=>{setSavePromptOpen(false);setPendingCheckoutAction(null)}}/>}
-      {toast && <StoreToast message={toast.message} kind={toast.kind} onClose={()=>setToast(null)}/> }
-      {promotionChoiceOpen && eligiblePromotions.length > 1 && (
-        <PromotionChoiceModal
-          promotions={eligiblePromotions}
-          onChoose={(id) => { setSelectedPromotionId(id); setPromotionChoiceOpen(false); notify("Promoción seleccionada y aplicada al carrito.", "success"); }}
-          onSkip={() => { setSelectedPromotionId(null); setPromotionChoiceOpen(false); notify("Podés continuar sin aplicar una promoción.", "success"); }}
-        />
-      )}
-
-      <ProductModal
-        product={selection.selectedProduct}
-        unavailableIngredients={unavailableIngredients}
-        garnish={selection.selectedGarnish}
-        removedIngredients={selection.removedIngredients}
-        note={selection.itemNote}
-        onGarnishChange={selection.setSelectedGarnish}
-        onNoteChange={selection.setItemNote}
-        onToggleIngredient={selection.toggleRemovedIngredient}
-        onClose={selection.resetSelection}
-        onAdd={addSelectedProduct}
-      />
-
-      {cart.length > 0 && <CartDrawer
-        open={cartOpen}
-        cart={cart}
+        promotions={promotions}
+        activeView={activeView}
+        salesAvailable={salesAvailable}
         cartCount={cartCount}
-        cartTotal={cartSubtotalBeforeDiscount}
-        onClose={() => setCartOpen(false)}
-        onChangeQuantity={changeQuantity}
+        selection={selection}
+        getProductQuantity={getProductQuantity}
+        incrementProduct={incrementProduct}
+        decrementProduct={decrementProduct}
+        onNavigate={navigate}
+        onOpenCart={() => setCartOpen(true)}
+        onSelectPromotion={setPromotionToConfigure}
+        onToast={notify}
+        onCustomerAuthenticated={onCustomerAuthenticated}
+      >
+      <StoreOverlays
+        store={activeStore}
+        salesAvailable={salesAvailable}
+        closedModalOpen={closedModalOpen}
+        onCloseClosedModal={() => setClosedModalOpen(false)}
+        refreshRequired={refreshRequired}
+        onRefresh={() => window.location.reload()}
+        loginPromptOpen={loginPromptOpen}
+        onCloseLoginPrompt={() => setLoginPromptOpen(false)}
+        onLogin={() => {
+          setLoginPromptOpen(false);
+          navigate("account");
+        }}
+        onContinueAsGuest={() => {
+          setLoginPromptOpen(false);
+          openCheckout();
+        }}
+        savePromptOpen={savePromptOpen}
+        onSaveCustomer={saveCustomerBeforeCheckout}
+        onSkipSaveCustomer={() => {
+          setSavePromptOpen(false);
+          const action = pendingCheckoutAction;
+          setPendingCheckoutAction(null);
+          if (action === "pay") void payWithMercadoPago();
+          if (action === "whatsapp") confirmWhatsApp();
+        }}
+        onCloseSavePrompt={() => {
+          setSavePromptOpen(false);
+          setPendingCheckoutAction(null);
+        }}
+        toast={toast}
+        onCloseToast={() => setToast(null)}
+        eligiblePromotions={eligiblePromotions}
+        promotionChoiceOpen={promotionChoiceOpen}
+        onChoosePromotion={(id) => {
+          setSelectedPromotionId(id);
+          setPromotionChoiceOpen(false);
+          notify("Promoción seleccionada y aplicada al carrito.", "success");
+        }}
+        onSkipPromotion={() => {
+          setSelectedPromotionId(null);
+          setPromotionChoiceOpen(false);
+          notify("Podés continuar sin aplicar una promoción.", "success");
+        }}
+        promotionToConfigure={promotionToConfigure}
+        onClosePromotionBuilder={() => setPromotionToConfigure(null)}
+        onConfirmPromotion={(selectionByGroup) => {
+          for (
+            let groupIndex = 0;
+            groupIndex < (promotionToConfigure?.items || []).length;
+            groupIndex += 1
+          ) {
+            for (const [productId, quantity] of Object.entries(
+              selectionByGroup[groupIndex] || {},
+            )) {
+              const product = products.find((item) => item.id === productId);
+              if (!product) continue;
+              for (let index = 0; index < quantity; index += 1)
+                addItem(product, "", [], "");
+            }
+          }
+          if (promotionToConfigure) {
+            notify(`${promotionToConfigure.name} agregada al carrito.`, "success");
+          }
+          setPromotionToConfigure(null);
+          setCartOpen(true);
+        }}
+        products={products}
+        unavailableIngredients={unavailableIngredients}
+        checkoutTotal={pricing.total}
+        cartState={{
+          cart,
+          cartCount,
+          changeQuantity,
+        }}
+        selection={selection}
+        checkoutState={checkoutState}
+        cartOpen={cartOpen}
+        onCloseCart={() => setCartOpen(false)}
         onCheckout={startCheckout}
-        promotionSavings={Math.max(0,cartSubtotalBeforeDiscount-pricing.total)}
-      />}
-
-      <CheckoutModal
-        open={checkoutOpen}
-        checkout={checkoutState.checkout}
-        total={pricing.total}
-        error={checkoutState.checkoutError}
-        onUpdate={checkoutState.updateCheckout}
-        onClose={() => setCheckoutOpen(false)}
-        onConfirm={()=>requestCheckoutAction("whatsapp")}
-        onPay={()=>requestCheckoutAction("pay")}
+        cartSubtotalBeforeDiscount={cartSubtotalBeforeDiscount}
+        promotionSavings={Math.max(0, cartSubtotalBeforeDiscount - pricing.total)}
+        checkoutOpen={checkoutOpen}
+        onCloseCheckout={() => setCheckoutOpen(false)}
+        onCheckoutAction={requestCheckoutAction}
         paying={paying}
-        salesEnabled={salesAvailable}
-        deliveryEnabled={Boolean(activeStore?.configuration?.delivery_enabled)}
-        pickupEnabled={activeStore?.configuration?.pickup_enabled !== false}
         onBackToCart={() => {
           setCheckoutOpen(false);
           setCartOpen(true);
         }}
-        formatMoney={money}
+        onAddSelectedProduct={addSelectedProduct}
       />
     </Page>
   );

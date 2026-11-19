@@ -31,17 +31,25 @@ from app.database.seed import (
 )
 
 from app.services.settings_service import SettingsService
+from app.services import store_service
 
 
 async def _audit_retention_worker():
     while True:
         try:
             await SettingsService.cleanup_expired_audit_logs()
-
         except Exception as exc:
             print(f"Error en limpieza de actividad vencida: {exc}")
-
         await asyncio.sleep(60 * 60)
+
+
+async def _online_order_retention_worker():
+    while True:
+        try:
+            await store_service.cleanup_expired_online_orders()
+        except Exception as exc:
+            print(f"Error en limpieza de pedidos online vencidos: {exc}")
+        await asyncio.sleep(5 * 60)
 
 
 @asynccontextmanager
@@ -57,21 +65,20 @@ async def lifespan(app: FastAPI):
     await initialize_app_settings()
 
     # 4. Iniciar limpieza automática de auditoría
-    cleanup_task = asyncio.create_task(
-        _audit_retention_worker()
-    )
+    cleanup_task = asyncio.create_task(_audit_retention_worker())
+    online_cleanup_task = asyncio.create_task(_online_order_retention_worker())
 
     print("Backend iniciado correctamente.")
 
     yield
 
     cleanup_task.cancel()
-
-    try:
-        await cleanup_task
-
-    except asyncio.CancelledError:
-        pass
+    online_cleanup_task.cancel()
+    for task in (cleanup_task, online_cleanup_task):
+        try:
+            await task
+        except asyncio.CancelledError:
+            pass
 
 
 app = FastAPI(

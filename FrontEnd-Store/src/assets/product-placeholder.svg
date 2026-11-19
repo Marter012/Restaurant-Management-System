@@ -5,7 +5,7 @@
      role="img"
      aria-labelledby="title description">
   <title id="title">Imagen de producto no disponible</title>
-  <desc id="description">Imagen de reemplazo de Setsu para productos sin fotografía.</desc>
+  <desc id="description">Imagen genérica de reemplazo para productos sin fotografía.</desc>
 
   <rect width="600" height="600" fill="#F5E8D1"/>
 
@@ -33,7 +33,7 @@
         font-size="34"
         font-weight="700"
         letter-spacing="5"
-        fill="#4A2818">SETSU</text>
+        fill="#4A2818">PRODUCTO</text>
 
   <text x="300" y="493"
         text-anchor="middle"

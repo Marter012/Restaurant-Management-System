@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
 import type { StoreProduct } from "../../types/store.ts";
-import { CatalogHeader } from "./CatalogHeader.tsx";
-import { CategoryFilter } from "./CategoryFilter.tsx";
-import { ProductGrid } from "./ProductGrid.tsx";
-import { Content, CatalogToolbar, ResultCount, SortSelect, AvailabilityToggle, ClearFilters } from "./CatalogStyles.ts";
+import { CatalogHeader } from "../CatalogHeader/CatalogHeader.tsx";
+import { CategoryFilter } from "../CategoryFilter/CategoryFilter.tsx";
+import { ProductGrid } from "../ProductGrid/ProductGrid.tsx";
+import { Content, CatalogToolbar, ResultCount, SortSelect, AvailabilityToggle, ClearFilters } from "./Catalog.styles.ts";
 
 interface Props {
   products: StoreProduct[];

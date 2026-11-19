@@ -55,3 +55,5 @@ async def create_indexes():
 
     # Asociación rápida de compras de invitado con cuentas registradas por teléfono.
     await database["online_orders"].create_index("customer_phone_normalized")
+    await database["online_orders"].create_index([("checkout_key", 1), ("updated_at", -1)])
+    await database["online_orders"].create_index("expires_at")

@@ -36,6 +36,7 @@ type OnlineOrder = {
   refund_status?: string | null;
   refund_error?: string;
   refund_sync_error?: string;
+  payment_attempts?: { payment_status?: string }[];
 };
 const labels: Record<string, string> = {
   pending_payment: "Pendiente de pago",
@@ -78,8 +79,8 @@ export default function OnlineOrders() {
 
   useEffect(() => {
     const refreshOnlineOrders = () => void load();
-    window.addEventListener("online-order-notification", refreshOnlineOrders);
-    return () => window.removeEventListener("online-order-notification", refreshOnlineOrders);
+    window.addEventListener("online-order-refresh", refreshOnlineOrders);
+    return () => window.removeEventListener("online-order-refresh", refreshOnlineOrders);
   }, [load]);
   // Los pedidos online y sus solicitudes de reembolso no dependen del día
   // de caja seleccionado: deben seguir visibles aunque sean de otra fecha.
@@ -192,6 +193,9 @@ export default function OnlineOrders() {
                         : order.payment_status}
                   </b>
                 </div>
+                {Boolean(order.payment_attempts?.length) && (
+                  <p>Intentos de pago registrados: {order.payment_attempts!.length}</p>
+                )}
                 <p>
                   {order.phone} ·{" "}
                   {order.fulfillment === "delivery"
@@ -238,6 +242,17 @@ export default function OnlineOrders() {
                   ))}
                 </ul>
                 {order.note && <p className="note">Nota: {order.note}</p>}
+                {order.payment_status === "approved" && order.administrative_order_id && order.status !== "delivered" && (
+                  <button
+                    type="button"
+                    className="delivered-action"
+                    disabled={Boolean(order.refund_status)}
+                    onClick={() => void changeStatus(order.id, "delivered")}
+                    title={order.refund_status ? "No se puede entregar mientras exista un reembolso en curso" : "Marcar pedido como entregado"}
+                  >
+                    Marcar como entregado
+                  </button>
+                )}
                 <div className="bottom">
                   <strong>{money(order.total)}</strong>
                   <StatusSelect

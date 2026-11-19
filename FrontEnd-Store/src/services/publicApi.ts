@@ -46,10 +46,27 @@ export async function createMercadoPagoOrder(cart: CartItem[], checkout: Checkou
       note: item.note,
     })),
   };
+  // La misma cesta conserva una clave de idempotencia entre reintentos del
+  // checkout. Así, dobles clics o recargas no crean pedidos duplicados.
+  const fingerprint = JSON.stringify(payload);
+  let hash = 2166136261;
+  for (let index = 0; index < fingerprint.length; index += 1) {
+    hash ^= fingerprint.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  const checkoutKeyName = `boutique_checkout_key_${(hash >>> 0).toString(36)}`;
+  let checkoutKey = localStorage.getItem(checkoutKeyName);
+  if (!checkoutKey) {
+    checkoutKey = typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    localStorage.setItem(checkoutKeyName, checkoutKey);
+  }
+
   const sessionRaw = localStorage.getItem("boutique_store_customer_session");
   let token: string | null = null;
   try { const session = sessionRaw ? JSON.parse(sessionRaw) : null; if (session?.expiresAt > Date.now()) token = session.token; } catch { token = null; }
-  const { data } = await publicApi.post<{ checkout_url: string; order_id: string; order_number: number }>("/public/online-orders", payload, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+  const { data } = await publicApi.post<{ checkout_url: string; order_id: string; order_number: number }>("/public/online-orders", payload, { headers: { "X-Checkout-Key": checkoutKey, ...(token ? { Authorization: `Bearer ${token}` } : {}) } });
   return data;
 }
 
@@ -60,6 +77,10 @@ export async function accessCustomer(payload: { phone: string; first_name?: stri
   return data;
 }
 export async function getCustomerMe(token:string):Promise<CustomerProfile>{const {data}=await publicApi.get<CustomerProfile>("/public/customers/me",{headers:{Authorization:`Bearer ${token}`}});return data;}
+export async function updateCustomerMe(token: string, profile: Pick<CustomerProfile, "first_name" | "last_name" | "location">): Promise<CustomerProfile> {
+  const { data } = await publicApi.put<CustomerProfile>("/public/customers/me", profile, { headers: { Authorization: `Bearer ${token}` } });
+  return data;
+}
 export interface CustomerOrderItem {
   name: string;
   quantity: number;

@@ -12,12 +12,17 @@ interface TooltipState {
 }
 
 const ONLINE_NOTIFICATION_KEY = "boutique-online-order-notifications";
+const ORDER_NOTIFICATION_KEY = "boutique-online-comanda-notifications";
 
 const Navigation = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
   const [onlineNotifications, setOnlineNotifications] = useState(() => {
     const stored = Number(localStorage.getItem(ONLINE_NOTIFICATION_KEY) || 0);
+    return Number.isFinite(stored) ? Math.max(0, stored) : 0;
+  });
+  const [orderNotifications, setOrderNotifications] = useState(() => {
+    const stored = Number(localStorage.getItem(ORDER_NOTIFICATION_KEY) || 0);
     return Number.isFinite(stored) ? Math.max(0, stored) : 0;
   });
   const location = useLocation();
@@ -51,27 +56,27 @@ const Navigation = () => {
         const context = new AudioContextClass();
         if (context.state === "suspended") void context.resume();
         const now = context.currentTime;
-        [880, 1046, 880].forEach((frequency, index) => {
+        [880, 1175, 880, 1175, 988, 1175].forEach((frequency, index) => {
           const oscillator = context.createOscillator();
           const gain = context.createGain();
-          const start = now + index * 0.19;
-          oscillator.type = "sawtooth";
+          const start = now + index * 0.24;
+          oscillator.type = "square";
           oscillator.frequency.value = frequency;
           gain.gain.setValueAtTime(0.0001, start);
-          gain.gain.exponentialRampToValueAtTime(0.32, start + 0.025);
-          gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.15);
+          gain.gain.exponentialRampToValueAtTime(0.48, start + 0.025);
+          gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.19);
           oscillator.connect(gain);
           gain.connect(context.destination);
           oscillator.start(start);
-          oscillator.stop(start + 0.16);
+          oscillator.stop(start + 0.2);
         });
-        window.setTimeout(() => void context.close(), 900);
+        window.setTimeout(() => void context.close(), 1900);
       } catch (error) {
         console.warn("No se pudo reproducir el sonido de pedidos:", error);
       }
     };
 
-    const handleNotification = () => {
+    const handleOnlineNotification = () => {
       if (window.location.pathname !== "/orders/online-orders") {
         setOnlineNotifications((count) => {
           const next = count + 1;
@@ -81,14 +86,32 @@ const Navigation = () => {
       }
       playAlert();
     };
-    window.addEventListener("online-order-notification", handleNotification);
-    return () => window.removeEventListener("online-order-notification", handleNotification);
+    const handleOrderNotification = () => {
+      if (window.location.pathname !== "/orders") {
+        setOrderNotifications((count) => {
+          const next = count + 1;
+          localStorage.setItem(ORDER_NOTIFICATION_KEY, String(next));
+          return next;
+        });
+      }
+      playAlert();
+    };
+    window.addEventListener("online-order-notification", handleOnlineNotification);
+    window.addEventListener("online-comanda-notification", handleOrderNotification);
+    return () => {
+      window.removeEventListener("online-order-notification", handleOnlineNotification);
+      window.removeEventListener("online-comanda-notification", handleOrderNotification);
+    };
   }, []);
 
   useEffect(() => {
     if (location.pathname === "/orders/online-orders") {
       setOnlineNotifications(0);
       localStorage.removeItem(ONLINE_NOTIFICATION_KEY);
+    }
+    if (location.pathname === "/orders") {
+      setOrderNotifications(0);
+      localStorage.removeItem(ORDER_NOTIFICATION_KEY);
     }
   }, [location.pathname]);
 
@@ -229,6 +252,11 @@ const Navigation = () => {
         >
           <ClipboardText size={25} weight="duotone" color="#C084FC" />
           <span>Comandas</span>
+          {orderNotifications > 0 && (
+            <span className="notification-badge" aria-label={`${orderNotifications} comandas online sin revisar`}>
+              {orderNotifications > 99 ? "99+" : orderNotifications}
+            </span>
+          )}
         </NavLink>
 
         <NavLink

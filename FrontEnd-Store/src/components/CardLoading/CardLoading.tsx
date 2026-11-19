@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { LoadingCard, LoadingIcon, LoadingRing, LoadingTrack, LoadingProgress, LoadingMessage } from "./CardLoadingStyles.ts";
+import { LoadingCard, LoadingIcon, LoadingRing, LoadingTrack, LoadingProgress, LoadingMessage } from "./CardLoading.styles.ts";
 interface Props { icon: ReactNode; text: string; progress?: number; }
 const CardLoading = ({ icon, text, progress }: Props) => (
   <LoadingCard role="status" aria-live="polite">
