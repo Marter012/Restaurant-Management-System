@@ -150,11 +150,17 @@ const ModalOrderCreate = ({ parentOrder = null }: ModalOrderCreateProps) => {
 
         const rect = currentAnchor.getBoundingClientRect();
         const shouldBeFixed = rect.top <= 0;
-        setSummaryFixed((previous) => previous === shouldBeFixed ? previous : shouldBeFixed);
+        setSummaryFixed((previous) =>
+          previous === shouldBeFixed ? previous : shouldBeFixed,
+        );
 
         if (shouldBeFixed) {
           setSummaryBounds((previous) => {
-            if (Math.abs(previous.left - rect.left) < 0.5 && Math.abs(previous.width - rect.width) < 0.5) return previous;
+            if (
+              Math.abs(previous.left - rect.left) < 0.5 &&
+              Math.abs(previous.width - rect.width) < 0.5
+            )
+              return previous;
             return { left: rect.left, width: rect.width };
           });
         }
@@ -162,7 +168,9 @@ const ModalOrderCreate = ({ parentOrder = null }: ModalOrderCreateProps) => {
     };
 
     updateSummaryPosition();
-    scrollContainer?.addEventListener("scroll", updateSummaryPosition, { passive: true });
+    scrollContainer?.addEventListener("scroll", updateSummaryPosition, {
+      passive: true,
+    });
     window.addEventListener("resize", updateSummaryPosition, { passive: true });
 
     return () => {
@@ -591,11 +599,7 @@ const ModalOrderCreate = ({ parentOrder = null }: ModalOrderCreateProps) => {
             dispatch(setProducts(updatedProducts));
           } catch (error) {
             if (axios.isAxiosError(error)) {
-              console.log("ERROR AXIOS:", error);
-              console.log("STATUS:", error.response?.status);
-              console.log("DATA:", error.response?.data);
-              console.log("DETAIL:", error.response?.data?.detail);
-              console.log("MESSAGE:", error.response?.data?.message);
+              getAxiosErrorMessage(error);
 
               showAlert(
                 error.response?.data?.detail ??
@@ -617,11 +621,7 @@ const ModalOrderCreate = ({ parentOrder = null }: ModalOrderCreateProps) => {
             dispatch(setCashMovements(updatedMovements));
           } catch (error) {
             if (axios.isAxiosError(error)) {
-              console.log("ERROR AXIOS:", error);
-              console.log("STATUS:", error.response?.status);
-              console.log("DATA:", error.response?.data);
-              console.log("DETAIL:", error.response?.data?.detail);
-              console.log("MESSAGE:", error.response?.data?.message);
+              getAxiosErrorMessage(error);
 
               showAlert(
                 error.response?.data?.detail ??
@@ -646,15 +646,6 @@ const ModalOrderCreate = ({ parentOrder = null }: ModalOrderCreateProps) => {
       }}
     >
       {({ values, setFieldValue, isSubmitting, submitForm }) => {
-        console.log(
-          isSubmitting ||
-            (values.items.length === 0 &&
-              values.extra_items?.length === 0 &&
-              values.payments?.length === 0),
-        );
-        console.log(values.items.length === 0);
-        console.log(values.extra_items?.length === 0);
-        console.log(values.payments?.length === 0);
         const getProduct = (id: string) =>
           products.find((product) => product.id === id);
 

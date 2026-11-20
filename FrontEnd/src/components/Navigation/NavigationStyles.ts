@@ -316,7 +316,10 @@ export const NavigationContainer = styled.nav`
   ========================================== */
 
   @media (max-width: 620px) {
+    position: static;
     width: auto;
+    max-height: none;
+    overflow: visible;
 
     .menu-toggle {
       display: flex;
@@ -324,10 +327,10 @@ export const NavigationContainer = styled.nav`
     }
 
     .navigation-links {
-      position: absolute;
+      position: fixed;
 
-      top: calc(100% + 12px);
-      right: 0;
+      top: 72px;
+      right: 12px;
 
       z-index: 1500;
 
@@ -337,7 +340,7 @@ export const NavigationContainer = styled.nav`
 
       width: min(290px, calc(100vw - 24px));
 
-      max-height: calc(100dvh - 100px);
+      max-height: calc(100dvh - 88px);
 
       padding: 9px;
       gap: 5px;

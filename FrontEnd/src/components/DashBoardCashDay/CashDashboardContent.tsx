@@ -302,7 +302,6 @@ const CashDashboardContent = ({
             ]}
           >
             {cashActivities.map((activity) => {
-              console.log(activity);
               const isOrder = activity.source === "order";
               const typeLabel = isOrder
                 ? activity.status === "Pagada"
