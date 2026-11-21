@@ -40,6 +40,7 @@ class StoreConfigurationUpdate(BaseModel):
     # Parámetros complementarios administrados desde la pestaña Store.
     phone_number: str | None = Field(default=None, max_length=30)
     public_sales_enabled: bool | None = None
+    allow_out_of_stock: bool = False
 
 
 class OnlineOrderItem(BaseModel):

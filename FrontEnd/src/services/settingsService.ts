@@ -6,6 +6,7 @@ import { api } from "./api.ts";
 
 export interface GeneralSettings {
   allow_out_of_stock: boolean;
+  allow_out_of_stock_management?: boolean;
 }
 
 export interface AuditEntry {

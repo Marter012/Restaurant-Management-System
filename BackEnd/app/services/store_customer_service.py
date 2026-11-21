@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import secrets
-from datetime import timedelta
+from datetime import timedelta, timezone
 
 from fastapi import HTTPException, Request
 from pymongo.errors import DuplicateKeyError
@@ -14,7 +14,7 @@ from app.utils.dateZone import DateUtils
 class StoreCustomerService:
     """Casos de uso de registro, sesión e historial de clientes del Store."""
 
-    SESSION_MINUTES = 10
+    SESSION_MINUTES = 60 * 24 * 30
 
     def __init__(self, repository: StoreCustomerRepository | None = None) -> None:
         self.repository = repository or StoreCustomerRepository()
@@ -139,12 +139,11 @@ class StoreCustomerService:
                 detail="La sesión del cliente ha expirado."
             )
 
+        # PyMongo devuelve datetimes naive en UTC por defecto.
         if expires_at.tzinfo is None:
-            expires_at = expires_at.replace(
-                tzinfo=DateUtils.now_argentina().tzinfo
-            )
+            expires_at = expires_at.replace(tzinfo=timezone.utc)
 
-        if expires_at <= DateUtils.now_argentina():
+        if expires_at <= DateUtils.now_argentina().astimezone(timezone.utc):
             raise HTTPException(
                 status_code=401,
                 detail="La sesión del cliente ha expirado."
@@ -198,7 +197,21 @@ class StoreCustomerService:
             str(customer["_id"]), phone, self.normalize_phone
         )
         rows = []
+        now = DateUtils.now_argentina()
         for order in documents:
+            if order.get("payment_status") == "pending":
+                expires_at = order.get("payment_expires_at")
+                if expires_at is None:
+                    created_at = order.get("created_at")
+                    if created_at is not None:
+                        if created_at.tzinfo is None:
+                            created_at = created_at.replace(tzinfo=timezone.utc)
+                        expires_at = created_at + timedelta(minutes=30)
+                if expires_at is not None:
+                    if expires_at.tzinfo is None:
+                        expires_at = expires_at.replace(tzinfo=timezone.utc)
+                    if expires_at <= now.astimezone(timezone.utc):
+                        continue
             created = order.get("created_at")
             requested_at = order.get("refund_requested_at")
             rows.append({
@@ -213,6 +226,10 @@ class StoreCustomerService:
                 "status": order.get("status", ""),
                 "refund_status": order.get("refund_status", ""),
                 "refund_requested_at": requested_at.isoformat() if hasattr(requested_at, "isoformat") else None,
+                "payment_provider": order.get("payment_provider"),
+                "payment_method": order.get("payment_method"),
+                "checkout_url": order.get("checkout_url"),
+                "payment_expires_at": order.get("payment_expires_at").isoformat() if hasattr(order.get("payment_expires_at"), "isoformat") else None,
             })
         return rows
 

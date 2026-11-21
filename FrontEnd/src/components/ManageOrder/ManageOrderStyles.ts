@@ -248,23 +248,17 @@ export const ContainerManageOrders = styled.div`
      PANTALLAS MEDIANAS
   ===================================================== */
 
-  @media (max-width: 1300px) {
+  @media (max-width: 1450px) {
     gap: 14px;
 
     .table-scroll > div:first-child {
-      grid-template-columns: repeat(6, minmax(115px, 1fr));
+      grid-template-columns: repeat(7, minmax(105px, 1fr));
 
-      h4:nth-child(5) {
-        display: none;
-      }
     }
 
     .table-scroll > div:last-child > div:has(.order-number) {
-      grid-template-columns: repeat(6, minmax(115px, 1fr));
+      grid-template-columns: repeat(7, minmax(105px, 1fr));
 
-      & > :nth-child(5) {
-        display: none;
-      }
     }
   }
 
@@ -464,6 +458,8 @@ export const EmptyMessage = styled.div`
 // =========================================================
 
 export const OrdersTableRow = styled(TableRow)<{$online?: boolean}>`
+  grid-template-columns: 0.55fr 1fr 1.2fr 0.75fr 0.9fr 0.95fr 0.7fr 0.55fr 1fr;
+  gap: 8px;
   background: ${({$online}) => $online ? "#EAF4EF" : "var(--color-surface)"};
   border-left: ${({$online}) => $online ? "4px solid #16835D" : "0"};
   .online-origin { display:inline-flex; margin-left:8px; padding:3px 6px; border-radius:5px; background:#D5EDE1; color:#126344; font-size:9px; font-weight:900; letter-spacing:.05em; vertical-align:middle; }

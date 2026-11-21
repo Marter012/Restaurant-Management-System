@@ -49,7 +49,12 @@ export function CustomerAccount({ storeName, onToast, onAuthenticated }: Props) 
     setLoadingOrders(true); setOrdersError("");
     try {
       const result = await getCustomerOrders(token);
-      setOrders(result);
+      const now = Date.now();
+      setOrders(result.filter(order => {
+        if (order.payment_status !== "pending" || !order.payment_expires_at) return true;
+        const expiresAt = new Date(order.payment_expires_at).getTime();
+        return !Number.isFinite(expiresAt) || expiresAt > now;
+      }));
     } catch (error) {
       const message = getApiError(error);
       setOrdersError(message);
@@ -150,7 +155,7 @@ export function CustomerAccount({ storeName, onToast, onAuthenticated }: Props) 
                 <OrderMiniTop><div><span className="order-number">PEDIDO #{order.order_number}</span><strong>{money(order.total)}</strong></div><span className="date">{new Date(order.created_at).toLocaleString("es-AR", { dateStyle: "medium", timeStyle: "short" })}</span></OrderMiniTop>
                 <OrderBadges><Badge $kind={order.payment_status === "approved" ? "success" : order.payment_status === "refunded" ? "muted" : "warning"}><CreditCard size={14}/>{paymentLabel(order.payment_status)}</Badge><Badge $kind="neutral">{orderStatusLabel(order.status)}</Badge></OrderBadges>
                 <OrderMiniMeta><span><CreditCard size={15}/>{order.payment_method || (order.payment_provider === "mercadopago" ? "Mercado Pago" : "Medio de pago pendiente")}</span><span><Clock size={15}/>{order.fulfillment === "delivery" ? "Envío" : "Retiro"}</span></OrderMiniMeta>
-                <span className="open-detail">Ver detalle del pedido →</span>
+                <span className="open-detail">{order.payment_status === "pending" && order.checkout_url && order.payment_expires_at && new Date(order.payment_expires_at).getTime() > Date.now() ? "Pendiente · Continuar pago →" : "Ver detalle del pedido →"}</span>
               </OrderMiniCard>)}</OrderCards>
             )}
           </OrdersPanel>
@@ -173,6 +178,7 @@ export function CustomerAccount({ storeName, onToast, onAuthenticated }: Props) 
           {selectedOrder.note && <DetailBlock><span>Comentarios del pedido</span><strong>{selectedOrder.note}</strong></DetailBlock>}
           {selectedOrder.applied_promotions?.length ? <DetailBlock><span>Promociones aplicadas</span><strong>{selectedOrder.applied_promotions.map(item => item.name).join(", ")}</strong></DetailBlock> : null}
           <div className="total"><span>Total</span><strong>{money(selectedOrder.total)}</strong></div>
+          {selectedOrder.payment_status === "pending" && selectedOrder.checkout_url && selectedOrder.payment_expires_at && new Date(selectedOrder.payment_expires_at).getTime() > Date.now() && <RefundButton type="button" onClick={() => window.location.assign(selectedOrder.checkout_url!)}>Continuar pago en Mercado Pago</RefundButton>}
           {selectedOrder.refund_status && <p className="refund-state">{refundLabel(selectedOrder.refund_status)}</p>}
           {selectedOrder.payment_status === "approved" && ["paid", "preparing", "ready", "delivered"].includes(selectedOrder.status) && !selectedOrder.refund_status && <RefundButton type="button" disabled={refundOrder === selectedOrder.order_number} onClick={() => void submitRefund()}>{refundOrder === selectedOrder.order_number ? "Enviando solicitud…" : "Solicitar reembolso"}</RefundButton>}
         </DetailContent>

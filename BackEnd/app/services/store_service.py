@@ -206,8 +206,6 @@ async def request_store_order_refund(order_number: int, request: Request):
         raise HTTPException(404, "No encontramos esa compra en tu cuenta.")
     if order.get("payment_status") != "approved":
         raise HTTPException(409, "Solo se puede solicitar el reembolso de una compra pagada y aprobada.")
-    if order.get("status") == "delivered":
-        raise HTTPException(409, "Este pedido ya fue entregado y no admite solicitudes de reembolso desde la tienda.")
     if not order.get("payment_id") or not order.get("administrative_order_id"):
         raise HTTPException(409, "La compra todavía no está vinculada a una comanda y no puede reembolsarse.")
     if order.get("refund_status") in {"requested", "processing", "refunded", "refunded_needs_sync"}:
@@ -215,7 +213,7 @@ async def request_store_order_refund(order_number: int, request: Request):
 
     now = DateUtils.now_argentina()
     result = await store_repository.collection("online_orders").update_one(
-        {"_id": order["_id"], "payment_status": "approved", "status": {"$ne": "delivered"}, "refund_status": {"$nin": ["requested", "processing", "refunded", "refunded_needs_sync"]}},
+        {"_id": order["_id"], "payment_status": "approved", "refund_status": {"$nin": ["requested", "processing", "refunded", "refunded_needs_sync"]}},
         {"$set": {"refund_status": "requested", "refund_requested_at": now, "updated_at": now}},
     )
     if not result.modified_count:
@@ -224,13 +222,14 @@ async def request_store_order_refund(order_number: int, request: Request):
     updated = await store_repository.collection("online_orders").find_one({"_id": order["_id"]})
     await broadcast_change("online_order", "refund_requested", _serialize_order(updated))
 
-    # La solicitud queda pendiente para revisión del comercio. El dinero NO se
-    # devuelve automáticamente: el administrador la procesa desde Pedidos online.
-    return {
-        "message": "Tu solicitud de reembolso fue enviada al comercio.",
-        "order_number": order_number,
-        "refund_status": "requested",
-    }
+    # El cliente puede cancelar una compra aprobada. Se reutiliza exactamente
+    # el flujo idempotente de reembolso del administrador: Mercado Pago primero,
+    # sincronización contable y cancelación de la comanda después.
+    return await process_online_order_refund(
+        str(order["_id"]),
+        request,
+        {"sub": f"store-customer:{customer['_id']}"},
+    )
 
 
 async def get_store_promotions():
@@ -413,38 +412,15 @@ async def create_online_order(data: OnlineOrderCreate, request: Request):
     total = max(0.0, round(total - promotion_savings, 2))
 
     now = DateUtils.now_argentina()
-    checkout_key = request.headers.get("X-Checkout-Key", "").strip()[:120]
-    existing_checkout = None
-    if checkout_key:
-        existing_checkout = await store_repository.collection("online_orders").find_one(
-            {
-                "checkout_key": checkout_key,
-                "$or": [
-                    {"expires_at": {"$gt": now}},
-                    {"expires_at": {"$exists": False}},
-                ],
-            },
-            sort=[("updated_at", -1)],
-        )
-        if existing_checkout and existing_checkout.get("payment_status") in {"pending", "in_process"} and existing_checkout.get("checkout_url"):
-            return {
-                "order_id": str(existing_checkout["_id"]),
-                "order_number": existing_checkout["order_number"],
-                "checkout_url": existing_checkout["checkout_url"],
-                "total": existing_checkout["total"],
-            }
 
-    counter = None
-    if not existing_checkout or existing_checkout.get("payment_status") in {"approved", "refunded"}:
-        counter = await store_repository.collection("counters").find_one_and_update(
-            {"_id": "online_order_number"},
-            {"$inc": {"value": 1}},
-            upsert=True,
-            return_document=ReturnDocument.AFTER,
-        )
-        order_number = int(counter["value"])
-    else:
-        order_number = int(existing_checkout["order_number"])
+    counter = await store_repository.collection("counters").find_one_and_update(
+        {"_id": "online_order_number"},
+        {"$inc": {"value": 1}},
+        upsert=True,
+        return_document=ReturnDocument.AFTER,
+    )
+
+    order_number = int(counter["value"])
 
     order = {
         "order_number": order_number,
@@ -463,44 +439,21 @@ async def create_online_order(data: OnlineOrderCreate, request: Request):
         "payment_status": "pending",
         "status": "pending_payment",
         "payment_provider": "mercadopago",
-        "created_at": existing_checkout.get("created_at", now) if existing_checkout else now,
+        "created_at": now,
         "updated_at": now,
-        "expires_at": now + timedelta(minutes=30),
+        "payment_expires_at": now + timedelta(minutes=30),
         "external_reference": str(uuid4()),
         "cash_register_id": str(open_register.get("id") or open_register.get("_id")),
-        **({"checkout_key": checkout_key} if checkout_key else {}),
     }
 
     customer = await _get_customer_from_request(request)
     if customer:
         order["customer_id"] = str(customer["_id"])
 
-    previous_attempts = list((existing_checkout or {}).get("payment_attempts", []))
-    if existing_checkout and existing_checkout.get("external_reference"):
-        previous_attempts.append({
-            "external_reference": existing_checkout.get("external_reference"),
-            "preference_id": existing_checkout.get("preference_id"),
-            "payment_id": existing_checkout.get("payment_id"),
-            "payment_status": existing_checkout.get("payment_status"),
-            "payment_detail": existing_checkout.get("payment_detail"),
-            "checkout_url": existing_checkout.get("checkout_url"),
-            "created_at": existing_checkout.get("updated_at") or existing_checkout.get("created_at"),
-        })
-    order["payment_attempts"] = previous_attempts
-
-    if existing_checkout and existing_checkout.get("payment_status") not in {"approved", "refunded"}:
-        order_id = str(existing_checkout["_id"])
-        await store_repository.collection("online_orders").update_one(
-            {"_id": existing_checkout["_id"]},
-            {"$set": order, "$unset": {"payment_id": "", "preference_id": "", "checkout_url": "", "payment_detail": ""}},
-        )
-        inserted_id = existing_checkout["_id"]
-    else:
-        inserted = await store_repository.collection("online_orders").insert_one(order)
-        inserted_id = inserted.inserted_id
-        order_id = str(inserted_id)
-        created_order = await store_repository.collection("online_orders").find_one({"_id": inserted_id})
-        await broadcast_change("online_order", "created", _serialize_order(created_order), request.headers.get("X-Client-ID"))
+    inserted = await store_repository.collection("online_orders").insert_one(order)
+    order_id = str(inserted.inserted_id)
+    created_order = await store_repository.collection("online_orders").find_one({"_id": inserted.inserted_id})
+    await broadcast_change("online_order", "created", _serialize_order(created_order), request.headers.get("X-Client-ID"))
 
     preference = {
         "expires": True,
@@ -553,7 +506,7 @@ async def create_online_order(data: OnlineOrderCreate, request: Request):
 
     except httpx.HTTPStatusError as exc:
         await store_repository.collection("online_orders").update_one(
-            {"_id": inserted_id},
+            {"_id": inserted.inserted_id},
             {"$set": {"status": "payment_error"}},
         )
 
@@ -570,7 +523,7 @@ async def create_online_order(data: OnlineOrderCreate, request: Request):
 
     except (httpx.HTTPError, ValueError) as exc:
         await store_repository.collection("online_orders").update_one(
-            {"_id": inserted_id},
+            {"_id": inserted.inserted_id},
             {"$set": {"status": "payment_error"}},
         )
 
@@ -584,18 +537,11 @@ async def create_online_order(data: OnlineOrderCreate, request: Request):
     checkout_url = payment_preference.get("init_point")
 
     await store_repository.collection("online_orders").update_one(
-        {"_id": inserted_id},
+        {"_id": inserted.inserted_id},
         {
             "$set": {
                 "preference_id": payment_preference.get("id"),
                 "checkout_url": checkout_url,
-                "payment_attempts": order["payment_attempts"] + [{
-                    "external_reference": order["external_reference"],
-                    "preference_id": payment_preference.get("id"),
-                    "payment_status": "pending",
-                    "checkout_url": checkout_url,
-                    "created_at": now,
-                }],
             }
         },
     )
@@ -757,17 +703,6 @@ async def mercadopago_webhook(request: Request):
                         return {"received": True, "matched": True, "conversion": "processing"}
 
     await store_repository.collection("online_orders").update_one({"_id": order["_id"]}, {"$set": update_fields})
-    # Mantener el resultado de cada intento para que Gestión pueda auditar
-    # reintentos sin convertir cada intento en un pedido nuevo.
-    await store_repository.collection("online_orders").update_one(
-        {"_id": order["_id"], "payment_attempts.external_reference": external_reference},
-        {"$set": {
-            "payment_attempts.$.payment_status": payment.get("status"),
-            "payment_attempts.$.payment_id": str(payment_id),
-            "payment_attempts.$.payment_detail": payment.get("status_detail"),
-            "payment_attempts.$.updated_at": DateUtils.now_argentina(),
-        }},
-    )
 
     if approved:
         latest = await store_repository.collection("online_orders").find_one({"_id": order["_id"]})
@@ -790,88 +725,52 @@ async def mercadopago_webhook(request: Request):
 
 
 async def cleanup_expired_online_orders():
-    """Elimina pedidos online abandonados tras 30 minutos, solo si MP confirma
-    que no hay un pago aprobado ni una operación pendiente/en proceso.
-    Ante cualquier error de consulta al proveedor, conserva el pedido.
+    """Elimina únicamente checkouts vencidos sin pago asociado ni acreditado.
+
+    Si existe payment_id se conserva el pedido: requiere conciliación explícita
+    con Mercado Pago y no se elimina ante incertidumbre.
     """
     now = DateUtils.now_argentina()
-    cutoff = now - timedelta(minutes=30)
     collection = store_repository.collection("online_orders")
     cursor = collection.find({
-        "$or": [
-            {"expires_at": {"$lte": now}},
-            {"expires_at": {"$exists": False}, "created_at": {"$lte": cutoff}},
-        ],
-        "status": {"$in": ["pending_payment", "payment_error", "cancelled"]},
         "payment_status": {"$in": ["pending", "rejected", "cancelled"]},
+        "$or": [
+            {"payment_expires_at": {"$lte": now}},
+            {"payment_expires_at": {"$exists": False}, "created_at": {"$lte": now - timedelta(minutes=30)}},
+        ],
+        "payment_id": {"$exists": False},
         "administrative_order_id": {"$exists": False},
         "refund_status": {"$nin": ["requested", "processing", "refunded", "refunded_needs_sync"]},
-    })
+    }, {"_id": 1, "order_number": 1})
     deleted = 0
-    token = settings.MERCADOPAGO_ACCESS_TOKEN.strip()
     async for order in cursor:
-        payment_id = order.get("payment_id")
-        provider_status = None
-        if not token:
-            # Sin credenciales no es seguro borrar: puede existir un pago que
-            # todavía no haya notificado su webhook.
-            continue
-        try:
-            async with httpx.AsyncClient(timeout=12) as client:
-                if payment_id:
-                    response = await client.get(
-                        f"https://api.mercadopago.com/v1/payments/{payment_id}",
-                        headers={"Authorization": f"Bearer {token}"},
-                    )
-                    response.raise_for_status()
-                    provider_status = response.json().get("status")
-                else:
-                    # La preferencia puede haberse pagado sin que el webhook
-                    # haya persistido aún payment_id. Consultamos por referencia.
-                    response = await client.get(
-                        "https://api.mercadopago.com/v1/payments/search",
-                        params={"external_reference": order.get("external_reference"), "sort": "date_created", "criteria": "desc"},
-                        headers={"Authorization": f"Bearer {token}"},
-                    )
-                    response.raise_for_status()
-                    results = (response.json() or {}).get("results", [])
-                    statuses = {row.get("status") for row in results if row.get("status")}
-                    if statuses - {"rejected", "cancelled"}:
-                        continue
-                    provider_status = next(iter(statuses), None)
-        except Exception as exc:
-            print(f"No se pudo verificar el vencimiento del pedido online #{order.get('order_number')}: {exc}")
-            continue
-        if provider_status not in {None, "rejected", "cancelled"}:
-            continue
-        # Borrado condicionado: un webhook o una acción concurrente puede haber
-        # actualizado el pedido después de la lectura anterior.
         result = await collection.delete_one({
             "_id": order["_id"],
-            "$or": [
-                {"expires_at": {"$lte": now}},
-                {"expires_at": {"$exists": False}, "created_at": {"$lte": cutoff}},
-            ],
             "payment_status": {"$in": ["pending", "rejected", "cancelled"]},
-            "status": {"$in": ["pending_payment", "payment_error", "cancelled"]},
+            "$or": [
+                {"payment_expires_at": {"$lte": now}},
+                {"payment_expires_at": {"$exists": False}, "created_at": {"$lte": now - timedelta(minutes=30)}},
+            ],
+            "payment_id": {"$exists": False},
             "administrative_order_id": {"$exists": False},
-            "refund_status": {"$nin": ["requested", "processing", "refunded", "refunded_needs_sync"]},
         })
-        if result.deleted_count:
-            deleted += 1
-            await broadcast_change("online_order", "expired", {
-                "id": str(order["_id"]),
-                "order_number": order.get("order_number"),
-                "payment_status": order.get("payment_status"),
-                "provider_status": provider_status,
-            })
+        deleted += result.deleted_count
     if deleted:
-        print(f"Limpieza de pedidos online: {deleted} pedido(s) vencido(s) eliminado(s).")
+        print(f"Pedidos online vencidos eliminados: {deleted}")
     return deleted
 
 
 async def list_online_orders(status: str | None = None):
-    query = {"status": status} if status else {}
+    now = DateUtils.now_argentina()
+    query = {
+        "$or": [
+            {"payment_expires_at": {"$gt": now}},
+            {"payment_expires_at": {"$exists": False}, "created_at": {"$gt": now - timedelta(minutes=30)}},
+            {"payment_status": {"$in": ["approved", "in_process"]}},
+        ]
+    }
+    if status:
+        query["status"] = status
     cursor = store_repository.collection("online_orders").find(query).sort("created_at", -1)
     return [_serialize_order(row) async for row in cursor]
 
@@ -1052,7 +951,7 @@ async def process_online_order_refund(
         try:
             async with httpx.AsyncClient(timeout=30) as client:
                 response = await client.post(
-                    f"https://api.mercadopago.com/v1/payments/{payment_id}/refund",
+                    f"https://api.mercadopago.com/v1/payments/{payment_id}/refunds",
                     headers={
                         "Authorization": f"Bearer {token}",
                         "X-Idempotency-Key": f"boutique-refund-{order_id}",
@@ -1060,7 +959,11 @@ async def process_online_order_refund(
                     },
                     json={},
                 )
-            response.raise_for_status()
+            if response.is_error:
+                raise HTTPException(
+                    status_code=502,
+                    detail=f"Mercado Pago rechazó el reembolso ({response.status_code}): {response.text[:350]}",
+                )
             refund_data = response.json()
             if refund_data.get("status") not in {"approved", "refunded", None}:
                 raise HTTPException(502, "Mercado Pago no confirmó el reembolso.")
@@ -1175,12 +1078,6 @@ async def update_online_order_status(
     if not current:
         raise HTTPException(404, "Pedido no encontrado.")
 
-    if current.get("status") == "delivered" and data.status != "delivered":
-        raise HTTPException(409, "Un pedido entregado no puede volver a un estado anterior.")
-
-    if data.status == "delivered" and current.get("refund_status") in {"requested", "processing", "refunded_needs_sync", "refunded"}:
-        raise HTTPException(409, "No se puede marcar como entregado mientras exista una solicitud o proceso de reembolso.")
-
     if data.status == "paid" and current.get("payment_status") == "approved" and not current.get("administrative_order_id"):
         raise HTTPException(409, "El pago fue aprobado, pero todavía no se generó la comanda administrativa.")
 
@@ -1206,10 +1103,7 @@ async def update_online_order_status(
         )
 
     result = await store_repository.collection("online_orders").update_one(
-        {
-            "_id": ObjectId(order_id),
-            **({"status": {"$ne": "delivered"}} if data.status != "delivered" else {"refund_status": {"$nin": ["requested", "processing", "refunded_needs_sync", "refunded"]}}),
-        },
+        {"_id": ObjectId(order_id)},
         {
             "$set": {
                 "status": data.status,
@@ -1219,7 +1113,7 @@ async def update_online_order_status(
     )
 
     if not result.matched_count:
-        raise HTTPException(409, "El pedido cambió de estado mientras se actualizaba. Actualizá la lista e intentá nuevamente.")
+        raise HTTPException(404, "Pedido no encontrado.")
 
     order = await store_repository.collection("online_orders").find_one(
         {"_id": ObjectId(order_id)}

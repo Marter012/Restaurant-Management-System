@@ -238,7 +238,7 @@ const CashDashboardContent = ({
                 className="secondary"
                 onClick={onOpenMovement}
               >
-                ＋ Registrar movimiento extra
+                Registrar egreso / ingreso
               </button>
               <CashDashboardCloseButton type="button" onClick={onCloseCash}>
                 Cerrar caja
@@ -395,24 +395,30 @@ const CashDashboardContent = ({
             </div>
           </div>
           <CashPaymentBreakdown>
-            {(
-              [
+            {(() => {
+              const pendingTotal = orders.reduce((sum, order) => {
+                if (order.status_payment === "cancelled") return sum;
+                return sum + Math.max(0, getOrderAmount(order) - getOrderPaidAmount(order));
+              }, 0);
+              const paymentRows: [string, number][] = [
                 ["Efectivo", totalCash],
                 ["Transferencia", totalTransfer],
                 ["Mercado Pago / QR", totalMercadoPago + totalQR],
                 ["Tarjeta débito", totalDebit],
-                ["Pendiente", totalDebit],
-              ] as [string, number][]
-            ).map(([label, amount]) => {
-              const percent =
-                salesTotal > 0 ? Math.min(100, (amount / salesTotal) * 100) : 0;
+                ["Pendiente", pendingTotal],
+              ];
+              const percentageBase = salesTotal > 0 ? salesTotal : 0;
+              const formatAmount = (value: number) =>
+                value.toLocaleString("es-AR", { maximumFractionDigits: 2 });
+              return paymentRows.map(([label, amount]) => {
+              const percent = percentageBase > 0 ? (amount / percentageBase) * 100 : 0;
               return (
                 <div className="payment-row" key={label}>
                   <div className="payment-label">
                     <strong>{label}</strong>
                     <span>
-                      ${amount.toLocaleString("es-AR")}{" "}
-                      <small>({percent.toFixed(0)}%)</small>
+                      ${formatAmount(amount)}{" "}
+                      <small>({percent.toFixed(2)}%)</small>
                     </span>
                   </div>
                   <CashPaymentBar $percent={percent}>
@@ -420,7 +426,8 @@ const CashDashboardContent = ({
                   </CashPaymentBar>
                 </div>
               );
-            })}
+              });
+            })()}
           </CashPaymentBreakdown>
         </CashDashboardPanel>
       </CashDashboardGrid>

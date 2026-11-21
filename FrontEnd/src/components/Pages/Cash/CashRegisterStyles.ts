@@ -309,19 +309,18 @@ export const CashBlockedConfirmButton = styled.button`
   gap: 11px;
   border: none;
   border-radius: var(--radius-md);
-  background: linear-gradient(110deg, var(--color-accent), var(--color-primary));
+  background: var(--color-primary);
   color: var(--color-white);
   font-size: 0.92rem;
   font-weight: 800;
   cursor: pointer;
   box-shadow: var(--shadow-md);
-  transition:
-    filter 0.2s ease,
-    transform 0.2s ease;
+  transition: transform 0.2s ease;
 
   &:hover {
-    filter: brightness(1.08);
-    transform: translateY(-1px);
+    background: var(--color-primary);
+    color: var(--color-white);
+    transform: scale(1.03);
   }
 
   @media (max-width: 600px) {

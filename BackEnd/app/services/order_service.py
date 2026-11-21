@@ -72,9 +72,12 @@ class OrderService(BaseService):
 
         super().__init__(self.repository)
 
-    async def _out_of_stock_enabled(self):
-        settings = await database["app_settings"].find_one({"_id": "operational"})
-        return bool(settings and settings.get("allow_out_of_stock", False))
+    async def _out_of_stock_enabled(self, sales_channel: str = "management"):
+        if sales_channel == "store":
+            store_settings = await database["app_settings"].find_one({"_id": "store"}) or {}
+            return bool(store_settings.get("allow_out_of_stock", False))
+        operational = await database["app_settings"].find_one({"_id": "operational"}) or {}
+        return bool(operational.get("allow_out_of_stock_management", operational.get("allow_out_of_stock", False)))
 
     async def _next_order_number(self, cash_register_id):
         """Asigna un número de comanda atómico por caja/turno."""
@@ -1031,7 +1034,8 @@ class OrderService(BaseService):
     async def create(
         self,
         data,
-        current_user_id
+        current_user_id,
+        sales_channel: str = "management",
     ):
 
         if data.status_payment == "cancelled":
@@ -1048,10 +1052,9 @@ class OrderService(BaseService):
         # PROCESAR ITEMS
         # -----------------------------------------------------
 
-        # El canal Store respeta la misma política operativa de stock configurada
-        # por administración: si se habilita vender sin stock, no se descuenta
-        # inventario; si se deshabilita, se valida y registra la salida habitual.
-        allow_out_of_stock = await self._out_of_stock_enabled()
+        # Cada canal mantiene su propia política de ventas sin stock.
+        # Si está habilitada, no se descuenta inventario para esa venta.
+        allow_out_of_stock = await self._out_of_stock_enabled(sales_channel)
         items, total_price = (
             await self._process_items(
                 data.items,

@@ -50,6 +50,7 @@ type StoreConfig = {
   show_featured: boolean;
   delivery_enabled: boolean;
   pickup_enabled: boolean;
+  allow_out_of_stock: boolean;
 };
 
 const defaults: StoreConfig = {
@@ -80,6 +81,7 @@ const defaults: StoreConfig = {
   show_featured: true,
   delivery_enabled: false,
   pickup_enabled: true,
+  allow_out_of_stock: false,
 };
 
 const colorLabels: Record<keyof Theme, string> = {
@@ -328,8 +330,9 @@ export default function SettingsStore() {
           <div><h3>Disponibilidad de ventas online</h3><p>Controlá si los clientes pueden iniciar y completar pedidos desde la tienda pública.</p></div>
         </StoreSettingsSectionHeader>
         <StoreSettingsToggle><input type="checkbox" checked={publicSalesEnabled} onChange={(event) => setPublicSalesEnabled(event.target.checked)} /><span>Habilitar ventas y checkout del FrontEnd-Store</span></StoreSettingsToggle>
+        <StoreSettingsToggle><input type="checkbox" checked={config.allow_out_of_stock} onChange={(event) => update("allow_out_of_stock", event.target.checked)} /><span>Habilitar ventas sin stock en el FrontEnd-Store</span></StoreSettingsToggle>
         <StoreSettingsActions>
-          <button type="button" onClick={() => void saveSection("Disponibilidad de ventas", [], { publicSales: true })} disabled={saving || publicSalesEnabled === savedPublicSalesEnabled}><Check /> {saving ? "Guardando..." : "Guardar disponibilidad"}</button>
+          <button type="button" onClick={() => void saveSection("Disponibilidad de ventas", ["allow_out_of_stock"], { publicSales: true })} disabled={saving || (publicSalesEnabled === savedPublicSalesEnabled && config.allow_out_of_stock === savedConfig.allow_out_of_stock)}><Check /> {saving ? "Guardando..." : "Guardar disponibilidad"}</button>
         </StoreSettingsActions>
       </StoreSettingsSection>
 

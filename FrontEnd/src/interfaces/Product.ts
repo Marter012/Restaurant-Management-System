@@ -4,6 +4,7 @@ import type { Promotion } from "./Promotion.ts";
 export interface Product {
   id: string;
   name: string;
+  description?: string;
   image?: string | null;
   quantity: number;
   price: number;

@@ -46,6 +46,7 @@ class SettingsService:
         "ranking_limit": 8,
         "delivery_enabled": False,
         "pickup_enabled": True,
+        "allow_out_of_stock": False,
     }
 
     @classmethod

@@ -247,6 +247,9 @@ export const PromotionStatusRow = styled.div`
 
 export const PromotionStatusSwitch = styled.button<{ $active: boolean }>`
   position: relative;
+  align-self: center;
+  margin: 0;
+  transform: none;
   flex: 0 0 43px;
   width: 43px;
   height: 25px;
@@ -580,19 +583,42 @@ export const ProductOption = styled.button<{ $selected: boolean }>`
 `;
 
 export const ProductCheck = styled.span<{ $selected: boolean }>`
-  display: grid;
-  place-items: center;
-  flex: 0 0 20px;
-  width: 20px;
-  height: 20px;
-  border: 1px solid
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 22px;
+  min-width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+
+  border: 2px solid
     ${({ $selected }) =>
       $selected ? "var(--color-primary)" : "var(--color-border)"};
-  border-radius: 6px;
+
+  border-radius: 50%;
+
   background: ${({ $selected }) =>
-    $selected ? "var(--color-primary)" : "var(--color-white)"};
-  color: var(--color-white);
-  font-size: 0.65rem;
+    $selected ? "var(--color-primary)" : "transparent"};
+
+  color: white;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1;
+
+  align-self: center;
+
+  transition: all 0.2s ease;
+
+  ${({ $selected }) =>
+    $selected &&
+    `
+      box-shadow: 0 0 0 3px rgba(74, 40, 24, 0.12);
+    `}
 `;
 
 export const EmptyProductsMessage = styled.div`

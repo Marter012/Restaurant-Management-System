@@ -40,7 +40,8 @@ export const CardTable = styled.div`
     display: flex;
     flex-direction: column;
 
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 
   @media (max-width: 700px) {
@@ -60,8 +61,8 @@ export const TableHeader = styled.div<{ $columns: number }>`
   gap: 16px;
   align-items: center;
 
-  min-width: 100%;
-  width: max-content;
+  min-width: 0;
+  width: 100%;
 
   padding: 15px 18px;
   background: var(--color-white);
@@ -114,6 +115,7 @@ export const TableHeader = styled.div<{ $columns: number }>`
 // =========================================================
 
 export const OrdersTableHeader = styled(TableHeader)`
+  grid-template-columns: 0.55fr 1fr 1.2fr 0.75fr 0.9fr 0.95fr 0.7fr 0.55fr 1fr;
   background: var(--color-surface-hover);
   h4 {
     font-size: 11px;
@@ -128,7 +130,7 @@ export const OrdersTableHeader = styled(TableHeader)`
 
 export const ContainerRows = styled.div`
   width: 100%;
-  min-width: 100%;
+  min-width: 0;
 
   min-height: 0;
   flex: 1 1 auto;
@@ -169,7 +171,7 @@ export const TableRow = styled.div<{ $columns: number }>`
   align-items: center;
 
   width: 100%;
-  min-width: 100%;
+  min-width: 0;
 
   margin: 4px 0;
   padding: 15px 14px;
@@ -251,51 +253,6 @@ export const TableRow = styled.div<{ $columns: number }>`
 
   .actions button {
     flex-shrink: 0;
-  }
-
-  .price,
-  .total {
-    color: var(--color-text);
-    font-size: 13px;
-    font-weight: 800;
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-  }
-
-  .status-text {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    width: fit-content;
-    max-width: 100%;
-
-    padding: 5px 10px;
-
-    border: 1px solid var(--color-border);
-    border-radius: 999px;
-
-    background: var(--color-success-soft);
-    color: var(--color-success);
-
-    font-size: 11px;
-    font-weight: 800;
-    line-height: 1.3;
-
-    white-space: nowrap;
-  }
-
-  .stock {
-    font-variant-numeric: tabular-nums;
-  }
-
-  .product-name {
-    color: var(--color-text);
-    font-weight: 700;
-  }
-
-  .category {
-    color: var(--color-text-light);
   }
 
   .actions svg {

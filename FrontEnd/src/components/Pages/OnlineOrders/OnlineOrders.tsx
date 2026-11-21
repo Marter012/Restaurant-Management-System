@@ -1,5 +1,7 @@
 import CardLoading from "../../../components/CardLoading/CardLoading.tsx";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../../store/store.ts";
 import { ArrowsClockwise, ShoppingBag } from "@phosphor-icons/react";
 import { api } from "../../../services/api.ts";
 import { ContainerPage } from "../PageStyles.ts";
@@ -55,6 +57,7 @@ const money = (value: number) =>
     maximumFractionDigits: 2,
   }).format(value || 0);
 export default function OnlineOrders() {
+  const selectedDay = useSelector((state: RootState) => state.daySelected.day);
   const [orders, setOrders] = useState<OnlineOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -81,9 +84,21 @@ export default function OnlineOrders() {
     window.addEventListener("online-order-notification", refreshOnlineOrders);
     return () => window.removeEventListener("online-order-notification", refreshOnlineOrders);
   }, [load]);
-  // Los pedidos online y sus solicitudes de reembolso no dependen del día
-  // de caja seleccionado: deben seguir visibles aunque sean de otra fecha.
-  const filteredOrders = orders;
+  // El selector global de fecha (CashStatus) también determina el día visible.
+  const filteredOrders = useMemo(
+    () => orders.filter((order) => {
+      if (!order.created_at) return false;
+      const date = new Date(order.created_at);
+      if (Number.isNaN(date.getTime())) return false;
+      const orderDay = [
+        date.getFullYear(),
+        String(date.getMonth() + 1).padStart(2, "0"),
+        String(date.getDate()).padStart(2, "0"),
+      ].join("-");
+      return orderDay === selectedDay;
+    }),
+    [orders, selectedDay],
+  );
   const processRefund = async (id: string) => {
     if (refundingId) return;
     setRefundingId(id);
@@ -139,7 +154,7 @@ export default function OnlineOrders() {
     <ContainerPage>
       <PageHeader
         title="Pedidos online"
-        description="Compras recibidas desde el Store y su estado de pago y preparación."
+        description={`Compras recibidas desde el Store para el día ${selectedDay} y su estado de pago y preparación.`}
       />
       <OnlineOrdersWrap>
         <header>
@@ -162,7 +177,7 @@ export default function OnlineOrders() {
         ) : filteredOrders.length === 0 ? (
           <div className="empty">
             <ShoppingBag />
-            <h3>Todavía no hay pedidos online</h3>
+            <h3>No hay pedidos online para el día seleccionado</h3>
             <p>Las compras pagadas desde el Store aparecerán acá.</p>
           </div>
         ) : (

@@ -244,14 +244,18 @@ const CashDay = ({ setActiveTab, onBlockedByOpenCash }: CashDayProps) => {
   );
 
   /* =========================================================
-     TOTALES DE VENTAS PAGADAS / COBRADAS
+     TOTAL BRUTO DE VENTAS (INCLUYE SALDOS PENDIENTES)
   ========================================================= */
 
   const salesTotal = useMemo(() => {
-    return salePaymentMovements
-      .filter((movement) => movement.type === "inflow")
-      .reduce((total, movement) => total + movement.amount, 0);
-  }, [salePaymentMovements]);
+    return cashRegisterOrders
+      .filter((order) => order.status_payment !== "cancelled")
+      .reduce(
+        (total, order) =>
+          total + Number(order.total_price ?? 0),
+        0,
+      );
+  }, [cashRegisterOrders]);
 
   /* =========================================================
      MÉTODOS DE PAGO

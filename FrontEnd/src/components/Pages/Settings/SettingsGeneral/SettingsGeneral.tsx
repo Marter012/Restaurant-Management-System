@@ -51,7 +51,10 @@ import {
   LogoPreviewImage,
 } from "./SettingsGeneralStyles.ts";
 
-const DEFAULT_OPERATIONAL: GeneralSettings = { allow_out_of_stock: false };
+const DEFAULT_OPERATIONAL: GeneralSettings = {
+  allow_out_of_stock: false,
+  allow_out_of_stock_management: false,
+};
 const DEFAULT_COMMERCIAL: CommercialSettings = {
   public_sales_enabled: false,
   general_discount_enabled: false,
@@ -113,7 +116,8 @@ const SettingsGeneral = () => {
         const initialName = establishmentData.name ?? "";
         const initialLogo = establishmentData.logo ?? null;
         const initialOperational = {
-          allow_out_of_stock: Boolean(operationalData.allow_out_of_stock),
+          allow_out_of_stock: Boolean(operationalData.allow_out_of_stock_management ?? operationalData.allow_out_of_stock),
+          allow_out_of_stock_management: Boolean(operationalData.allow_out_of_stock_management ?? operationalData.allow_out_of_stock),
         };
         const initialCommercial = {
           public_sales_enabled: Boolean(commercialData.public_sales_enabled),
@@ -216,7 +220,8 @@ const SettingsGeneral = () => {
     try {
       const result = await updateSettingsAPI(operational);
       const persisted = {
-        allow_out_of_stock: Boolean(result.allow_out_of_stock),
+        allow_out_of_stock: Boolean(result.allow_out_of_stock_management ?? result.allow_out_of_stock),
+        allow_out_of_stock_management: Boolean(result.allow_out_of_stock_management ?? result.allow_out_of_stock),
       };
       setOperational(persisted);
       setSavedOperational(persisted);
@@ -408,6 +413,7 @@ const SettingsGeneral = () => {
               setOperational((current) => ({
                 ...current,
                 allow_out_of_stock: !current.allow_out_of_stock,
+                allow_out_of_stock_management: !current.allow_out_of_stock,
               }))
             }
           >

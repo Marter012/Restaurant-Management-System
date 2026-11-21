@@ -1068,11 +1068,7 @@ export const OpenCashButton = styled.button`
   border: none;
   border-radius: 13px;
 
-  background: linear-gradient(
-    110deg,
-    var(--color-accent),
-    var(--color-primary)
-  );
+  background: var(--color-primary);
 
   color: var(--color-white);
 
@@ -1083,19 +1079,14 @@ export const OpenCashButton = styled.button`
 
   box-shadow: 0 6px 15px var(--shadow-md);
 
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    filter 0.2s ease;
+  transition: transform 0.2s ease;
 
   &:hover {
-    transform: translateY(-2px);
-    filter: brightness(1.08);
-    box-shadow: 0 9px 20px var(--shadow-md);
+    transform: scale(1.03);
   }
 
   &:active {
-    transform: translateY(0);
+    transform: scale(1);
   }
 
   &:focus-visible {
@@ -1139,17 +1130,13 @@ export const CloseCashButton = styled.button`
 
   white-space: nowrap;
 
-  transition:
-    background 0.2s ease,
-    border-color 0.2s ease,
-    color 0.2s ease;
+  transition: transform 0.2s ease;
 
   &:hover {
     background: var(--color-danger);
-
-    border-color: var(--color-border);
-
-    color: var(--color-text-secondary);
+    border-color: var(--color-surface-hover);
+    color: var(--color-white);
+    transform: scale(1.03);
   }
 
   @media (max-width: 1050px) {
@@ -1557,20 +1544,22 @@ export const CashDashboardActions = styled.div`
     padding: 9px 14px;
     border: 1px solid var(--color-primary-soft);
     border-radius: 10px;
-    background: var(--color-white);
+    background: var(--color-primary);
+    color: white;
 
-    background: linear-gradient(
-      110deg,
-      var(--color-danger),
-      var(--color-success)
-    );
-    color: var(--color-primary);
     font-weight: 700;
     font-size: 12px;
     cursor: pointer;
   }
+
+  button {
+    transition: transform 0.2s ease;
+  }
+
   button:hover {
-    background: var(--color-surface-hover);
+    background: var(--color-primary);
+    color: var(--color-white);
+    transform: scale(1.03);
   }
   @media (max-width: 1300px) {
     display: flex;
@@ -1592,8 +1581,12 @@ export const CashDashboardCloseButton = styled.button`
   font-size: 12px;
   font-weight: 800;
   cursor: pointer;
+  transition: transform 0.2s ease;
+
   &:hover {
-    background: var(--color-primary-hover);
+    background: var(--color-danger) !important;
+    color: var(--color-white);
+    transform: scale(1.03);
   }
 `;
 

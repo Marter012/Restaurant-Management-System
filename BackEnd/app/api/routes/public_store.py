@@ -59,7 +59,7 @@ async def get_public_store():
         "general_discount_percentage": float(commercial.get("general_discount_percentage", 0) or 0),
         "configuration": store_config,
         "cash_register_open": bool(await database["cash_registers"].find_one({"status_cash_register": "open", "status": True}, {"_id": 1})),
-        "allow_out_of_stock": bool(operational.get("allow_out_of_stock", False)),
+        "allow_out_of_stock": bool(store_config.get("allow_out_of_stock", False)),
         "operational_updated_at": operational_updated_at.isoformat() if hasattr(operational_updated_at, "isoformat") else str(operational_updated_at or ""),
     }
 
@@ -70,8 +70,7 @@ async def get_public_products():
     store_config = await SettingsService.get_store_configuration()
     featured_ids = set(store_config.get("featured_product_ids", []))
     enabled_ids = set(store_config.get("enabled_product_ids", []))
-    operational = await database["app_settings"].find_one({"_id": "operational"}) or {}
-    allow_out_of_stock = bool(operational.get("allow_out_of_stock", False))
+    allow_out_of_stock = bool(store_config.get("allow_out_of_stock", False))
     products = await products_service.get_all()
     visible = [
         product for product in products
@@ -114,8 +113,7 @@ async def get_public_product_ranking(period_days: int = Query(default=30, ge=0, 
     ranking = await sales_analytics_service.product_ranking(period_days, limit)
     config = await SettingsService.get_store_configuration()
     commercial = await SettingsService.get_commercial()
-    operational = await database["app_settings"].find_one({"_id": "operational"}) or {}
-    allow_out_of_stock = bool(operational.get("allow_out_of_stock", False))
+    allow_out_of_stock = bool(config.get("allow_out_of_stock", False))
     all_products = await products_service.get_all()
     enabled_ids = set(config.get("enabled_product_ids", []))
     visible_ids = {str(row.get("id")) for row in all_products if row.get("status", True) is True and (not config.get("catalog_restricted") or str(row.get("id")) in enabled_ids) and (allow_out_of_stock or int(row.get("quantity", 0) or 0) > 0)}

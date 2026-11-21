@@ -56,26 +56,47 @@ const ProductsForOrder = ({
     "Promociones",
   ];
 
-  const filteredProducts = useMemo(
-    () =>
-      products.filter(
-        (product) =>
-          (allowOutOfStock || product.quantity > 0) &&
-          product.name.toLowerCase().includes(search.toLowerCase()) &&
-          (category === "Todos" || product.category === category),
-      ),
-    [products, search, category, allowOutOfStock],
-  );
+  const normalizeSearch = (value: unknown) =>
+    String(value ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("es");
 
-  const filteredPromotions = useMemo(
-    () =>
-      promotions.filter(
-        (promotion) =>
-          promotion.status &&
-          promotion.name.toLowerCase().includes(search.toLowerCase()),
-      ),
-    [promotions, search],
-  );
+  const filteredProducts = useMemo(() => {
+    const term = normalizeSearch(search);
+    return products.filter((product) => {
+      const searchableText = [
+        product.name,
+        product.category,
+        product.description,
+        product.price,
+        product.quantity,
+        ...(product.ingredients ?? []),
+        ...(product.garnish_options ?? []),
+        JSON.stringify(product),
+      ].join(" ");
+      return (allowOutOfStock || product.quantity > 0) &&
+        (!term || normalizeSearch(searchableText).includes(term)) &&
+        (category === "Todos" || product.category === category);
+    });
+  }, [products, search, category, allowOutOfStock]);
+
+  const filteredPromotions = useMemo(() => {
+    const term = normalizeSearch(search);
+    return promotions.filter((promotion) => {
+      const searchableText = [
+        promotion.name,
+        promotion.description,
+        promotion.price,
+        ...(promotion.items ?? []).flatMap((item) => [
+          item.name,
+          item.quantity,
+          ...(item.product_ids ?? []).map((id) =>
+            products.find((product) => product.id === id)?.name ?? id
+          ),
+        ]),
+        JSON.stringify(promotion),
+      ].join(" ");
+      return promotion.status && (!term || normalizeSearch(searchableText).includes(term));
+    });
+  }, [promotions, search, products]);
 
   const handlePromotionClick = (promotion: Promotion) => {
     setSelectedPromotion(promotion);

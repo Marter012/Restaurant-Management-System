@@ -246,7 +246,10 @@ export const FormGroup = styled.div`
       height: 19px;
       min-height: 19px;
       flex: 0 0 19px;
-      margin: 0;
+      align-self: center;
+      position: relative;
+      top: 0;
+      margin: 0 !important;
       padding: 0;
       accent-color: var(--color-primary);
       cursor: pointer;

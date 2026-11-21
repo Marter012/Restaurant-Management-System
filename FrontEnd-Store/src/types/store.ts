@@ -9,6 +9,7 @@ export interface StoreConfiguration {
   featured_product_ids: string[]; enabled_product_ids: string[]; catalog_restricted: boolean; enabled_promotion_ids: string[]; featured_promotion_ids?: string[]; product_discounts: Record<string, number>; general_store_discount: number; theme: StoreTheme;
   show_promotions: boolean; show_featured: boolean;
   delivery_enabled: boolean; pickup_enabled: boolean;
+  allow_out_of_stock?: boolean;
 }
 export interface StorePromotion {
   id: string; name: string; description: string; image?: string | null;

@@ -27,7 +27,7 @@ export function saveCustomerSession(token: string, customer: CustomerProfile, ex
   const session: StoredCustomerSession = {
     token,
     customer,
-    expiresAt: Date.now() + Math.min(expiresIn, 600) * 1000,
+    expiresAt: Date.now() + Math.min(expiresIn, 60 * 60 * 24 * 30) * 1000,
   };
   localStorage.setItem(CUSTOMER_SESSION_KEY, JSON.stringify(session));
   return session;

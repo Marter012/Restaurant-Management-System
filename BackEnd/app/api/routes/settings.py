@@ -15,21 +15,39 @@ router = APIRouter(prefix="/settings", tags=["Settings"])
 
 class OperationalSettings(BaseModel):
     allow_out_of_stock: bool = False
+    allow_out_of_stock_management: bool | None = None
 
 @router.get("/")
 async def get_settings(current_user=Depends(get_current_user)):
     data = await database["app_settings"].find_one({"_id": "operational"})
-    return {"allow_out_of_stock": bool(data and data.get("allow_out_of_stock", False))}
+    management_value = data.get("allow_out_of_stock_management", data.get("allow_out_of_stock", False))
+    return {
+        "allow_out_of_stock": bool(management_value),
+        "allow_out_of_stock_management": bool(management_value),
+    }
 
 @router.put("/", dependencies=[Depends(require_admin)])
 async def update_settings(data: OperationalSettings, request: Request):
     updated_at = DateUtils.now_argentina()
+    management_value = (
+        data.allow_out_of_stock_management
+        if data.allow_out_of_stock_management is not None
+        else data.allow_out_of_stock
+    )
     await database["app_settings"].update_one(
         {"_id": "operational"},
-        {"$set": {"allow_out_of_stock": data.allow_out_of_stock, "updated_at": updated_at}},
+        {"$set": {
+            "allow_out_of_stock": management_value,
+            "allow_out_of_stock_management": management_value,
+            "updated_at": updated_at,
+        }},
         upsert=True,
     )
-    result = {**data.model_dump(), "updated_at": updated_at.isoformat()}
+    result = {
+        "allow_out_of_stock": management_value,
+        "allow_out_of_stock_management": management_value,
+        "updated_at": updated_at.isoformat(),
+    }
     await broadcast_change(
         "settings",
         "operational_settings_updated",
